@@ -2,14 +2,19 @@
 
 #include "Shader.h"
 
-Shader::Shader()
+Shader::Shader(GLuint pId)
 {
-
+    programID = pId;
 }
 
 Shader::~Shader()
 {
 
+}
+
+GLuint Shader::getProgramID()
+{
+    return programID;
 }
 
 

@@ -12,9 +12,11 @@ class Shader
 
     public:
 
-        Shader();
+        Shader(GLuint pId);
 
         ~Shader();
+
+        GLuint getProgramID();
 
 };
 

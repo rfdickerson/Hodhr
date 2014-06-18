@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "TerrainPatch.h"
+#include "ShaderLibrary.h"
 
 /**
  * Terrain Patch is a section of terrain that can be swapped in and out of memory
@@ -22,7 +23,7 @@ void TerrainPatch::init ()
     cout << "Building the terrain patch" << endl;
 
     static const float vertices[] = {
-        0.5f, 0.0f, -0.5f,
+        0.5f, 1.0f, -0.5f,
         -0.5f, 0.0f, 0.5f,
         0.5f, 0.0f, 0.5f,
         0.5f, 0.0f, -0.5f
@@ -54,7 +55,22 @@ void TerrainPatch::init ()
 
 void TerrainPatch::draw()
 {
-    
+
+    ShaderLibrary* library = &ShaderLibrary::getInstance();
+    Shader* basic = library->getShader("basic");
+
+    glUseProgram(basic->getProgramID());
+
+    glBindAttribLocation(basic->getProgramID(), 0, "in_Position");
+    glBindVertexArray(0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+
+    glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, 0);
+
+    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
+
 }
 
 TerrainPatch::~TerrainPatch()

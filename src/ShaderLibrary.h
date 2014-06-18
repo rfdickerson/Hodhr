@@ -7,20 +7,19 @@
 
 #include "Shader.h"
 
-using namespace std;
 
 class ShaderLibrary
 {
 
 private:
-    
+
     ShaderLibrary();
     ShaderLibrary(ShaderLibrary const& copy);
     ShaderLibrary& operator=(ShaderLibrary const& copy);
-    
+
     //static ShaderLibrary *instance;
 
-    map<string, Shader> shaders;
+    std::map<std::string, Shader*> shaders;
 
 public:
 
@@ -30,7 +29,9 @@ public:
         return instance;
     }
 
-    void addShader(string vertexShaderSrc, string fragmentShaderSrc);
+    void addShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc);
+
+    Shader* getShader(std::string shaderName);
 
 
     ~ShaderLibrary();

@@ -32,14 +32,16 @@ void checkSDLError(int line = -1)
         }
 }
 
+
 int main()
 {
    
+    int oldTicks=0;
 
     SDL_Window *mainwindow;
     SDL_GLContext maincontext;
     
-    if (SDL_Init(SDL_INIT_VIDEO) <0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) <0)
     {
         cout << "err";
     }
@@ -66,28 +68,52 @@ int main()
     glewInit();
 
     ShaderLibrary *sl = &ShaderLibrary::getInstance();
-    sl->addShader("resources/shaders/basic.vs", "resources/shaders/basic.fs");
+    sl->addShader("basic", "../resources/shaders/basic.vs", "../resources/shaders/basic.fs");
 
+
+    SDL_Event event;
      
     TerrainPatch *terrain = new TerrainPatch();
     terrain->init();
  
-    /* Clear our buffer with a red background */
-    glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-    glClear ( GL_COLOR_BUFFER_BIT );
-    /* Swap our back buffer to the front */
-    SDL_GL_SwapWindow(mainwindow);
-    /* Wait 2 seconds */
-    SDL_Delay(2000);
-    
-     /* Same as above, but green */
-    glClearColor ( 0.0, 1.0, 0.0, 1.0 );
-    glClear ( GL_COLOR_BUFFER_BIT );
-    SDL_GL_SwapWindow(mainwindow);
-    SDL_Delay(2000);
-        
+    int done = 0;
+    int interval = 20;
+
+    while (done == 0)
+    {
+        int currentTick;
+        int waitTicks;
+
+        currentTick = SDL_GetTicks();
+        waitTicks = (oldTicks + interval) - currentTick;
+        oldTicks = currentTick;
+
+        if (waitTicks>0)
+        {
+            SDL_Delay(waitTicks);
+        }
+
+        while (SDL_PollEvent(&event)) 
+        {
+            if (event.type == SDL_QUIT) { done = 1;}
+            if (event.type == SDL_KEYDOWN)
+            {
+                done = 1;
+            }
+        }
+
+        // Clear our buffer with a red background */
+        glClearColor ( 0.2, 0.2, 0.2, 1.0 );
+        glClear ( GL_COLOR_BUFFER_BIT );
+        /* Swap our back buffer to the front */
+        terrain->draw();
+
+        SDL_GL_SwapWindow(mainwindow);
+
+    }
     
     delete terrain;
+
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);
     SDL_Quit();

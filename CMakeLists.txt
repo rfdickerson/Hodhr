@@ -34,7 +34,7 @@ include_directories( ${GLM_INCLUDE_DIRS} )
 include_directories( ${SDL2_INCLUDE_DIRS} )
 
 ADD_EXECUTABLE(OpenWorld 
-    src/main.cxx 
+    src/main.cpp 
     src/TerrainPatch.h src/TerrainPatch.cpp
     src/ShaderLibrary.h src/ShaderLibrary.cpp
     src/Shader.h src/Shader.cpp
