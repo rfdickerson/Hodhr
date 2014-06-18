@@ -33,7 +33,12 @@ include_directories( ${GLEW_INCLUDE_DIRS} )
 include_directories( ${GLM_INCLUDE_DIRS} )
 include_directories( ${SDL2_INCLUDE_DIRS} )
 
-ADD_EXECUTABLE(OpenWorld src/main.cxx src/TerrainPatch.cpp)
+ADD_EXECUTABLE(OpenWorld 
+    src/main.cxx 
+    src/TerrainPatch.h src/TerrainPatch.cpp
+    src/ShaderLibrary.h src/ShaderLibrary.cpp
+    src/Shader.h src/Shader.cpp
+    )
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld ${GLFW_LIBRARIES})

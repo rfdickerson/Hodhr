@@ -5,6 +5,8 @@
 
 #include <SDL.h>
 
+
+#include "ShaderLibrary.h"
 #include "TerrainPatch.h"
 
 #define PROGRAM_NAME "Tutorial1"
@@ -32,8 +34,7 @@ void checkSDLError(int line = -1)
 
 int main()
 {
-    TerrainPatch *p = new TerrainPatch();
-    p->init();
+   
 
     SDL_Window *mainwindow;
     SDL_GLContext maincontext;
@@ -42,7 +43,8 @@ int main()
     {
         cout << "err";
     }
-    
+
+        
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     
@@ -58,7 +60,17 @@ int main()
     maincontext = SDL_GL_CreateContext(mainwindow);
     checkSDLError(__LINE__);
     
-     SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(1);
+    
+    glewExperimental = GL_TRUE;
+    glewInit();
+
+    ShaderLibrary *sl = &ShaderLibrary::getInstance();
+    sl->addShader("resources/shaders/basic.vs", "resources/shaders/basic.fs");
+
+     
+    TerrainPatch *terrain = new TerrainPatch();
+    terrain->init();
  
     /* Clear our buffer with a red background */
     glClearColor ( 1.0, 0.0, 0.0, 1.0 );
@@ -74,8 +86,8 @@ int main()
     SDL_GL_SwapWindow(mainwindow);
     SDL_Delay(2000);
         
-    cout << "Hello World!";
     
+    delete terrain;
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);
     SDL_Quit();
