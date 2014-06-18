@@ -5,6 +5,8 @@
 
 #include <SDL.h>
 
+#include "TerrainPatch.h"
+
 #define PROGRAM_NAME "Tutorial1"
 
 using namespace std;
@@ -18,7 +20,6 @@ void sdldie(const char *msg)
 
 void checkSDLError(int line = -1)
 {
-#ifndef NDEBUG
         const char *error = SDL_GetError();
         if (*error != '\0')
         {
@@ -27,11 +28,13 @@ void checkSDLError(int line = -1)
                         printf(" + line: %i\n", line);
                 SDL_ClearError();
         }
-#endif
 }
 
 int main()
 {
+    TerrainPatch *p = new TerrainPatch();
+    p->init();
+
     SDL_Window *mainwindow;
     SDL_GLContext maincontext;
     
