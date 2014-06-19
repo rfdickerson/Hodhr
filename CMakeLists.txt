@@ -38,6 +38,7 @@ ADD_EXECUTABLE(OpenWorld
     src/TerrainPatch.h src/TerrainPatch.cpp
     src/ShaderLibrary.h src/ShaderLibrary.cpp
     src/Shader.h src/Shader.cpp
+    src/Renderer.h src/Renderer.cpp
     )
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})

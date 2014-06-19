@@ -8,8 +8,12 @@
 
 #include "ShaderLibrary.h"
 #include "TerrainPatch.h"
+#include "Renderer.h"
 
 #define PROGRAM_NAME "Tutorial1"
+
+const int WIDTH = 1024;
+const int HEIGHT = 768;
 
 using namespace std;
 
@@ -54,7 +58,7 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     
     mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        512, 512, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+        WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if (!mainwindow) /* Die if creation failed */
         sdldie("Unable to create window");
         
@@ -72,6 +76,9 @@ int main()
 
 
     SDL_Event event;
+
+    Renderer *renderer = new Renderer(WIDTH, HEIGHT);
+    renderer->init();
      
     TerrainPatch *terrain = new TerrainPatch();
     terrain->init();
@@ -104,15 +111,21 @@ int main()
 
         // Clear our buffer with a red background */
         glClearColor ( 0.2, 0.2, 0.2, 1.0 );
-        glClear ( GL_COLOR_BUFFER_BIT );
+        glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         /* Swap our back buffer to the front */
+
+        renderer->draw();
+
         terrain->draw();
+
+
 
         SDL_GL_SwapWindow(mainwindow);
 
     }
     
     delete terrain;
+    delete renderer;
 
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);
