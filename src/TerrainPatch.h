@@ -3,7 +3,10 @@
 
 #include <GL/glew.h>
 
-class TerrainPatch 
+#include "SceneNode.h"
+#include "Model.h"
+
+class TerrainPatch : public Model
 {
 
 private:
@@ -13,11 +16,11 @@ public:
 
     TerrainPatch();
 
-    void init( void );
+    virtual void init( void );
 
-    void draw( void );
+    virtual void draw(const SceneNode& node );
     
-    ~TerrainPatch();
+    virtual ~TerrainPatch();
 
 
 };

@@ -116,7 +116,7 @@ int main()
 
         renderer->draw();
 
-        terrain->draw();
+        //terrain->draw();
 
 
 

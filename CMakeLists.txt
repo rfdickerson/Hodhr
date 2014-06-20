@@ -39,6 +39,8 @@ ADD_EXECUTABLE(OpenWorld
     src/ShaderLibrary.h src/ShaderLibrary.cpp
     src/Shader.h src/Shader.cpp
     src/Renderer.h src/Renderer.cpp
+    src/Model.h
+    src/SceneNode.h src/SceneNode.cpp
     )
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})

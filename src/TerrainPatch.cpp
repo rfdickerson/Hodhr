@@ -3,6 +3,7 @@
 
 #include "TerrainPatch.h"
 #include "ShaderLibrary.h"
+#include "SceneNode.h"
 
 /**
  * Terrain Patch is a section of terrain that can be swapped in and out of memory
@@ -53,7 +54,7 @@ void TerrainPatch::init ()
 }
 
 
-void TerrainPatch::draw()
+void TerrainPatch::draw(const SceneNode& node)
 {
 
     ShaderLibrary* library = &ShaderLibrary::getInstance();
@@ -72,6 +73,7 @@ void TerrainPatch::draw()
     glBindVertexArray(0);
 
 }
+
 
 TerrainPatch::~TerrainPatch()
 {

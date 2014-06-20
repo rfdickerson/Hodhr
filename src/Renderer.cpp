@@ -45,6 +45,7 @@ Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
     library->addShader("screen", "../resources/shaders/screen.vs", "../resources/shaders/screen.fs");
     Shader* screenShader = library->getShader("screen");
     screenShaderProgram = screenShader->getProgramID();
+    std::cout << "Screen shader program ID: " << screenShaderProgram << std::endl;
 }
 
 Renderer::~Renderer ()
