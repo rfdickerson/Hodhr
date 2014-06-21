@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+#include "SceneNode.h"
+
 class Renderer 
 {
 
@@ -27,6 +29,8 @@ class Renderer
     GLuint screenShaderProgram;
 
     GLfloat* textureBuffer;
+    
+    SceneNode* rootSceneNode;
 
 };
 

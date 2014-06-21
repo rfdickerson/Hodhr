@@ -1,4 +1,8 @@
 #include <GL/glew.h>
+
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 #include "TerrainPatch.h"
@@ -16,6 +20,7 @@ TerrainPatch::TerrainPatch()
     vboId = 0;
     vaoId = 0;
     vboiId = 0;
+    subdivisions = 128;
 }
 
 void TerrainPatch::init ()
@@ -23,6 +28,50 @@ void TerrainPatch::init ()
 
     cout << "Building the terrain patch" << endl;
 
+    float step = 2.0f / (subdivisions - 1);
+    float uvstep = 1.0f / (subdivisions -1);
+    int numPerRow = subdivisions * 5;
+
+    int numVertices = subdivisions * subdivisions * 5;
+    float vertices[numVertices];
+
+     for (int i = 0; i < subdivisions; i++) {
+            for (int j = 0; j < subdivisions; j++) {
+                // put the position down
+                vertices[(numPerRow * i) + (5 * j) + 0] = -1.0f + (step * i);
+                vertices[(numPerRow * i) + (5 * j) + 1] = 0;
+                vertices[(numPerRow * i) + (5 * j) + 2] = -1.0f + (step * j);
+
+                // put the uv coords down
+                vertices[(numPerRow * i) + (5 * j) + 3] = (uvstep * i);
+                vertices[(numPerRow * i) + (5 * j) + 4] = (uvstep * j);
+            }
+        }
+
+
+    int numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
+     int indices[numIndices];
+
+        numPerRow = (subdivisions - 1) * 6;
+        for (int i = 0; i < subdivisions - 1; i++) {
+            for (int j = 0; j < subdivisions - 1; j++) {
+                int baseindex = i * (subdivisions) + j;
+
+                int a = baseindex;
+                int b = baseindex + subdivisions;
+                int c = b + 1;
+                int d = a + 1;
+
+                indices[(numPerRow * i) + (6 * j) + 0] = a;
+                indices[(numPerRow * i) + (6 * j) + 1] = b;
+                indices[(numPerRow * i) + (6 * j) + 2] = c;
+
+                indices[(numPerRow * i) + (6 * j) + 3] = c;
+                indices[(numPerRow * i) + (6 * j) + 4] = d;
+                indices[(numPerRow * i) + (6 * j) + 5] = a;
+            }
+        }
+    /*
     static const float vertices[] = {
         0.5f, 1.0f, -0.5f,
         -0.5f, 0.0f, 0.5f,
@@ -34,20 +83,22 @@ void TerrainPatch::init ()
         0, 1, 3,
         1, 2, 3
     };
+    */
 
     glGenVertexArrays(1, &vaoId);
     glBindVertexArray(vaoId);
 
     glGenBuffers(1, &vboId);
-    glBufferData(GL_ARRAY_BUFFER, 12, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices, vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 20, (void*)12);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     glGenBuffers(1, &vboiId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices, indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     //vaoId = glGenVertexArrays();
@@ -61,6 +112,10 @@ void TerrainPatch::draw(const SceneNode& node)
     Shader* basic = library->getShader("basic");
 
     glUseProgram(basic->getProgramID());
+
+    int MVPMatrixLocation = glGetUniformLocation(basic->getProgramID(), "MVPMatrix");
+    glm::mat4 mvpMatrix = node.getMVPMatrix();
+    glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, glm::value_ptr( mvpMatrix));
 
     glBindAttribLocation(basic->getProgramID(), 0, "in_Position");
     glBindVertexArray(0);

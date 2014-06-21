@@ -1,21 +1,27 @@
 #ifndef SCENENODE_H
 #define SCENENODE_H
 
+#include <memory>
 #include <vector>
 
 #include <glm/glm.hpp>
 
 #include "Model.h"
 
+class Model;
+class SceneNode;
+
+typedef std::vector<std::shared_ptr<SceneNode>> NodeVector;
+
 class SceneNode
 {
     private:
 
-        Model* modelAsset;
+        std::shared_ptr<Model> asset;
 
-        SceneNode* parent;
+        // std::weak_ptr<SceneNode> parent;
 
-        std::vector<SceneNode*> children;
+        NodeVector children;
 
         glm::vec4 Position;
 
@@ -28,6 +34,21 @@ class SceneNode
         SceneNode();
         ~SceneNode();
 
+        void addChild(std::shared_ptr<SceneNode> node);
+
+        void setAsset(std::shared_ptr<Model> model);
+
+        //glm::mat4 getMVMatrix() const;
+
+        glm::mat4 getMVPMatrix() const;
+
+        //glm::mat3 getNormalMatrix() const;
+
+        void draw( void);
+
+        void updateLocal();
+
+        void updateAll();
 
 };
 

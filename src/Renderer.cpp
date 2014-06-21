@@ -26,12 +26,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <memory>
 
 #include <GL/glew.h>
 
 #include "Renderer.h"
 #include "Shader.h"
 #include "ShaderLibrary.h"
+#include "TerrainPatch.h"
 
 Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
 {
@@ -42,15 +44,28 @@ Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
     textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
 
     ShaderLibrary* library = &ShaderLibrary::getInstance();
-    library->addShader("screen", "../resources/shaders/screen.vs", "../resources/shaders/screen.fs");
+    library->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
     Shader* screenShader = library->getShader("screen");
     screenShaderProgram = screenShader->getProgramID();
     std::cout << "Screen shader program ID: " << screenShaderProgram << std::endl;
+
+    // initialize the root scene node
+    rootSceneNode = new SceneNode();
+
+    std::shared_ptr<TerrainPatch> terrain ( new TerrainPatch());
+    terrain->init();
+
+    std::shared_ptr<SceneNode> terrainNode (new SceneNode());
+    terrainNode->setAsset(terrain);
+    rootSceneNode->addChild(terrainNode);
 }
 
 Renderer::~Renderer ()
 {
     std::cout << "Cleaning up render system" << std::endl;
+    //delete terrain;
+
+
     glDeleteFramebuffers(2, frameBufferID);
     glDeleteRenderbuffers(2, renderBufferID);
 
@@ -63,14 +78,27 @@ Renderer::~Renderer ()
 void Renderer::draw ()
 {
 
+// draw the scene first
+    glClearColor(0.2f, 0.2f, 0.2f, 1);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
+
+    if (rootSceneNode != NULL) {
+        rootSceneNode->draw();
+    }
+
+// draw the deferred texture rendering
     glUseProgram(screenShaderProgram);
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glViewport(0,0, targetWidth, targetHeight);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     glUseProgram(screenShaderProgram);
-    
+
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -92,7 +120,7 @@ void Renderer::draw ()
 
 void Renderer::init ()
 {
-  
+
     /* Create the render buffers */
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -5,12 +5,12 @@
 
 #include <SDL.h>
 
-
+#include "SceneNode.h"
 #include "ShaderLibrary.h"
 #include "TerrainPatch.h"
 #include "Renderer.h"
 
-#define PROGRAM_NAME "Tutorial1"
+#define PROGRAM_NAME "World Viewer"
 
 const int WIDTH = 1024;
 const int HEIGHT = 768;
@@ -72,7 +72,7 @@ int main()
     glewInit();
 
     ShaderLibrary *sl = &ShaderLibrary::getInstance();
-    sl->addShader("basic", "../resources/shaders/basic.vs", "../resources/shaders/basic.fs");
+    sl->addShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
 
 
     SDL_Event event;
@@ -80,8 +80,7 @@ int main()
     Renderer *renderer = new Renderer(WIDTH, HEIGHT);
     renderer->init();
      
-    TerrainPatch *terrain = new TerrainPatch();
-    terrain->init();
+    
  
     int done = 0;
     int interval = 20;
@@ -97,7 +96,7 @@ int main()
 
         if (waitTicks>0)
         {
-            SDL_Delay(waitTicks);
+            SDL_Delay(1);
         }
 
         while (SDL_PollEvent(&event)) 
@@ -110,8 +109,8 @@ int main()
         }
 
         // Clear our buffer with a red background */
-        glClearColor ( 0.2, 0.2, 0.2, 1.0 );
-        glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        // glClearColor ( 0.2, 0.2, 0.2, 1.0 );
+        // glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         /* Swap our back buffer to the front */
 
         renderer->draw();
@@ -124,7 +123,7 @@ int main()
 
     }
     
-    delete terrain;
+    //delete terrain;
     delete renderer;
 
     SDL_GL_DeleteContext(maincontext);

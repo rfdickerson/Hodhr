@@ -24,6 +24,10 @@ PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 SET(EXTRA_LIBS ${GLFW_LDFLAGS_OTHER})
 add_definitions(${GLFW_CFLAGS_OTHER})
 
+ADD_DEFINITIONS(
+    -std=c++11 # Or -std=c++0x
+    # Other flags
+)
 
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
 
@@ -41,6 +45,7 @@ ADD_EXECUTABLE(OpenWorld
     src/Renderer.h src/Renderer.cpp
     src/Model.h
     src/SceneNode.h src/SceneNode.cpp
+    src/AssetLibrary.h src/AssetLibrary.cpp
     )
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})
