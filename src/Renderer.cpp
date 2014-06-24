@@ -43,11 +43,13 @@ Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
 
     textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
 
+/*
     ShaderLibrary* library = &ShaderLibrary::getInstance();
     library->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
     Shader* screenShader = library->getShader("screen");
     screenShaderProgram = screenShader->getProgramID();
     std::cout << "Screen shader program ID: " << screenShaderProgram << std::endl;
+    */
 
     // initialize the root scene node
     rootSceneNode = new SceneNode();
@@ -91,13 +93,14 @@ void Renderer::draw ()
     }
 
 // draw the deferred texture rendering
-    glUseProgram(screenShaderProgram);
+    //glUseProgram(screenShaderProgram);
+    glUseProgram(screenShader->getProgramID());
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glViewport(0,0, targetWidth, targetHeight);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(screenShaderProgram);
+    //glUseProgram(screenShaderProgram);
 
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);
@@ -120,6 +123,8 @@ void Renderer::draw ()
 
 void Renderer::init ()
 {
+
+
 
     /* Create the render buffers */
     glEnable(GL_BLEND);
@@ -227,4 +232,9 @@ void Renderer::init ()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+}
+
+void Renderer::setScreenShader(Shader* s)
+{
+    this->screenShader = s;
 }

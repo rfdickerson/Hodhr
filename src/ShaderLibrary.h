@@ -4,30 +4,28 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <memory>
 
 #include "Shader.h"
 
+using namespace std;
 
 class ShaderLibrary
 {
 
-private:
-
-    ShaderLibrary();
-    ShaderLibrary(ShaderLibrary const& copy);
-    ShaderLibrary& operator=(ShaderLibrary const& copy);
+    private:
 
     //static ShaderLibrary *instance;
 
-    std::map<std::string, Shader*> shaders;
+    std::map<std::string, unique_ptr<Shader>> shaders;
 
 public:
 
-    static ShaderLibrary& getInstance()
-    {
-        static ShaderLibrary instance;
-        return instance;
-    }
+
+    ShaderLibrary();
+    ShaderLibrary(ShaderLibrary const& copy) = delete;
+    ShaderLibrary& operator=(ShaderLibrary const& copy) = delete;
+
 
     void addShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc);
 

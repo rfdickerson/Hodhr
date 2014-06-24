@@ -3,6 +3,8 @@
 #include <string>
 #include <fstream>
 #include <cerrno>
+#include <memory>
+#include <utility>
 
 #include "ShaderLibrary.h"
 
@@ -17,7 +19,7 @@ ShaderLibrary::ShaderLibrary()
 
 ShaderLibrary::~ShaderLibrary()
 {
-
+    cout << "Cleaning up shader library" << endl;
 }
 
 
@@ -71,14 +73,14 @@ void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSr
     glGetProgramInfoLog(pId, 20, NULL, logInfo);
     cout << logInfo << endl;
 
-    Shader *newShader = new Shader(pId);
+    auto newShader = make_unique<Shader>(pId);
 
-    shaders[std::string(shaderName)] = newShader;
+    shaders[std::string(shaderName)] = move(newShader);
 
 }
 
 Shader* ShaderLibrary::getShader(std::string shaderName)
 {
-    return shaders[shaderName];
+    return shaders[shaderName].get();
 
 }

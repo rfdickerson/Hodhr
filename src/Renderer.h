@@ -5,7 +5,9 @@
 
 #include "SceneNode.h"
 
-class Renderer 
+class Shader;
+
+class Renderer
 {
 
     public:
@@ -14,6 +16,8 @@ class Renderer
 
     void init ();
     void draw ();
+
+    void setScreenShader( Shader* s);
 
     private:
 
@@ -26,11 +30,13 @@ class Renderer
     GLuint renderBufferID[2];
     GLuint frameBufferID[2];
 
-    GLuint screenShaderProgram;
+    //GLuint screenShaderProgram;
 
     GLfloat* textureBuffer;
-    
+
     SceneNode* rootSceneNode;
+
+    Shader* screenShader;
 
 };
 

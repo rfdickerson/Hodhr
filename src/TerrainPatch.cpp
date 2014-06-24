@@ -110,8 +110,9 @@ void TerrainPatch::init ()
 void TerrainPatch::draw(const SceneNode& node)
 {
 
-    ShaderLibrary* library = &ShaderLibrary::getInstance();
-    Shader* basic = library->getShader("basic");
+    //ShaderLibrary* library = &ShaderLibrary::getInstance();
+    //Shader* basic = library->getShader("basic");
+    Shader* basic = shader;
 
     glUseProgram(basic->getProgramID());
 

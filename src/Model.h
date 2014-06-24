@@ -5,15 +5,22 @@
 
 #include "SceneNode.h"
 
+
 /**
 Pure virtual class for describing a model
 **/
 
+class Shader;
 class SceneNode;
 
 class Model
 {
-    public:
+
+protected:
+
+    Shader* shader;
+
+public:
 
         // no copy
         //Model(const Model&) = delete;
@@ -27,6 +34,9 @@ class Model
         virtual void init() = 0;
         virtual void draw(const SceneNode& n) = 0;
 
+        virtual void setShader(Shader *s) {
+            this->shader = s;
+        }
 };
 
 #endif

@@ -74,16 +74,21 @@ int main()
     glewExperimental = GL_TRUE;
     glewInit();
 
-    ShaderLibrary *sl = &ShaderLibrary::getInstance();
-    sl->addShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
+    //ShaderLibrary *sl = &ShaderLibrary::getInstance();
+
 
 
     SDL_Event event;
 
-    //auto sl = make_unique<ShaderLibrary>();
+    auto sl = make_unique<ShaderLibrary>();
+    sl->addShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
+    sl->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
 
     auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
     renderer->init();
+
+    Shader* screenShader = sl->getShader("screen");
+    renderer->setScreenShader(screenShader);
 
     auto assets = make_unique<AssetLibrary>();
     assets->addTerrainPatch("simpleterrain");
