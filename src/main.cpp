@@ -4,10 +4,12 @@
 #include <GL/glut.h>
 
 #include <SDL.h>
+#include <memory>
 
 #include "SceneNode.h"
 #include "ShaderLibrary.h"
 #include "TerrainPatch.h"
+#include "AssetLibrary.h"
 #include "Renderer.h"
 
 #define PROGRAM_NAME "World Viewer"
@@ -39,35 +41,36 @@ void checkSDLError(int line = -1)
 
 int main()
 {
-   
+
     int oldTicks=0;
 
     SDL_Window *mainwindow;
     SDL_GLContext maincontext;
-    
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) <0)
     {
         cout << "err";
     }
 
-        
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    
+
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    
+
     mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if (!mainwindow) /* Die if creation failed */
         sdldie("Unable to create window");
-        
-        
+
+
     maincontext = SDL_GL_CreateContext(mainwindow);
     checkSDLError(__LINE__);
-    
+
     SDL_GL_SetSwapInterval(1);
-    
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     glewExperimental = GL_TRUE;
     glewInit();
 
@@ -77,18 +80,25 @@ int main()
 
     SDL_Event event;
 
-    Renderer *renderer = new Renderer(WIDTH, HEIGHT);
+    //auto sl = make_unique<ShaderLibrary>();
+
+    auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
     renderer->init();
-     
-    
- 
+
+    auto assets = make_unique<AssetLibrary>();
+    assets->addTerrainPatch("simpleterrain");
+    assets->getModel("simpleterrain")->init();
+
     int done = 0;
     int interval = 20;
+
+    int x,y;
 
     while (done == 0)
     {
         int currentTick;
         int waitTicks;
+
 
         currentTick = SDL_GetTicks();
         waitTicks = (oldTicks + interval) - currentTick;
@@ -99,8 +109,16 @@ int main()
             SDL_Delay(1);
         }
 
-        while (SDL_PollEvent(&event)) 
+        while (SDL_PollEvent(&event))
         {
+            if ( event.type == SDL_MOUSEMOTION )
+            {
+                x = event.motion.x;
+                y = event.motion.y;
+
+                cout << "X: " << x << " Y: " << y << endl;
+            }
+
             if (event.type == SDL_QUIT) { done = 1;}
             if (event.type == SDL_KEYDOWN)
             {
@@ -122,9 +140,9 @@ int main()
         SDL_GL_SwapWindow(mainwindow);
 
     }
-    
+
     //delete terrain;
-    delete renderer;
+    // delete renderer;
 
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);

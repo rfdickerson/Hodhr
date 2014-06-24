@@ -25,7 +25,7 @@ SET(EXTRA_LIBS ${GLFW_LDFLAGS_OTHER})
 add_definitions(${GLFW_CFLAGS_OTHER})
 
 ADD_DEFINITIONS(
-    -std=c++11 # Or -std=c++0x
+    -std=c++14 # Or -std=c++0x
     # Other flags
 )
 

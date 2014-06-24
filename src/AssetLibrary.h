@@ -3,23 +3,40 @@
 
 #include <memory>
 #include <vector>
+#include <string>
+#include <map>
 
 #include "Model.h"
 
-typedef std::vector<std::shared_ptr<Model>> ModelVector;
+using namespace std;
+
+
+class strless {
+   public:
+      bool operator() (const string & first, const string & second ) const  {
+         return first < second;
+      }
+};
+
+
+typedef map<const char*, unique_ptr<Model>, strless> ModelMap;
+//typedef map<const char*, unique_ptr<Model>> ModelMap;
 
 class AssetLibrary
 {
 
 private:
 
-    ModelVector assets;
+    ModelMap models;
 
 public:
 
     AssetLibrary();
     ~AssetLibrary();
-    void addAsset( std::shared_ptr<Model> m );
+
+    void addTerrainPatch(const char* name);
+
+    Model* getModel(const char* name);
 
 };
 #endif

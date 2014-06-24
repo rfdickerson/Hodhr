@@ -19,13 +19,14 @@ private:
 public:
 
     TerrainPatch();
+    
+    
+    virtual ~TerrainPatch();
 
     virtual void init( void );
 
     virtual void draw(const SceneNode& node );
     
-    virtual ~TerrainPatch();
-
 
 };
 

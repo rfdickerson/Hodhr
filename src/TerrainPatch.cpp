@@ -23,6 +23,8 @@ TerrainPatch::TerrainPatch()
     subdivisions = 128;
 }
 
+
+
 void TerrainPatch::init ()
 {
 
