@@ -90,9 +90,23 @@ int main()
     Shader* screenShader = sl->getShader("screen");
     renderer->setScreenShader(screenShader);
 
+    Shader* basicShader = sl->getShader("basic");
+
+    // load the assets
     auto assets = make_unique<AssetLibrary>();
     assets->addTerrainPatch("simpleterrain");
-    assets->getModel("simpleterrain")->init();
+    Model* terrainModel = assets->getModel("simpleterrain");
+    terrainModel->setShader(basicShader);
+    terrainModel->init();
+
+    // make the scene graph
+    auto rootNode = make_unique<SceneNode>();
+    unique_ptr<SceneNode> terrainNode ( new SceneNode());
+    terrainNode->setAsset(terrainModel);
+
+    rootNode->addChild( move(terrainNode) );
+
+    renderer->setRootSceneNode( std::move(rootNode));
 
     int done = 0;
     int interval = 20;
@@ -148,6 +162,7 @@ int main()
 
     //delete terrain;
     // delete renderer;
+   
 
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);

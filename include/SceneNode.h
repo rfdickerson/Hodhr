@@ -11,13 +11,13 @@
 class Model;
 class SceneNode;
 
-typedef std::vector<std::shared_ptr<SceneNode>> NodeVector;
+typedef std::vector<std::unique_ptr<SceneNode>> NodeVector;
 
 class SceneNode
 {
     private:
 
-        std::shared_ptr<Model> asset;
+        Model* asset = NULL;
 
         // std::weak_ptr<SceneNode> parent;
 
@@ -32,11 +32,16 @@ class SceneNode
     public:
 
         SceneNode();
-        ~SceneNode();
 
-        void addChild(std::shared_ptr<SceneNode> node);
+        SceneNode(const SceneNode&);
+        SceneNode & operator=(const SceneNode &n);
+        
 
-        void setAsset(std::shared_ptr<Model> model);
+        virtual ~SceneNode();
+
+        void addChild(std::unique_ptr<SceneNode>  node);
+
+        void setAsset(Model* model);
 
         //glm::mat4 getMVMatrix() const;
 

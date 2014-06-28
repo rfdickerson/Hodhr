@@ -1,6 +1,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <memory>
+
 #include <GL/glew.h>
 
 #include "SceneNode.h"
@@ -12,12 +14,14 @@ class Renderer
 
     public:
     Renderer(GLuint targetWidth, GLuint targetHeight);
-    ~Renderer();
+    virtual ~Renderer();
 
     void init ();
     void draw ();
 
     void setScreenShader( Shader* s);
+
+    void setRootSceneNode( std::unique_ptr<SceneNode> sceneNode);
 
     private:
 
@@ -34,7 +38,7 @@ class Renderer
 
     GLfloat* textureBuffer;
 
-    SceneNode* rootSceneNode;
+    std::unique_ptr<SceneNode> rootSceneNode;
 
     Shader* screenShader;
 

@@ -73,7 +73,7 @@ void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSr
     glGetProgramInfoLog(pId, 20, NULL, logInfo);
     cout << logInfo << endl;
 
-    auto newShader = make_unique<Shader>(pId);
+    auto newShader = make_unique<Shader>(shaderName, pId);
 
     shaders[std::string(shaderName)] = move(newShader);
 

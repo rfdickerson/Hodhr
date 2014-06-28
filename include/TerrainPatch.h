@@ -15,6 +15,10 @@ private:
     GLuint vboId, vaoId, vboiId;
 
     unsigned short subdivisions;
+    
+    unsigned short numIndices;
+    
+    GLint MVPMatrixLocation, MVMatrixLocation;
 
 
 public:
@@ -28,6 +32,7 @@ public:
 
     virtual void draw(const SceneNode& node );
 
+    virtual void setShader(Shader* shader);
 
 };
 

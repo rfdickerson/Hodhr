@@ -1,8 +1,14 @@
+#include <utility>
+#include <memory>
+#include <iostream>
+
 #include "SceneNode.h"
+
+using namespace std;
 
 SceneNode::SceneNode ()
 {
-
+    asset = NULL;
 }
 
 SceneNode::~SceneNode()
@@ -12,8 +18,9 @@ SceneNode::~SceneNode()
 
 void SceneNode::draw()
 {
-
+    
     if (asset) {
+        // cout << "drawing asset" << endl;
          asset->draw(*this);
     }
 
@@ -26,13 +33,14 @@ void SceneNode::draw()
 
 }
 
-void SceneNode::addChild(std::shared_ptr<SceneNode> node)
+void SceneNode::addChild(unique_ptr<SceneNode> node)
 {
-    children.push_back( node);
+    //auto tnode = unique_ptr<SceneNode>(node);
+    children.push_back( move(node) );
 
 }
 
-void SceneNode::setAsset(std::shared_ptr<Model> model)
+void SceneNode::setAsset(Model* model)
 {
     asset = model;
 }

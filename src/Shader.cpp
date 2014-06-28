@@ -2,8 +2,9 @@
 
 #include "Shader.h"
 
-Shader::Shader(GLuint pId)
+Shader::Shader(std::string name, GLuint pId)
 {
+    this->name = name;
     programID = pId;
 }
 
@@ -17,4 +18,7 @@ GLuint Shader::getProgramID()
     return programID;
 }
 
-
+std::string Shader::getName()
+{
+    return this->name;
+}

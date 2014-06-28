@@ -51,7 +51,7 @@ void TerrainPatch::init ()
         }
 
 
-    int numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
+    numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
      int indices[numIndices];
 
         numPerRow = (subdivisions - 1) * 6;
@@ -109,14 +109,15 @@ void TerrainPatch::init ()
 
 void TerrainPatch::draw(const SceneNode& node)
 {
-
+    //cout << "draw terrain" << endl;
     //ShaderLibrary* library = &ShaderLibrary::getInstance();
     //Shader* basic = library->getShader("basic");
     Shader* basic = shader;
 
     glUseProgram(basic->getProgramID());
+    //cout << "drawing with shader " << basic->getName() << endl;
 
-    int MVPMatrixLocation = glGetUniformLocation(basic->getProgramID(), "MVPMatrix");
+    //int MVPMatrixLocation = glGetUniformLocation(basic->getProgramID(), "MVPMatrix");
     glm::mat4 mvpMatrix = node.getMVPMatrix();
     glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, glm::value_ptr( mvpMatrix));
 
@@ -125,7 +126,7 @@ void TerrainPatch::draw(const SceneNode& node)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
-    glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, 0);
+    glDrawElements(GL_TRIANGLE_FAN, numIndices, GL_UNSIGNED_BYTE, 0);
 
     glDisableVertexAttribArray(0);
     glBindVertexArray(0);
@@ -147,5 +148,15 @@ TerrainPatch::~TerrainPatch()
     glBindVertexArray(0);
     glDeleteVertexArrays(1,&vaoId);
     cout << "Destroying terrain patch" << endl;
+}
+
+void TerrainPatch::setShader(Shader* shader)
+{
+    Model::setShader(shader);
+    MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
+    cout << "Set terrain shader " << shader->getName() 
+        << " with pID " << shader->getProgramID() 
+        << " location for mvp matrix is " << MVPMatrixLocation << endl;
+    
 }
 

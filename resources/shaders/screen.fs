@@ -10,4 +10,6 @@ void main(void)
 {
     color = texture(tex, vs_tex_coord);
 
+//color = vec4(1.0,0.0,0.0,1.0);
+
 }

@@ -10,12 +10,13 @@ using namespace std;
 
 AssetLibrary::AssetLibrary()
 {
-
+    
 }
 
 AssetLibrary::~AssetLibrary()
 {
-    cout << "Destroyed the Asset Library" << endl;
+    cout << "Cleaning up the asset Library" << endl;
+    models.clear();
 }
 
 void AssetLibrary::addTerrainPatch(const char* name)

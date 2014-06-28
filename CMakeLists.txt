@@ -29,6 +29,7 @@ ADD_DEFINITIONS(
     # Other flags
 )
 
+
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
 
 include_directories( ${OPENGL_INCLUDE_DIRS} )
@@ -37,15 +38,18 @@ include_directories( ${GLEW_INCLUDE_DIRS} )
 include_directories( ${GLM_INCLUDE_DIRS} )
 include_directories( ${SDL2_INCLUDE_DIRS} )
 
+include_directories( include )
+
 ADD_EXECUTABLE(OpenWorld 
-    src/main.cpp 
-    src/TerrainPatch.h src/TerrainPatch.cpp
-    src/ShaderLibrary.h src/ShaderLibrary.cpp
-    src/Shader.h src/Shader.cpp
-    src/Renderer.h src/Renderer.cpp
-    src/Model.h
-    src/SceneNode.h src/SceneNode.cpp
-    src/AssetLibrary.h src/AssetLibrary.cpp
+    include/main.cpp 
+    include/TerrainPatch.h src/TerrainPatch.cpp
+    include/ShaderLibrary.h src/ShaderLibrary.cpp
+    include/Shader.h src/Shader.cpp
+    include/Renderer.h src/Renderer.cpp
+    include/Model.h
+    include/SceneNode.h src/SceneNode.cpp
+    include/AssetLibrary.h src/AssetLibrary.cpp
+    include/Camera.h src/Camera.cpp
     )
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})

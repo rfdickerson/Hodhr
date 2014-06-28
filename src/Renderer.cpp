@@ -52,14 +52,15 @@ Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
     */
 
     // initialize the root scene node
-    rootSceneNode = new SceneNode();
+    //rootSceneNode = new SceneNode();
 
-    std::shared_ptr<TerrainPatch> terrain ( new TerrainPatch());
-    terrain->init();
+    //std::shared_ptr<TerrainPatch> terrain ( new TerrainPatch());
+    //Model* tasset =
+    //terrain->init();
 
-    std::shared_ptr<SceneNode> terrainNode (new SceneNode());
-    terrainNode->setAsset(terrain);
-    rootSceneNode->addChild(terrainNode);
+    //unique_ptr<SceneNode> terrainNode (new SceneNode());
+    //terrainNode->setAsset(terrain);
+    //rootSceneNode->addChild(terrainNode);
 }
 
 Renderer::~Renderer ()
@@ -81,6 +82,8 @@ void Renderer::draw ()
 {
 
 // draw the scene first
+
+
     glClearColor(0.2f, 0.2f, 0.2f, 1);
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
@@ -92,15 +95,17 @@ void Renderer::draw ()
         rootSceneNode->draw();
     }
 
-// draw the deferred texture rendering
-    //glUseProgram(screenShaderProgram);
+    // draw the deferred texture rendering
+    
     glUseProgram(screenShader->getProgramID());
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glViewport(0,0, targetWidth, targetHeight);
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //glUseProgram(screenShaderProgram);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0,0, targetWidth, targetHeight);
+
+    glUseProgram(screenShader->getProgramID());
 
     glBindVertexArray(vaoID);
     glEnableVertexAttribArray(0);
@@ -223,6 +228,7 @@ void Renderer::init ()
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*20, quadData, GL_STATIC_DRAW);
+    cout << "Screen vertex buffer is " << vboID << endl;
 
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
@@ -237,4 +243,10 @@ void Renderer::init ()
 void Renderer::setScreenShader(Shader* s)
 {
     this->screenShader = s;
+}
+
+
+void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode)
+{
+    this->rootSceneNode = std::move(sceneNode);
 }
