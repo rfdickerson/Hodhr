@@ -91,6 +91,7 @@ void TerrainPatch::init ()
     glBindVertexArray(vaoId);
 
     glGenBuffers(1, &vboId);
+    glBindBuffer(GL_ARRAY_BUFFER, vboId);
     glBufferData(GL_ARRAY_BUFFER, numVertices, vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
@@ -100,6 +101,7 @@ void TerrainPatch::init ()
     glBindVertexArray(0);
 
     glGenBuffers(1, &vboiId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices, indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -109,26 +111,31 @@ void TerrainPatch::init ()
 
 void TerrainPatch::draw(const SceneNode& node)
 {
-    //cout << "draw terrain" << endl;
-    //ShaderLibrary* library = &ShaderLibrary::getInstance();
-    //Shader* basic = library->getShader("basic");
-    Shader* basic = shader;
+   
+    
+    //Shader* basic = shader;
 
-    glUseProgram(basic->getProgramID());
-    //cout << "drawing with shader " << basic->getName() << endl;
-
-    //int MVPMatrixLocation = glGetUniformLocation(basic->getProgramID(), "MVPMatrix");
+    glUseProgram(shader->getProgramID());
+  
     glm::mat4 mvpMatrix = node.getMVPMatrix();
-    glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, glm::value_ptr( mvpMatrix));
+    //glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, glm::value_ptr( mvpMatrix));
+    //glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, glm::value_ptr( mvpMatrix));
+    glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
 
-    glBindAttribLocation(basic->getProgramID(), 0, "in_Position");
-    glBindVertexArray(0);
+    glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+    
+    glBindVertexArray(vaoId);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-
-    glDrawElements(GL_TRIANGLE_FAN, numIndices, GL_UNSIGNED_BYTE, 0);
+    
+        
+    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)0);
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    
     glBindVertexArray(0);
 
 }
@@ -137,16 +144,17 @@ void TerrainPatch::draw(const SceneNode& node)
 TerrainPatch::~TerrainPatch()
 {
     glDisableVertexAttribArray(0);
+    
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glDeleteVertexArrays(1, &vaoId);
     glDeleteBuffers(1, &vboId);
-
+    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glDeleteBuffers(1, &vboId);
-
+    
     glBindVertexArray(0);
-    glDeleteVertexArrays(1,&vaoId);
+    glDeleteVertexArrays(1, &vaoId);
+    
+
     cout << "Destroying terrain patch" << endl;
 }
 

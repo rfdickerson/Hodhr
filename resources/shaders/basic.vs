@@ -10,7 +10,7 @@ out vec4 color;
 
 void main() {
     gl_Position = MVPMatrix * in_Position;
-    gl_Position = in_Position;
+    //gl_Position = in_Position;
     color = vec4(.5, .85, 0.15, 1);
     
 }

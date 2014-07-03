@@ -11,6 +11,9 @@
 #include "TerrainPatch.h"
 #include "AssetLibrary.h"
 #include "Renderer.h"
+#include "Camera.h"
+#include "CubeMesh.h"
+#include "Model.h"
 
 #define PROGRAM_NAME "World Viewer"
 
@@ -86,6 +89,8 @@ int main()
 
     auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
     renderer->init();
+    
+    auto camera = make_unique<Camera> (WIDTH, HEIGHT);
 
     Shader* screenShader = sl->getShader("screen");
     renderer->setScreenShader(screenShader);
@@ -95,18 +100,35 @@ int main()
     // load the assets
     auto assets = make_unique<AssetLibrary>();
     assets->addTerrainPatch("simpleterrain");
+
     Model* terrainModel = assets->getModel("simpleterrain");
     terrainModel->setShader(basicShader);
     terrainModel->init();
 
+    auto cubeMesh = make_unique<CubeMesh>();
+    cubeMesh->setShader(basicShader);
+    cubeMesh->init();
+    assets->addAsset("cube", std::move(cubeMesh));
+    
+    Model* c = assets->getModel("cube");
+
     // make the scene graph
-    auto rootNode = make_unique<SceneNode>();
-    unique_ptr<SceneNode> terrainNode ( new SceneNode());
+    auto rootNode = make_unique<SceneNode>("root node");
+
+    // make the terrain node
+    unique_ptr<SceneNode> terrainNode ( new SceneNode("terrain node"));
     terrainNode->setAsset(terrainModel);
 
-    rootNode->addChild( move(terrainNode) );
+    // make the cube node
+    auto cubeNode = make_unique<SceneNode>("cube node");
+    cubeNode->setAsset(c);
+
+
+    // rootNode->addChild( std::move(terrainNode) );
+    rootNode->addChild( std::move(cubeNode) );
 
     renderer->setRootSceneNode( std::move(rootNode));
+    renderer->setCamera( camera.get() );
 
     int done = 0;
     int interval = 20;
@@ -149,6 +171,9 @@ int main()
         // glClearColor ( 0.2, 0.2, 0.2, 1.0 );
         // glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         /* Swap our back buffer to the front */
+
+        // update the matrices
+        
 
         renderer->draw();
 

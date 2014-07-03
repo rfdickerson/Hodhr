@@ -36,6 +36,8 @@ public:
 
     void addTerrainPatch(const char* name);
 
+    void addAsset(std::string, unique_ptr<Model> model);
+
     Model* getModel(const char* name);
 
 };

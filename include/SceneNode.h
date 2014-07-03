@@ -3,13 +3,15 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include <glm/glm.hpp>
 
-#include "Model.h"
+//#include "Model.h"
 
 class Model;
 class SceneNode;
+class Camera;
 
 typedef std::vector<std::unique_ptr<SceneNode>> NodeVector;
 
@@ -24,17 +26,19 @@ class SceneNode
         NodeVector children;
 
         glm::vec4 Position;
-
+        
         glm::mat4 MVMatrix;
         glm::mat4 MVPMatrix;
         glm::mat3 NormalMatrix;
 
+	std::string name;
+
     public:
 
-        SceneNode();
+        SceneNode(const std::string& name);
 
-        SceneNode(const SceneNode&);
-        SceneNode & operator=(const SceneNode &n);
+        // SceneNode(const SceneNode&);
+        // SceneNode & operator=(const SceneNode &n);
         
 
         virtual ~SceneNode();
@@ -51,9 +55,9 @@ class SceneNode
 
         void draw( void);
 
-        void updateLocal();
+        void updateLocal(Camera& c);
 
-        void updateAll();
+        void updateAll(Camera& c);
 
 };
 

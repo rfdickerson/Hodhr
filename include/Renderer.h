@@ -7,6 +7,7 @@
 
 #include "SceneNode.h"
 
+class Camera;
 class Shader;
 
 class Renderer
@@ -19,6 +20,7 @@ class Renderer
     void init ();
     void draw ();
 
+    void setCamera( Camera* c);
     void setScreenShader( Shader* s);
 
     void setRootSceneNode( std::unique_ptr<SceneNode> sceneNode);
@@ -41,6 +43,8 @@ class Renderer
     std::unique_ptr<SceneNode> rootSceneNode;
 
     Shader* screenShader;
+    
+    Camera* camera;
 
 };
 

@@ -1,4 +1,4 @@
-/*
+/**
    The MIT License
 
    Copyright (c) 2009 Campaign rfdickerson@gmail.com
@@ -20,7 +20,7 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
    THE SOFTWARE.
- */
+**/
 
 
 #include <iostream>
@@ -43,24 +43,6 @@ Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
 
     textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
 
-/*
-    ShaderLibrary* library = &ShaderLibrary::getInstance();
-    library->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
-    Shader* screenShader = library->getShader("screen");
-    screenShaderProgram = screenShader->getProgramID();
-    std::cout << "Screen shader program ID: " << screenShaderProgram << std::endl;
-    */
-
-    // initialize the root scene node
-    //rootSceneNode = new SceneNode();
-
-    //std::shared_ptr<TerrainPatch> terrain ( new TerrainPatch());
-    //Model* tasset =
-    //terrain->init();
-
-    //unique_ptr<SceneNode> terrainNode (new SceneNode());
-    //terrainNode->setAsset(terrain);
-    //rootSceneNode->addChild(terrainNode);
 }
 
 Renderer::~Renderer ()
@@ -82,13 +64,21 @@ void Renderer::draw ()
 {
 
 // draw the scene first
+    if (!camera)
+    {
+        cout << "No camera attached!!" << endl;
+        return;
+    }
 
+    // update the transformation matrices
+    rootSceneNode->updateAll(*camera);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1);
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 
     if (rootSceneNode != NULL) {
@@ -96,6 +86,7 @@ void Renderer::draw ()
     }
 
     // draw the deferred texture rendering
+    /*
     
     glUseProgram(screenShader->getProgramID());
 
@@ -123,6 +114,7 @@ void Renderer::draw ()
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
+    */
 
 }
 
@@ -156,7 +148,8 @@ void Renderer::init ()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    std::cout << "Texture ID for Depth Channel is " << textureIDs[1] << std::endl;
+    std::cout << "Texture ID for Depth Channel is " 
+	      << textureIDs[1] << std::endl;
 
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
 
@@ -245,6 +238,10 @@ void Renderer::setScreenShader(Shader* s)
     this->screenShader = s;
 }
 
+void Renderer::setCamera(Camera* c)
+{
+    this->camera = c;
+}
 
 void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode)
 {

@@ -35,3 +35,8 @@ Model* AssetLibrary::getModel(const char* name)
     return it->second.get();
 }
 
+void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model)
+{
+  models[name.c_str()] = std::move(model);
+
+}
