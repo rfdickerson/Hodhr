@@ -92,7 +92,7 @@ void TerrainPatch::init ()
 
     glGenBuffers(1, &vboId);
     glBindBuffer(GL_ARRAY_BUFFER, vboId);
-    glBufferData(GL_ARRAY_BUFFER, numVertices, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(float), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
     glVertexAttribPointer(1, 2, GL_FLOAT, false, 20, (void*)12);
@@ -102,7 +102,7 @@ void TerrainPatch::init ()
 
     glGenBuffers(1, &vboiId);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(int), indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     //vaoId = glGenVertexArrays();

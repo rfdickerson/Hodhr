@@ -13,7 +13,9 @@ class Camera
   Camera(int width, int height);
   virtual ~Camera();
   
-  void rotate( float dx, float dy);
+  void rotate( float deltaTime, float dx, float dy);
+
+  void move( float deltaTime, float speed );
   
   glm::mat4 const& getViewMatrix();
   
@@ -23,11 +25,18 @@ class Camera
  
  private:
   
+  float mouseSpeed;
+
   glm::mat4 projectionMatrix;
   glm::mat4 viewMatrix;
   
-  glm::quat pitch;
-  glm::quat bearing;
+  glm::vec3 position;
+  glm::vec3 direction;
+  glm::vec3 up;
+  glm::vec3 right;
+
+  float horizontalAngle;
+  float verticalAngle;
   
   float fieldOfView;
   int width;

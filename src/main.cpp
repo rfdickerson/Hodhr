@@ -55,7 +55,7 @@ int main()
         cout << "err";
     }
 
-
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
@@ -71,12 +71,33 @@ int main()
     maincontext = SDL_GL_CreateContext(mainwindow);
     checkSDLError(__LINE__);
 
+    SDL_GL_MakeCurrent(mainwindow, maincontext);
+
     SDL_GL_SetSwapInterval(1);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     glewExperimental = GL_TRUE;
-    glewInit();
+    GLenum result = glewInit();
+    if (result != GLEW_OK)
+      {
+	cerr << "Problem initializing GLEW" << endl;
+      }
 
+    if (GLEW_VERSION_1_1)
+      {
+	cout << "Graphics Successfully Initialized" << endl;
+	cout << "  Version: " << glGetString(GL_VERSION) << endl;
+	cout << "  Vendor: " << glGetString(GL_VENDOR) << endl;
+	cout << " Renderer: " << glGetString(GL_RENDERER) << endl;
+      }
+
+    if (SDL_HasSSE42)
+      {
+	cout << "CPU has SSE4.2 features!" << endl;
+      }
+
+    cout << "Number of logical CPU cores: " << SDL_GetCPUCount() << endl;
+    cout << "System has " << SDL_GetSystemRAM() << " memory" << endl;
     //ShaderLibrary *sl = &ShaderLibrary::getInstance();
 
 
@@ -124,7 +145,7 @@ int main()
     cubeNode->setAsset(c);
 
 
-    // rootNode->addChild( std::move(terrainNode) );
+    rootNode->addChild( std::move(terrainNode) );
     rootNode->addChild( std::move(cubeNode) );
 
     renderer->setRootSceneNode( std::move(rootNode));
@@ -135,20 +156,23 @@ int main()
 
     int x,y;
 
+    int currentTick;
+    int lastTick;
+    float dt;
+
     while (done == 0)
     {
-        int currentTick;
-        int waitTicks;
-
-
+      	
         currentTick = SDL_GetTicks();
-        waitTicks = (oldTicks + interval) - currentTick;
-        oldTicks = currentTick;
+	dt = ((float)(currentTick-lastTick))*0.1;
+	lastTick = currentTick;
+        //waitTicks = (oldTicks + interval) - currentTick;
+        //oldTicks = currentTick;
 
-        if (waitTicks>0)
-        {
-            SDL_Delay(1);
-        }
+        //if (waitTicks>0)
+        //{
+        //    SDL_Delay(1);
+        //}
 
         while (SDL_PollEvent(&event))
         {
@@ -157,29 +181,36 @@ int main()
                 x = event.motion.x;
                 y = event.motion.y;
 
-                cout << "X: " << x << " Y: " << y << endl;
+		//cout << "dt:" << dt << " dx: " 
+		//     << event.motion.xrel << " dy: " << event.motion.yrel << endl;
+		camera->rotate( dt, event.motion.xrel, event.motion.yrel);
+
+                //cout << "X: " << x << " Y: " << y << endl;
             }
 
             if (event.type == SDL_QUIT) { done = 1;}
             if (event.type == SDL_KEYDOWN)
             {
-                done = 1;
+
+	      switch ( event.key.keysym.sym ) {
+	      case SDLK_w:
+		camera->move( dt, .02);
+		break;
+	      case SDLK_s:
+		camera->move( dt, -0.02);
+		break;
+	      case SDLK_ESCAPE:
+		done = 1;
+		break;
+	      default:
+		break;
+	      }
+	      //done = 1;
             }
         }
 
-        // Clear our buffer with a red background */
-        // glClearColor ( 0.2, 0.2, 0.2, 1.0 );
-        // glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        /* Swap our back buffer to the front */
-
-        // update the matrices
-        
-
+	/* draw the scene */
         renderer->draw();
-
-        //terrain->draw();
-
-
 
         SDL_GL_SwapWindow(mainwindow);
 

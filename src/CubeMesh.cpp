@@ -16,6 +16,7 @@ CubeMesh::CubeMesh ()
 CubeMesh::~CubeMesh ()
 {
 
+  cout << "Destroying the cube mesh" << endl;
   glDisableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vboId);
@@ -57,15 +58,15 @@ void CubeMesh::init( void )
 
   glGenBuffers(1, &vboId);
   glBindBuffer(GL_ARRAY_BUFFER, vboId);
-  glBufferData(GL_ARRAY_BUFFER, numVertices, vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, NULL);
  
   glBindVertexArray(0);
 
   glGenBuffers(1, &vboiId);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices, indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
@@ -90,19 +91,10 @@ void CubeMesh::draw(const SceneNode& node)
 
   glUseProgram(shader->getProgramID());
   
-  //glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &node.getMVPMatrix()[0][0]);
+  //std::cout << "draw cube with indices " << numIndices << std::endl;
 
-  //glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
-
-  //glBindVertexArray(vaoId);
-  //glEnableVertexAttribArray(0);
-  //glEnableVertexAttribArray(1);
-
-  //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-
-  std::cout << "draw cube" << std::endl;
-
-  glDrawElements(GL_TRIANGLE_FAN, numIndices, GL_UNSIGNED_SHORT, (void*)0);
+  //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
+  glDrawElements(GL_TRIANGLE_STRIP, numIndices, GL_UNSIGNED_SHORT, NULL);
 
   glDisableVertexAttribArray(0);
   glBindVertexArray(0);

@@ -31,7 +31,7 @@ void SceneNode::draw()
   //cout << "drawing node " << name << endl;
   if (asset) 
     {
-      cout << "drawing asset in " << name << endl;
+      // cout << "drawing asset in " << name << endl;
       asset->draw(*this);
     }
 

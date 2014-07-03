@@ -44,9 +44,9 @@ std::string loadFile(std::string filename)
 void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc)
 {
 
-    cout << "Added shader " << vertexShaderSrc << endl;
-    string shaderSrc = loadFile(vertexShaderSrc);
-    cout << "Loaded " << shaderSrc << endl;
+  //cout << "Added shader " << vertexShaderSrc << endl;
+  string shaderSrc = loadFile(vertexShaderSrc);
+  //cout << "Loaded " << shaderSrc << endl;
 
     const char *c_str = shaderSrc.c_str();
 
@@ -55,7 +55,7 @@ void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSr
     glCompileShader(vsid);
 
     shaderSrc = loadFile(fragmentShaderSrc);
-    cout << "Loaded " << shaderSrc << endl;
+    //  cout << "Loaded " << shaderSrc << endl;
 
     const char *cf_str = shaderSrc.c_str();
 
