@@ -16,11 +16,28 @@
 
 using namespace std;
 
-typedef struct _vertexStruct
+struct MyVertex
 {
-  GLfloat position[3];
-  GLfloat uv[2];
-} vertexStruct;
+  float x, y, z;
+  float nx, ny, nz;
+  float s0, t0;
+};
+
+
+int printOglError(std::string instruction)
+{
+    int retCode = 0;
+    GLenum glErr = glGetError();
+  if (glErr != GL_NO_ERROR)
+  {
+
+      cerr << "glError after " << instruction << " error: " << gluErrorString(glErr) << endl;
+      retCode = 1;
+  }
+
+  return retCode;
+
+}
 
 TerrainPatch::TerrainPatch()
 {
@@ -37,39 +54,47 @@ void TerrainPatch::init ()
 
   cout << "Building the terrain patch" << endl;
 
-  float step = 2.0f / (subdivisions - 1);
-  float uvstep = 1.0f / (subdivisions -1);
-  int numPerRow = subdivisions * 5;
+  float step = (float)2.0f / (float)(subdivisions - 1);
+  float uvstep = (float)1.0f / (float)(subdivisions -1);
+  //int numPerRow = subdivisions * 5;
 
-  int numVertices = subdivisions * subdivisions * 5;
-  GLfloat vertices[numVertices];
+  int numVertices = subdivisions * subdivisions;
+  MyVertex vertices[numVertices];
 
   for (int i = 0; i < subdivisions; i++) {
     for (int j = 0; j < subdivisions; j++) {
       // put the position down
-      vertices[(numPerRow * i) + (5 * j) + 0] = -1.0f + (step * i);
-      vertices[(numPerRow * i) + (5 * j) + 1] = 0;
-      vertices[(numPerRow * i) + (5 * j) + 2] = -1.0f + (step * j);
-      
+      int e = i*subdivisions+j;
+      vertices[e].x = -1.0f + (step * (float)i);
+      vertices[e].y = 0;
+      vertices[e].z = -1.0f + (step * (float)j);
+
+      vertices[e].nx = 0.0f;
+      vertices[e].ny = 1.0f;
+      vertices[e].nz = 0.0f;
+
       // put the uv coords down
-      vertices[(numPerRow * i) + (5 * j) + 3] = (uvstep * i);
-      vertices[(numPerRow * i) + (5 * j) + 4] = (uvstep * j);
-  
+      vertices[e].s0 = (uvstep * i);
+      vertices[e].t0 = (uvstep * j);
+
     }
   }
 
   cout << "Vertex data:" << endl;
   for (int i=0;i<12;i++)
     {
-      cout << vertices[i] << ", ";
+      cout << vertices[i].x << ", ";
     }
+    cout << endl;
+    cout << "----------------" << endl;
 
-  this->numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
+  numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
   cout << "Built terrain with " << numIndices << " indices" << endl;
-  
+
   GLushort indices[numIndices];
 
-  numPerRow = (subdivisions - 1) * 6;
+    int numPerRow = (subdivisions-1)*6;
+  //numPerRow = (subdivisions - 1) * 6;
   for (int i = 0; i < subdivisions - 1; i++) {
     for (int j = 0; j < subdivisions - 1; j++) {
       int baseindex = i * (subdivisions) + j;
@@ -89,25 +114,41 @@ void TerrainPatch::init ()
     }
   }
 
-  glGenVertexArrays(1, &vaoId);
-  glBindVertexArray(vaoId);
+  for (int i=0;i<12;i++)
+    {
+      cout << indices[i] << ", ";
+    }
+    cout << endl;
+    cout << "----------------" << endl;
+
+  //glGenVertexArrays(1, &vaoId);
+  //glBindVertexArray(vaoId);
+  //printOglError("vertex array");
 
   glGenBuffers(1, &vboId);
+  printOglError("Gen Buffers");
   glBindBuffer(GL_ARRAY_BUFFER, vboId);
-  glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(MyVertex), &vertices[0].x, GL_STATIC_DRAW);
+  printOglError("Creating VBO");
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 5 * sizeof(GLfloat), BUFFER_OFFSET(0));
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), BUFFER_OFFSET(12));
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(12));
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(24));
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  //glBindBuffer(GL_ARRAY_BUFFER, 0);
+  //glBindVertexArray(0);
 
   glGenBuffers(1, &vboiId);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLushort), indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*numIndices, indices, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   initialized = true;
+
+printOglError("Creating terrain");
 
   cout << "Terrain has been initialized" << endl;
   cout << "VBO: " << vboId << "VAO: " << vaoId << endl;
@@ -131,16 +172,21 @@ void TerrainPatch::draw(const SceneNode& node)
     }
 
   glUseProgram(shader->getProgramID());
+  //cout << "using shader " << shader->getProgramID() << endl;
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();
 
   glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
+    glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
 
-  glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    //cout << mvpMatrix[0][0] << endl;
+    //glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+    //glBindAttribLocation(shader->getProgramID(), 1, "in_tex_coord");
 
-  glBindVertexArray(vaoId);
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
+  //glBindVertexArray(vaoId);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
@@ -148,10 +194,13 @@ void TerrainPatch::draw(const SceneNode& node)
   //glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
   glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
 
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
 
   glBindVertexArray(0);
+
+  printOglError("Draw terrain patch");
 
 }
 
@@ -170,7 +219,7 @@ TerrainPatch::~TerrainPatch()
     glDeleteBuffers(1, &vboId);
 
     glBindVertexArray(0);
-    glDeleteVertexArrays(1, &vaoId);
+    //glDeleteVertexArrays(1, &vaoId);
 
 
     cout << "Destroying terrain patch" << endl;

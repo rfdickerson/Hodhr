@@ -110,6 +110,7 @@ int main()
 
     auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
     renderer->init();
+    checkSDLError(__LINE__);
 
     auto camera = make_unique<Camera> (WIDTH, HEIGHT);
 
@@ -127,12 +128,12 @@ int main()
     assets->addAsset("terrain", std::move(terrainModel));
 
 
-    auto cubeMesh = make_unique<CubeMesh>();
-    cubeMesh->setShader(basicShader);
-    cubeMesh->init();
-    assets->addAsset("cube", std::move(cubeMesh));
+    //auto cubeMesh = make_unique<CubeMesh>();
+    //cubeMesh->setShader(basicShader);
+    //cubeMesh->init();
+    //assets->addAsset("cube", std::move(cubeMesh));
 
-    Model* c = assets->getModel("cube");
+    //Model* c = assets->getModel("cube");
     Model* t = assets->getModel("terrain");
 
     //t->setShader(basicShader);
@@ -142,15 +143,16 @@ int main()
     auto rootNode = make_unique<SceneNode>("root node");
 
     // make the terrain node
-    for (int i=0;i<9;i++) 
-      {
+    //for (int i=0;i<9;i++)
+    //  {
 	auto terrainNode = make_unique<SceneNode>( "terrain node");
 	terrainNode->setAsset(t);
-	terrainNode->setPosition(i,i,i);
+	terrainNode->setPosition(0,0,0);
 	rootNode->addChild( std::move(terrainNode));
-      }
+    //  }
 
     // make the cube node
+    /**
     for (int i=0;i<9;i++)
       {
 	auto cubeNode = make_unique<SceneNode>("cube node");
@@ -158,7 +160,7 @@ int main()
 	cubeNode->setPosition(i, i, i);
 	//rootNode->addChild( std::move(cubeNode));
       }
-
+    **/
 
     // rootNode->addChild( std::move(terrainNode) );
     // rootNode->addChild( std::move(cubeNode) );
@@ -236,6 +238,8 @@ int main()
         renderer->draw();
 
         SDL_GL_SwapWindow(mainwindow);
+
+        SDL_Delay(1);
 
     }
 

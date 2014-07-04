@@ -75,8 +75,8 @@ void Renderer::draw ()
 
     glClearColor(0.2f, 0.2f, 0.2f, 1);
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     //glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
@@ -84,10 +84,16 @@ void Renderer::draw ()
     if (rootSceneNode != NULL) {
         rootSceneNode->draw();
     }
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
 
     // draw the deferred texture rendering
-    /*
-    
+
+
     glUseProgram(screenShader->getProgramID());
 
 
@@ -114,7 +120,7 @@ void Renderer::draw ()
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
-    */
+
 
 }
 
@@ -148,7 +154,7 @@ void Renderer::init ()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    std::cout << "Texture ID for Depth Channel is " 
+    std::cout << "Texture ID for Depth Channel is "
 	      << textureIDs[1] << std::endl;
 
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);

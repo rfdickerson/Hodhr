@@ -5,6 +5,7 @@ uniform mat4 MVMatrix;
 uniform mat3 NormalMatrix;
 
 layout(location = 0) in vec4 in_Position;
+layout(location = 1) in vec3 in_Normals;
 layout(location = 1) in vec2 in_tex_coord;
 
 out vec4 color;
