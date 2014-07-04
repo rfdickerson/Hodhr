@@ -20,11 +20,15 @@ private:
     
     GLint MVPMatrixLocation, MVMatrixLocation;
 
+    // bool initialized;
+
 
 public:
 
     TerrainPatch();
 
+    TerrainPatch(const TerrainPatch&) = delete;
+    TerrainPatch& operator=(const TerrainPatch&) = delete;
 
     virtual ~TerrainPatch();
 

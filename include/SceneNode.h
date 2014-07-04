@@ -25,7 +25,7 @@ class SceneNode
 
         NodeVector children;
 
-        glm::vec4 Position;
+        glm::vec3 Position;
         
         glm::mat4 MVMatrix;
         glm::mat4 MVPMatrix;
@@ -52,6 +52,8 @@ class SceneNode
         glm::mat4 getMVPMatrix() const;
 
         //glm::mat3 getNormalMatrix() const;
+
+	void setPosition(float x, float y, float z);
 
         void draw( void);
 

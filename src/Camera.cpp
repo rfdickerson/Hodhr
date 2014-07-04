@@ -1,39 +1,39 @@
 #include <iostream>
 
-
+#include <glm/gtc/constants.hpp>
 #include "Camera.h"
 
 
 
 Camera::Camera(int width, int height)
 {
-  
-    
+
+
   //ctor
-  fieldOfView = 80.0f;
-  horizontalAngle = 3.14f;
+  fieldOfView = 75.0f;
+  horizontalAngle = 0.0f;
   verticalAngle = 0.0f;
   position = glm::vec3(0,0,0);
   mouseSpeed = 0.005;
-    
+
   aspectRatio = (float) width / (float) height;
-    
+
   viewMatrix = glm::lookAt(
 			   position,
 			   position+direction,
 			   up
 			   );
-    
-    
+
+
   projectionMatrix = glm::perspective(
 				      fieldOfView,
 				      aspectRatio,
 				      0.1f,
 				      100.0f
 				      );
-        
+
   std::cout << "Created a camera with field of view " << fieldOfView << std::endl;
-    
+
 }
 
 
@@ -66,9 +66,9 @@ void Camera::rotate( float deltaTime, float dx, float dy )
 		      );
 
   right = glm::vec3(
-		    sin(horizontalAngle - 3.14f/2.0f),
+		    sin(horizontalAngle - glm::pi<float>()/2.0f),
 		    0,
-		    cos(horizontalAngle - 3.14f/2.0f)
+		    cos(horizontalAngle - glm::pi<float>()/2.0f)
 		    );
 
   up = glm::cross( right, direction );

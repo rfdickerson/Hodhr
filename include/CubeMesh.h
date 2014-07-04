@@ -27,6 +27,7 @@ class CubeMesh : public Model
 
   GLint MVPMatrixLocation, MVMatrixLocation;
 
+
 };
 
 #endif

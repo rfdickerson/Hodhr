@@ -17,7 +17,7 @@
 
 #define PROGRAM_NAME "World Viewer"
 
-const int WIDTH = 1024;
+const int WIDTH = 1280;
 const int HEIGHT = 768;
 
 using namespace std;
@@ -110,7 +110,7 @@ int main()
 
     auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
     renderer->init();
-    
+
     auto camera = make_unique<Camera> (WIDTH, HEIGHT);
 
     Shader* screenShader = sl->getShader("screen");
@@ -120,33 +120,48 @@ int main()
 
     // load the assets
     auto assets = make_unique<AssetLibrary>();
-    assets->addTerrainPatch("simpleterrain");
 
-    Model* terrainModel = assets->getModel("simpleterrain");
+    auto terrainModel = make_unique<TerrainPatch>();
     terrainModel->setShader(basicShader);
     terrainModel->init();
+    assets->addAsset("terrain", std::move(terrainModel));
+
 
     auto cubeMesh = make_unique<CubeMesh>();
     cubeMesh->setShader(basicShader);
     cubeMesh->init();
     assets->addAsset("cube", std::move(cubeMesh));
-    
+
     Model* c = assets->getModel("cube");
+    Model* t = assets->getModel("terrain");
+
+    //t->setShader(basicShader);
+    //t->init();
 
     // make the scene graph
     auto rootNode = make_unique<SceneNode>("root node");
 
     // make the terrain node
-    unique_ptr<SceneNode> terrainNode ( new SceneNode("terrain node"));
-    terrainNode->setAsset(terrainModel);
+    for (int i=0;i<9;i++) 
+      {
+	auto terrainNode = make_unique<SceneNode>( "terrain node");
+	terrainNode->setAsset(t);
+	terrainNode->setPosition(i,i,i);
+	rootNode->addChild( std::move(terrainNode));
+      }
 
     // make the cube node
-    auto cubeNode = make_unique<SceneNode>("cube node");
-    cubeNode->setAsset(c);
+    for (int i=0;i<9;i++)
+      {
+	auto cubeNode = make_unique<SceneNode>("cube node");
+	cubeNode->setAsset(c);
+	cubeNode->setPosition(i, i, i);
+	//rootNode->addChild( std::move(cubeNode));
+      }
 
 
-    rootNode->addChild( std::move(terrainNode) );
-    rootNode->addChild( std::move(cubeNode) );
+    // rootNode->addChild( std::move(terrainNode) );
+    // rootNode->addChild( std::move(cubeNode) );
 
     renderer->setRootSceneNode( std::move(rootNode));
     renderer->setCamera( camera.get() );
@@ -160,12 +175,14 @@ int main()
     int lastTick;
     float dt;
 
+    bool keysHeld[323] = {false};
+
     while (done == 0)
     {
-      	
+
         currentTick = SDL_GetTicks();
-	dt = ((float)(currentTick-lastTick))*0.1;
-	lastTick = currentTick;
+        dt = ((float)(currentTick-lastTick))*0.1;
+        lastTick = currentTick;
         //waitTicks = (oldTicks + interval) - currentTick;
         //oldTicks = currentTick;
 
@@ -181,9 +198,9 @@ int main()
                 x = event.motion.x;
                 y = event.motion.y;
 
-		//cout << "dt:" << dt << " dx: " 
+		//cout << "dt:" << dt << " dx: "
 		//     << event.motion.xrel << " dy: " << event.motion.yrel << endl;
-		camera->rotate( dt, event.motion.xrel, event.motion.yrel);
+            camera->rotate( dt, event.motion.xrel, event.motion.yrel);
 
                 //cout << "X: " << x << " Y: " << y << endl;
             }
@@ -191,22 +208,28 @@ int main()
             if (event.type == SDL_QUIT) { done = 1;}
             if (event.type == SDL_KEYDOWN)
             {
-
-	      switch ( event.key.keysym.sym ) {
-	      case SDLK_w:
-		camera->move( dt, .02);
-		break;
-	      case SDLK_s:
-		camera->move( dt, -0.02);
-		break;
-	      case SDLK_ESCAPE:
-		done = 1;
-		break;
-	      default:
-		break;
-	      }
-	      //done = 1;
+                keysHeld[event.key.keysym.sym] = true;
             }
+            if (event.type == SDL_KEYUP)
+            {
+                keysHeld[event.key.keysym.sym] = false;
+            }
+	      //done = 1;
+
+        }
+
+        if (keysHeld[SDLK_ESCAPE])
+        {
+            done = 1;
+        }
+        if (keysHeld[SDLK_w])
+        {
+            camera->move( dt, .02);
+        }
+        if (keysHeld[SDLK_s])
+        {
+            camera->move( dt, -.02);
+
         }
 
 	/* draw the scene */
@@ -218,7 +241,7 @@ int main()
 
     //delete terrain;
     // delete renderer;
-   
+
 
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);

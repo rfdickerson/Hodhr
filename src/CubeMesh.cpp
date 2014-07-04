@@ -70,13 +70,20 @@ void CubeMesh::init( void )
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
-
+  initialized = true;
 
 
 }
 
 void CubeMesh::draw(const SceneNode& node)
 {
+
+  if (!initialized)
+    {
+      cerr << "Cube is not initialized yet" << endl;
+      return;
+    }
+
   glUseProgram(shader->getProgramID());
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();

@@ -19,7 +19,7 @@ AssetLibrary::~AssetLibrary()
     models.clear();
 }
 
-void AssetLibrary::addTerrainPatch(const char* name)
+void AssetLibrary::addTerrainPatch(std::string name)
 {
 
     auto terrain = make_unique<TerrainPatch>();
@@ -27,16 +27,14 @@ void AssetLibrary::addTerrainPatch(const char* name)
 }
 
 
-Model* AssetLibrary::getModel(const char* name)
+Model* AssetLibrary::getModel(std::string assetName)
 {
 
-    std::map<const char*, unique_ptr<Model>>::iterator it;
-    it = models.find(name);
-    return it->second.get();
+  return models[assetName].get();
 }
 
 void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model)
 {
-  models[name.c_str()] = std::move(model);
+  models[name] = std::move(model);
 
 }

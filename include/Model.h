@@ -19,6 +19,7 @@ class Model
 protected:
 
     Shader* shader;
+    bool initialized;
 
 public:
 

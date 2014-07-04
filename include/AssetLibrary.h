@@ -19,7 +19,8 @@ class strless {
 };
 
 
-typedef map<const char*, unique_ptr<Model>, strless> ModelMap;
+typedef map<std::string, unique_ptr<Model>> ModelMap;
+//typedef map<const char*, unique_ptr<Model>, strless> ModelMap;
 //typedef map<const char*, unique_ptr<Model>> ModelMap;
 
 class AssetLibrary
@@ -34,11 +35,11 @@ public:
     AssetLibrary();
     ~AssetLibrary();
 
-    void addTerrainPatch(const char* name);
+    void addTerrainPatch(std::string name);
 
     void addAsset(std::string, unique_ptr<Model> model);
 
-    Model* getModel(const char* name);
+    Model* getModel(std::string name);
 
 };
 #endif
