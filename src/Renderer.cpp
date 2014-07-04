@@ -108,9 +108,17 @@ void Renderer::draw ()
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
+    int texLoc = glGetUniformLocation(screenShader->getProgramID(), "tex");
+    glUniform1i(texLoc, 0);
 
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
+    texLoc = glGetUniformLocation(screenShader->getProgramID(), "depthTex");
+    glUniform1i(texLoc, 1);
+
+    //glReadBuffer(GL_COLOR_ATTACHMENT0);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 
@@ -165,8 +173,8 @@ void Renderer::init ()
             targetWidth,
             targetHeight,
             0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
+            GL_DEPTH_COMPONENT,
+            GL_FLOAT,
             textureBuffer);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

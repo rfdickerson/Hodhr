@@ -44,7 +44,7 @@ TerrainPatch::TerrainPatch()
     vboId = 0;
     vaoId = 0;
     vboiId = 0;
-    subdivisions = 128;
+    subdivisions = 64;
 }
 
 
@@ -91,7 +91,7 @@ void TerrainPatch::init ()
   numIndices = (subdivisions - 1) * (subdivisions - 1) * 2 * 3;
   cout << "Built terrain with " << numIndices << " indices" << endl;
 
-  GLushort indices[numIndices];
+  GLuint indices[numIndices];
 
     int numPerRow = (subdivisions-1)*6;
   //numPerRow = (subdivisions - 1) * 6;
@@ -143,7 +143,7 @@ void TerrainPatch::init ()
 
   glGenBuffers(1, &vboiId);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*numIndices, indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*numIndices, indices, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   initialized = true;
@@ -192,7 +192,7 @@ void TerrainPatch::draw(const SceneNode& node)
 
   // cout << "drawing " << numIndices << " indices, " << vaoId << " VAO" << endl;
   //glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
-  glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
+  glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);

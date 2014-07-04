@@ -239,7 +239,7 @@ int main()
 
         SDL_GL_SwapWindow(mainwindow);
 
-        SDL_Delay(1);
+        SDL_Delay(6);
 
     }
 
