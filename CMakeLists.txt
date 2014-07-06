@@ -54,32 +54,32 @@ include_directories( include )
 
 set(SOURCE
     ${SOURCE}
-    src/TerrainPatch.cpp
-    src/ShaderLibrary.cpp
-    src/Shader.cpp
-    src/Renderer.cpp
-    src/model.cpp
-    src/SceneNode.cpp
-    src/AssetLibrary.cpp
-    src/Camera.cpp
-    src/NetworkManager.cpp
-    src/CubeMesh.cpp
-    src/texturemanager.cpp
-    src/texture.cpp
+    src/terrainpatch.cc
+    src/shaderlibrary.cc
+    src/shader.cc
+    src/renderer.cc
+    src/model.cc
+    src/scenenode.cc
+    src/assetlibrary.cc
+    src/camera.cc
+    src/networkmanager.cc
+    src/cubemesh.cc
+    src/texturemanager.cc
+    src/texture.cc
     )
     
 set(HEADERS
     ${HEADERS}
-    include/TerrainPatch.h
-    include/ShaderLibrary.h
-    include/Shader.h
-    include/Renderer.h
-    include/Model.h
-    include/SceneNode.h
-    include/AssetLibrary.h
-    include/Camera.h
-    include/NetworkManager.h
-    include/CubeMesh.h
+    include/terrainpatch.h
+    include/shaderlibrary.h
+    include/shader.h
+    include/renderer.h
+    include/model.h
+    include/scenenode.h
+    include/assetlibrary.h
+    include/camera.h
+    include/networkmanager.h
+    include/cubemesh.h
     include/texturemanager.h
     include/texture.h
     include/common.h
@@ -88,7 +88,7 @@ set(HEADERS
 ADD_LIBRARY( Hodhr ${SOURCE} ${HEADERS})
 
 ADD_EXECUTABLE(OpenWorld 
-    src/main.cpp 
+    src/main.cc 
     )
 
 if(${tests})

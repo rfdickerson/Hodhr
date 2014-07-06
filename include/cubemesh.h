@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-#include "Model.h"
+#include "model.h"
 
 namespace Hodhr {
 

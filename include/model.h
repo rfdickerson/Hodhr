@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "SceneNode.h"
+#include "scenenode.h"
 
 
 /**

@@ -6,9 +6,9 @@
 #include <iostream>
 
 #include "common.h"
-#include "TerrainPatch.h"
-#include "ShaderLibrary.h"
-#include "SceneNode.h"
+#include "terrainpatch.h"
+#include "shaderlibrary.h"
+#include "scenenode.h"
 
 /**
  * Terrain Patch is a section of terrain that can be swapped in and out of memory

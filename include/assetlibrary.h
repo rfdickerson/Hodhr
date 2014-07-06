@@ -6,7 +6,7 @@
 #include <string>
 #include <map>
 
-#include "Model.h"
+#include "model.h"
 
 using namespace std;
 

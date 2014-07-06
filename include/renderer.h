@@ -5,7 +5,7 @@
 
 #include <GL/glew.h>
 
-#include "SceneNode.h"
+#include "scenenode.h"
 
 namespace Hodhr {
 

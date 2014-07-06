@@ -6,9 +6,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include "SceneNode.h"
-#include "Model.h"
-#include "Camera.h"
+#include "scenenode.h"
+#include "model.h"
+#include "camera.h"
 
 //using namespace std;
 namespace Hodhr {

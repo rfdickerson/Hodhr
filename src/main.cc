@@ -6,14 +6,14 @@
 #include <SDL.h>
 #include <memory>
 
-#include "SceneNode.h"
-#include "ShaderLibrary.h"
-#include "TerrainPatch.h"
-#include "AssetLibrary.h"
-#include "Renderer.h"
-#include "Camera.h"
-#include "CubeMesh.h"
-#include "Model.h"
+#include "scenenode.h"
+#include "shaderlibrary.h"
+#include "terrainpatch.h"
+#include "assetlibrary.h"
+#include "renderer.h"
+#include "camera.h"
+#include "cubemesh.h"
+#include "model.h"
 
 #define PROGRAM_NAME "World Viewer"
 

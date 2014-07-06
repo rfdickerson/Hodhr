@@ -2,7 +2,7 @@
 
 #include "SDL_net.h"
 
-#include "NetworkManager.h"
+#include "networkmanager.h"
 
 namespace Hodhr {
 

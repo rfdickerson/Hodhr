@@ -3,8 +3,8 @@
 #include <string>
 #include <utility>
 
-#include "AssetLibrary.h"
-#include "TerrainPatch.h"
+#include "assetlibrary.h"
+#include "terrainpatch.h"
 
 using namespace std;
 

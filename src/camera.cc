@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <glm/gtc/constants.hpp>
-#include "Camera.h"
+#include "camera.h"
 
 namespace Hodhr {
 

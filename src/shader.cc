@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Shader.h"
+#include "shader.h"
 
 namespace Hodhr {
 

@@ -6,7 +6,7 @@
 #include <memory>
 #include <utility>
 
-#include "ShaderLibrary.h"
+#include "shaderlibrary.h"
 
 using namespace std;
 

@@ -30,10 +30,10 @@
 
 #include <GL/glew.h>
 
-#include "Renderer.h"
-#include "Shader.h"
-#include "ShaderLibrary.h"
-#include "TerrainPatch.h"
+#include "renderer.h"
+#include "shader.h"
+#include "shaderlibrary.h"
+#include "terrainpatch.h"
 
 
 namespace Hodhr {

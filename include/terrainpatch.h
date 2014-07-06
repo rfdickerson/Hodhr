@@ -6,8 +6,8 @@
 #include <GL/glew.h>
 
 #include "common.h"
-#include "SceneNode.h"
-#include "Model.h"
+#include "scenenode.h"
+#include "model.h"
 
 namespace Hodhr {
 

@@ -2,7 +2,7 @@
 #include <memory>
 #include <utility>
 
-#include "NetworkManager.h"
+#include "networkmanager.h"
 
 using namespace std;
 

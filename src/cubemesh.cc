@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "Shader.h"
-#include "CubeMesh.h"
+#include "shader.h"
+#include "cubemesh.h"
 
 using namespace std;
 
