@@ -5,6 +5,9 @@
 
 #include "SDL_net.h"
 
+namespace Hodhr {
+
+
 class NetworkManager
 {
  public:
@@ -23,5 +26,6 @@ class NetworkManager
 
 };
 
+}
 
 #endif

@@ -5,6 +5,8 @@
 
 #include <GL/glew.h>
 
+namespace Hodhr {
+
 class Shader
 {
 
@@ -27,5 +29,6 @@ class Shader
         
 };
 
+}
 
 #endif

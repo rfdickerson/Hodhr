@@ -10,6 +10,8 @@
 
 using namespace std;
 
+namespace Hodhr {
+
 ShaderLibrary::ShaderLibrary()
 {
 
@@ -82,5 +84,7 @@ void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSr
 Shader* ShaderLibrary::getShader(std::string shaderName)
 {
     return shaders[shaderName].get();
+
+}
 
 }

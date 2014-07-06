@@ -9,6 +9,12 @@
 
 //#include "Model.h"
 
+
+
+namespace Hodhr {
+
+
+
 class Model;
 class SceneNode;
 class Camera;
@@ -62,5 +68,7 @@ class SceneNode
         void updateAll(Camera& c);
 
 };
+
+}
 
 #endif

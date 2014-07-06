@@ -5,6 +5,8 @@
 
 #include "Model.h"
 
+namespace Hodhr {
+
 class CubeMesh : public Model
 {
 
@@ -29,5 +31,6 @@ class CubeMesh : public Model
 
 
 };
+}
 
 #endif

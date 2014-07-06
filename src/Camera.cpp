@@ -3,7 +3,7 @@
 #include <glm/gtc/constants.hpp>
 #include "Camera.h"
 
-
+namespace Hodhr {
 
 Camera::Camera(int width, int height)
 {
@@ -91,5 +91,7 @@ void Camera::move( float deltaTime, float speed)
 			   position+direction,
 			   up
 			   );
+
+}
 
 }

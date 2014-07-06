@@ -8,6 +8,10 @@
 
 using namespace std;
 
+namespace Hodhr {
+
+
+
 AssetLibrary::AssetLibrary()
 {
     
@@ -16,7 +20,17 @@ AssetLibrary::AssetLibrary()
 AssetLibrary::~AssetLibrary()
 {
     cout << "Cleaning up the asset Library" << endl;
+    // models.erase();
+
+    /*
+    for (auto iter = models.begin(); iter != models.end(); ++iter)
+    {
+        iter->second.release();
+
+    }
+
     models.clear();
+    */
 }
 
 void AssetLibrary::addTerrainPatch(std::string name)
@@ -36,5 +50,7 @@ Model* AssetLibrary::getModel(std::string assetName)
 void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model)
 {
   models[name] = std::move(model);
+
+}
 
 }

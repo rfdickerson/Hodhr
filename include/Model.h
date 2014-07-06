@@ -10,6 +10,8 @@
 Pure virtual class for describing a model
 **/
 
+namespace Hodhr {
+
 class Shader;
 class SceneNode;
 
@@ -30,14 +32,14 @@ public:
         //Model& operator=(const Model&) = delete;
 
         //virtual ~Model() = default;
-        //virtual ~Model();
+        virtual ~Model() = 0;
 
         virtual void init() = 0;
         virtual void draw(const SceneNode& n) = 0;
 
-        virtual void setShader(Shader *s) {
-            this->shader = s;
-        }
+        virtual void setShader(Shader *s);
 };
+
+}
 
 #endif

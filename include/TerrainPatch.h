@@ -5,8 +5,11 @@
 
 #include <GL/glew.h>
 
+#include "common.h"
 #include "SceneNode.h"
 #include "Model.h"
+
+namespace Hodhr {
 
 class TerrainPatch : public Model
 {
@@ -39,5 +42,7 @@ public:
     virtual void setShader(Shader* shader);
 
 };
+
+}
 
 #endif

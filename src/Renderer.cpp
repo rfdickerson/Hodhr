@@ -35,6 +35,10 @@
 #include "ShaderLibrary.h"
 #include "TerrainPatch.h"
 
+
+namespace Hodhr {
+
+
 Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
 {
 
@@ -260,4 +264,6 @@ void Renderer::setCamera(Camera* c)
 void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode)
 {
     this->rootSceneNode = std::move(sceneNode);
+}
+
 }

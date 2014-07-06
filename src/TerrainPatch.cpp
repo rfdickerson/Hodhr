@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#include "common.h"
 #include "TerrainPatch.h"
 #include "ShaderLibrary.h"
 #include "SceneNode.h"
@@ -16,12 +17,9 @@
 
 using namespace std;
 
-struct MyVertex
-{
-  float x, y, z;
-  float nx, ny, nz;
-  float s0, t0;
-};
+namespace Hodhr {
+
+
 
 
 int printOglError(std::string instruction)
@@ -59,7 +57,7 @@ void TerrainPatch::init ()
   //int numPerRow = subdivisions * 5;
 
   int numVertices = subdivisions * subdivisions;
-  MyVertex vertices[numVertices];
+  HodhrVertex vertices[numVertices];
 
   for (int i = 0; i < subdivisions; i++) {
     for (int j = 0; j < subdivisions; j++) {
@@ -128,15 +126,15 @@ void TerrainPatch::init ()
   glGenBuffers(1, &vboId);
   printOglError("Gen Buffers");
   glBindBuffer(GL_ARRAY_BUFFER, vboId);
-  glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(MyVertex), &vertices[0].x, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(HodhrVertex), &vertices[0].x, GL_STATIC_DRAW);
   printOglError("Creating VBO");
 
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(0));
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(12));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(12));
   glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MyVertex), BUFFER_OFFSET(24));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
 
   //glBindBuffer(GL_ARRAY_BUFFER, 0);
   //glBindVertexArray(0);
@@ -191,8 +189,8 @@ void TerrainPatch::draw(const SceneNode& node)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
   // cout << "drawing " << numIndices << " indices, " << vaoId << " VAO" << endl;
-  //glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
-  glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+  glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+  //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -232,6 +230,8 @@ void TerrainPatch::setShader(Shader* shader)
   cout << "Set terrain shader " << shader->getName()
        << " with pID " << shader->getProgramID()
        << " location for mvp matrix is " << MVPMatrixLocation << endl;
+
+}
 
 }
 

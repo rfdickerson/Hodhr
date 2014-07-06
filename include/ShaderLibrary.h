@@ -10,6 +10,8 @@
 
 using namespace std;
 
+namespace Hodhr {
+
 class ShaderLibrary
 {
 
@@ -37,5 +39,7 @@ public:
 
 
 };
+
+}
 
 #endif

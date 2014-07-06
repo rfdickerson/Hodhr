@@ -58,11 +58,14 @@ set(SOURCE
     src/ShaderLibrary.cpp
     src/Shader.cpp
     src/Renderer.cpp
+    src/model.cpp
     src/SceneNode.cpp
     src/AssetLibrary.cpp
     src/Camera.cpp
     src/NetworkManager.cpp
     src/CubeMesh.cpp
+    src/texturemanager.cpp
+    src/texture.cpp
     )
     
 set(HEADERS
@@ -77,9 +80,12 @@ set(HEADERS
     include/Camera.h
     include/NetworkManager.h
     include/CubeMesh.h
+    include/texturemanager.h
+    include/texture.h
+    include/common.h
     )
 
-ADD_LIBRARY( CampaignLib ${SOURCE} ${HEADERS})
+ADD_LIBRARY( Hodhr ${SOURCE} ${HEADERS})
 
 ADD_EXECUTABLE(OpenWorld 
     src/main.cpp 
@@ -101,13 +107,13 @@ TARGET_LINK_LIBRARIES(OpenWorld ${GLFW_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld ${GLEW_LIBRARY})
 TARGET_LINK_LIBRARIES(OpenWorld ${EXTRA_LIBS})
 TARGET_LINK_LIBRARIES(OpenWorld ${OPENGL_LIBRARIES})
-TARGET_LINK_LIBRARIES(OpenWorld CampaignLib)
+TARGET_LINK_LIBRARIES(OpenWorld Hodhr)
 
-TARGET_LINK_LIBRARIES(testNetwork CampaignLib)
+TARGET_LINK_LIBRARIES(testNetwork Hodhr)
 TARGET_LINK_LIBRARIES(testNetwork 
 				  ${SDL2_LIBRARIES}
 				  ${SDLNET_LIBRARY})
 
 target_link_libraries(testFonts
-			CampaignLib
+                        Hodhr
 			${PANGOCAIRO_LIBRARIES})

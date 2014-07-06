@@ -4,6 +4,8 @@
 
 #include "NetworkManager.h"
 
+namespace Hodhr {
+
 
 NetworkManager::NetworkManager()
 {
@@ -37,4 +39,6 @@ void NetworkManager::connectServer(std::string hostaddress, int port)
 void NetworkManager::disconnectServer()
 {
   
+}
+
 }

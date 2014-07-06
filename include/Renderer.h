@@ -7,8 +7,11 @@
 
 #include "SceneNode.h"
 
+namespace Hodhr {
+
 class Camera;
 class Shader;
+
 
 class Renderer
 {
@@ -48,5 +51,6 @@ class Renderer
 
 };
 
+}
 
 #endif

@@ -104,25 +104,25 @@ int main()
 
     SDL_Event event;
 
-    auto sl = make_unique<ShaderLibrary>();
+    auto sl = make_unique<Hodhr::ShaderLibrary>();
     sl->addShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
     sl->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
 
-    auto renderer = make_unique<Renderer> (WIDTH, HEIGHT);
+    auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
     renderer->init();
     checkSDLError(__LINE__);
 
-    auto camera = make_unique<Camera> (WIDTH, HEIGHT);
+    auto camera = make_unique<Hodhr::Camera> (WIDTH, HEIGHT);
 
-    Shader* screenShader = sl->getShader("screen");
+    Hodhr::Shader* screenShader = sl->getShader("screen");
     renderer->setScreenShader(screenShader);
 
-    Shader* basicShader = sl->getShader("basic");
+    Hodhr::Shader* basicShader = sl->getShader("basic");
 
     // load the assets
-    auto assets = make_unique<AssetLibrary>();
+    auto assets = make_unique<Hodhr::AssetLibrary>();
 
-    auto terrainModel = make_unique<TerrainPatch>();
+    auto terrainModel = make_unique<Hodhr::TerrainPatch>();
     terrainModel->setShader(basicShader);
     terrainModel->init();
     assets->addAsset("terrain", std::move(terrainModel));
@@ -134,18 +134,18 @@ int main()
     //assets->addAsset("cube", std::move(cubeMesh));
 
     //Model* c = assets->getModel("cube");
-    Model* t = assets->getModel("terrain");
+    Hodhr::Model* t = assets->getModel("terrain");
 
     //t->setShader(basicShader);
     //t->init();
 
     // make the scene graph
-    auto rootNode = make_unique<SceneNode>("root node");
+    auto rootNode = make_unique<Hodhr::SceneNode>("root node");
 
     // make the terrain node
     //for (int i=0;i<9;i++)
     //  {
-	auto terrainNode = make_unique<SceneNode>( "terrain node");
+    auto terrainNode = make_unique<Hodhr::SceneNode>( "terrain node");
 	terrainNode->setAsset(t);
 	terrainNode->setPosition(0,0,0);
 	rootNode->addChild( std::move(terrainNode));

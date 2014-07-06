@@ -10,15 +10,16 @@
 
 using namespace std;
 
-
+/*
 class strless {
    public:
       bool operator() (const string & first, const string & second ) const  {
          return first < second;
       }
 };
+*/
 
-
+namespace Hodhr {
 typedef map<std::string, unique_ptr<Model>> ModelMap;
 //typedef map<const char*, unique_ptr<Model>, strless> ModelMap;
 //typedef map<const char*, unique_ptr<Model>> ModelMap;
@@ -42,4 +43,6 @@ public:
     Model* getModel(std::string name);
 
 };
+}
+
 #endif

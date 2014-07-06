@@ -5,6 +5,9 @@
 
 using namespace std;
 
+namespace Hodhr {
+
+
 CubeMesh::CubeMesh ()
 {
   cout << "Created a cube mesh asset" << endl;
@@ -115,4 +118,6 @@ void CubeMesh::setShader(Shader* shader)
        << " with pID " << shader->getProgramID() 
        << " location for mvp matrix is " << MVPMatrixLocation << endl;
   
+}
+
 }

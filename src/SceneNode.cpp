@@ -10,7 +10,8 @@
 #include "Model.h"
 #include "Camera.h"
 
-using namespace std;
+//using namespace std;
+namespace Hodhr {
 
 SceneNode::SceneNode (const std::string& name)
 {
@@ -49,7 +50,7 @@ void SceneNode::setPosition(float x, float y, float z)
   this->Position = glm::vec3(x,y,z);
 }
 
-void SceneNode::addChild(unique_ptr<SceneNode> node)
+void SceneNode::addChild(std::unique_ptr<SceneNode> node)
 {
     //auto tnode = unique_ptr<SceneNode>(node);
     children.push_back( move(node) );
@@ -58,7 +59,7 @@ void SceneNode::addChild(unique_ptr<SceneNode> node)
 
 void SceneNode::setAsset(Model* model)
 {
-  cout << "Setting asset for " << name << endl;
+  std::cout << "Setting asset for " << name << std::endl;
     asset = model;
 }
 
@@ -80,8 +81,10 @@ void SceneNode::updateLocal(Camera& camera)
 void SceneNode::updateAll(Camera& camera)
 {
     updateLocal(camera);
-    for (std::vector<unique_ptr<SceneNode>>::iterator it = children.begin(); it != children.end(); ++it)
+    for (std::vector<std::unique_ptr<SceneNode>>::iterator it = children.begin(); it != children.end(); ++it)
     {
         (*it)->updateAll(camera);
     }
+}
+
 }
