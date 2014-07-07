@@ -30,6 +30,7 @@
 
 #include <GL/glew.h>
 
+#include "common.h"
 #include "renderer.h"
 #include "shader.h"
 #include "shaderlibrary.h"
@@ -61,6 +62,8 @@ Renderer::~Renderer ()
     glDeleteTextures(2, textureIDs);
     glDeleteBuffers(1,&vaoID);
     glDeleteBuffers(1,&vboID);
+
+    printOglError("Clean up render system");
 
 }
 
@@ -139,11 +142,16 @@ void Renderer::draw ()
 void Renderer::init ()
 {
 
-
+  printOglError("Begin Render System init");
 
     /* Create the render buffers */
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
 
     glGenTextures(2, textureIDs);
 
@@ -169,11 +177,13 @@ void Renderer::init ()
     std::cout << "Texture ID for Depth Channel is "
 	      << textureIDs[1] << std::endl;
 
+    printOglError("Create deferred rendering color texture");
+
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
 
     glTexImage2D(GL_TEXTURE_2D,
             0,
-            GL_DEPTH_COMPONENT,
+            GL_DEPTH_COMPONENT32,
             targetWidth,
             targetHeight,
             0,
@@ -187,8 +197,11 @@ void Renderer::init ()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    printOglError("Create deferred rendering depth texture");
 
     glGenRenderbuffers(2, renderBufferID);
+
+    /*
     glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID[0]);
 
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, targetWidth, targetHeight);
@@ -213,10 +226,12 @@ void Renderer::init ()
 
     glCheckFramebufferStatus(GL_FRAMEBUFFER);
     glBindRenderbuffer(GL_FRAMEBUFFER, 0);
+    */
 
     glGenFramebuffers(2,frameBufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
 
+    glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
     glFramebufferTexture2D(
             GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0,
@@ -224,8 +239,17 @@ void Renderer::init ()
             textureIDs[0],
             0);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
+    glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_DEPTH_ATTACHMENT,
+            GL_TEXTURE_2D,
+            textureIDs[1],
+            0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  printOglError("Create Framebuffer");
+
 
     // create the render quad surface
 
@@ -248,6 +272,9 @@ void Renderer::init ()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    printOglError("Create deferred rendering surface");
+
 
 }
 

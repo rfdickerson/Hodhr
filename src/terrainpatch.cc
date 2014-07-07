@@ -22,20 +22,6 @@ namespace Hodhr {
 
 
 
-int printOglError(std::string instruction)
-{
-    int retCode = 0;
-    GLenum glErr = glGetError();
-  if (glErr != GL_NO_ERROR)
-  {
-
-      cerr << "glError after " << instruction << " error: " << gluErrorString(glErr) << endl;
-      retCode = 1;
-  }
-
-  return retCode;
-
-}
 
 TerrainPatch::TerrainPatch()
 {

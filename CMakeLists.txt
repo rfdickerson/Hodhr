@@ -66,6 +66,7 @@ set(SOURCE
     src/cubemesh.cc
     src/texturemanager.cc
     src/texture.cc
+    src/common.cc
     )
     
 set(HEADERS

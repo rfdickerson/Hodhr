@@ -64,8 +64,7 @@ void SceneNode::addChild(std::unique_ptr<SceneNode> node)
 
 void SceneNode::setAsset(Model* model)
 {
-  std::cout << "Setting asset for " << name << std::endl;
-    asset = model;
+  asset = model;
 }
 
 glm::mat4 SceneNode::getMVPMatrix() const

@@ -23,7 +23,7 @@ private:
     
     GLint MVPMatrixLocation, MVMatrixLocation;
 
-    // bool initialized;
+    bool initialized;
 
 
 public:

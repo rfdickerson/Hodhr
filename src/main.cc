@@ -60,7 +60,7 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
-    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     // multisample antialiasing
@@ -152,20 +152,22 @@ int main()
     //  {
     auto terrainNode = make_unique<Hodhr::SceneNode>( "terrain node");
 	terrainNode->setAsset(t);
-	terrainNode->setPosition(0,0,0);
+	terrainNode->setPosition(0,1,0);
 	//terrainNode->setScale(20);
 	rootNode->addChild( std::move(terrainNode));
     //  }
 
     // make the cube node
 
-    for (int i=0;i<9;i++)
+    for (int j=0; j<20;j++) {
+    for (int i=0;i<20;i++)
       {
         auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
 	cubeNode->setAsset(c);
-	cubeNode->setPosition(i, 0, i);
+	cubeNode->setPosition(i, 0, j);
 	cubeNode->setScale(0.2);
 	rootNode->addChild( std::move(cubeNode));
+      }
       }
 
 

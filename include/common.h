@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 
+
 namespace Hodhr {
 
 struct HodhrVertex
@@ -14,5 +15,7 @@ struct HodhrVertex
 };
 
 } // namespace Hodhr
+
+int printOglError(std::string instruction);
 
 #endif // COMMON_H
