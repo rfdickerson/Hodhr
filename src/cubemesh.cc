@@ -281,6 +281,10 @@ void CubeMesh::init( void )
 void CubeMesh::draw(const SceneNode& node)
 {
 
+  glm::vec3 light_position = glm::vec3(0,5,0);
+  glm::vec3 light_color = glm::vec3(0.2,0.7,0.2);
+  glm::vec3 ambient_light = glm::vec3(0.2,0.2,0.3);
+
   if (!initialized)
     {
       cerr << "Cube is not initialized yet" << endl;
@@ -290,12 +294,23 @@ void CubeMesh::draw(const SceneNode& node)
   glUseProgram(shader->getProgramID());
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();
+  glm::mat3 normal_matrix = node.getNormalMatrix();
 
   glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
-  glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+  glUniformMatrix3fv( normal_matrix_loc_, 1, GL_FALSE, &normal_matrix[0][0]);
+  glUniform3f( ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
+  glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
+  glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
+
+  glUniform1f( constant_attenuation_loc_, .2);
+  glUniform1f( linear_attenuation_loc_, .2);
+
+  glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
+  glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
 
   glBindVertexArray(vaoId);
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
@@ -307,6 +322,7 @@ void CubeMesh::draw(const SceneNode& node)
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, NULL);
 
   glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
   glBindVertexArray(0);
 }
 
@@ -314,9 +330,22 @@ void CubeMesh::setShader(Shader* shader)
 {
   Model::setShader(shader);
   MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
+  normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
+  light_position_loc_ = glGetUniformLocation(shader->getProgramID(), "LightPosition");
+  eye_direction_loc_ = glGetUniformLocation(shader->getProgramID(), "EyeDirection");
+  constant_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "ConstantAttenuation");
+  linear_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "LinearAttenuation");
+  quadratic_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "QuadraticAttenuation");
+  shininess_loc_ = glGetUniformLocation(shader->getProgramID(), "Shininess");
+  strength_loc_ = glGetUniformLocation(shader->getProgramID(), "Strength");
+  light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
+  ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
+
   cout << "Set cube shader " << shader->getName() 
        << " with pID " << shader->getProgramID() 
-       << " location for mvp matrix is " << MVPMatrixLocation << endl;
+       << " mvp_matrix: " << MVPMatrixLocation
+       << " normal matrix: " << normal_matrix_loc_
+       << ", ambient light: " << ambient_loc_ <<  endl;
   
 }
 

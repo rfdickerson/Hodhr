@@ -71,8 +71,9 @@ void ShaderLibrary::AddShader(std::string shaderName, std::string vertexShaderSr
 
     glLinkProgram(pId);
 
-    char logInfo[20];
-    glGetProgramInfoLog(pId, 20, NULL, logInfo);
+    char logInfo[128];
+    glGetProgramInfoLog(pId, 128, NULL, logInfo);
+    cout << "Compiled " << shaderName << endl;
     cout << logInfo << endl;
 
     auto newShader = make_unique<Shader>(shaderName, pId);

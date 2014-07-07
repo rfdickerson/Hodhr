@@ -69,7 +69,12 @@ void SceneNode::setAsset(Model* model)
 
 glm::mat4 SceneNode::getMVPMatrix() const
 {
-    return MVPMatrix;
+    return mvp_matrix_;
+}
+
+glm::mat3 SceneNode::getNormalMatrix() const
+{
+  return normal_matrix_;
 }
 
 void SceneNode::updateLocal(Camera& camera)
@@ -81,9 +86,13 @@ void SceneNode::updateLocal(Camera& camera)
 
   glm::mat4 s = glm::scale(glm::mat4(1.0f), scale_);
 
-  glm::mat4 Model = t * s;
+  glm::mat4 model_matrix = t * s;
+
+  mv_matrix_ = camera.getViewMatrix() * model_matrix;
     
-  MVPMatrix = camera.getProjectionMatrix() * camera.getViewMatrix() * Model;
+  mvp_matrix_ = camera.getProjectionMatrix() * mv_matrix_;
+
+  normal_matrix_ = glm::transpose(glm::inverse(glm::mat3(mv_matrix_)));
 }
 
 void SceneNode::updateAll(Camera& camera)

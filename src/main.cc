@@ -15,7 +15,7 @@
 #include "cubemesh.h"
 #include "model.h"
 
-#define PROGRAM_NAME "World Viewer"
+#define PROGRAM_NAME "Hodhr"
 
 const int WIDTH = 1280;
 const int HEIGHT = 768;

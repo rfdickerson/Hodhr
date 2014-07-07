@@ -27,7 +27,19 @@ class CubeMesh : public Model
 
   unsigned short numIndices;
 
-  GLint MVPMatrixLocation, MVMatrixLocation;
+  GLint MVPMatrixLocation,
+  MVMatrixLocation,
+  normal_matrix_loc_,
+  light_position_loc_,
+  eye_direction_loc_,
+  constant_attenuation_loc_,
+  linear_attenuation_loc_,
+  quadratic_attenuation_loc_,
+  shininess_loc_,
+  strength_loc_,
+  light_color_loc_,
+  ambient_loc_
+  ;
 
 
 };

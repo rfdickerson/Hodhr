@@ -32,9 +32,9 @@ class SceneNode
         glm::vec3 position_;
         glm::vec3 scale_;
         
-        glm::mat4 MVMatrix;
-        glm::mat4 MVPMatrix;
-        glm::mat3 NormalMatrix;
+        glm::mat4 mvp_matrix_;
+        glm::mat4 mv_matrix_;
+        glm::mat3 normal_matrix_;
 
 	std::string name;
 
@@ -55,6 +55,8 @@ class SceneNode
         //glm::mat4 getMVMatrix() const;
 
         glm::mat4 getMVPMatrix() const;
+
+        glm::mat3 getNormalMatrix() const;
 
         //glm::mat3 getNormalMatrix() const;
 
