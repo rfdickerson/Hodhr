@@ -65,7 +65,7 @@ void CubeMesh::init( void )
       // bottom face
 
   nx = 0;
-  ny = -1;
+  ny = 1;
   nz = 0;
 
         vertices[0].x = -1.0;
@@ -99,7 +99,7 @@ void CubeMesh::init( void )
 
         // top face
         nx = 0;
-        ny = 1;
+        ny = -1;
         nz = 0;
 
         vertices[4].x = -1.0;
@@ -134,7 +134,7 @@ void CubeMesh::init( void )
 
         // front face
 
-        nx = 1;
+        nx = -1;
         ny = 0;
         nz = 0;
 
@@ -167,7 +167,7 @@ void CubeMesh::init( void )
         vertices[11].nz = nz;
 
         // back face
-        nx = -1;
+        nx = 1;
         ny = 0;
         nz = 0;
 
@@ -202,7 +202,7 @@ void CubeMesh::init( void )
         // right face
         nx = 0;
         ny = 0;
-        nz = 1;
+        nz = -1;
 
 
         vertices[16].x = 1.0;
