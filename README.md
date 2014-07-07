@@ -10,6 +10,8 @@ Dependencies:
 
 Compilation Instructions:
 
-> mkdir build
-> cmake ..
-> make
+```
+mkdir build
+cmake ..
+make
+```
