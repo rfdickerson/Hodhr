@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "common.h"
 #include "shader.h"
 #include "cubemesh.h"
 
@@ -33,6 +34,10 @@ CubeMesh::~CubeMesh ()
 
 void CubeMesh::init( void )
 {
+
+  HodhrVertex vertices[30];
+
+  /*
   float vertices[] = {
     -0.5f, 0.5f, 0.5f,
     -0.5f, -0.5f, 0.5f,
@@ -44,18 +49,208 @@ void CubeMesh::init( void )
   };
 
   int numVertices = 21;
+  */
+
+  /*
+  short b[][2] = {
+    {0,0},
+    {0,1},
+    {1,0},
+    {1,1}
+  };
+  */
+
+  float nx, ny, nz;
+
+      // bottom face
+
+  nx = 0;
+  ny = -1;
+  nz = 0;
+
+        vertices[0].x = -1.0;
+        vertices[0].y = -1.0;
+        vertices[0].z = -1.0;
+        vertices[0].nx = nx;
+        vertices[0].ny = ny;
+        vertices[0].nz = nz;
+
+        vertices[1].x = -1.0;
+        vertices[1].y = -1.0;
+        vertices[1].z = 1.0;
+        vertices[1].nx = nx;
+        vertices[1].ny = ny;
+        vertices[1].nz = nz;
+
+        vertices[2].x = 1.0;
+        vertices[2].y = -1.0;
+        vertices[2].z = 1.0;
+        vertices[2].nx = nx;
+        vertices[2].ny = ny;
+        vertices[2].nz = nz;
+
+        vertices[3].x = 1.0;
+        vertices[3].y = -1.0;
+        vertices[3].z = -1.0;
+        vertices[3].nx = nx;
+        vertices[3].ny = ny;
+        vertices[3].nz = nz;
+
+
+        // top face
+        nx = 0;
+        ny = 1;
+        nz = 0;
+
+        vertices[4].x = -1.0;
+        vertices[4].y = 1.0;
+        vertices[4].z = -1.0;
+        vertices[4].nx = nx;
+        vertices[4].ny = ny;
+        vertices[4].nz = nz;
+
+        vertices[5].x = -1.0;
+        vertices[5].y = 1.0;
+        vertices[5].z = 1.0;
+        vertices[5].nx = nx;
+        vertices[5].ny = ny;
+        vertices[5].nz = nz;
+
+        vertices[6].x = 1.0;
+        vertices[6].y = 1.0;
+        vertices[6].z = 1.0;
+        vertices[6].nx = nx;
+        vertices[6].ny = ny;
+        vertices[6].nz = nz;
+
+        vertices[7].x = 1.0;
+        vertices[7].y = 1.0;
+        vertices[7].z = -1.0;
+        vertices[7].nx = nx;
+        vertices[7].ny = ny;
+        vertices[7].nz = nz;
+
+
+
+        // front face
+
+        nx = 1;
+        ny = 0;
+        nz = 0;
+
+        vertices[8].x = -1.0;
+        vertices[8].y = -1.0;
+        vertices[8].z = -1.0;
+        vertices[8].nx = nx;
+        vertices[8].ny = ny;
+        vertices[8].nz = nz;
+
+        vertices[9].x = -1.0;
+        vertices[9].y = 1.0;
+        vertices[9].z = -1.0;
+        vertices[9].nx = nx;
+        vertices[9].ny = ny;
+        vertices[9].nz = nz;
+
+        vertices[10].x = 1.0;
+        vertices[10].y = 1.0;
+        vertices[10].z = -1.0;
+        vertices[10].nx = nx;
+        vertices[10].ny = ny;
+        vertices[10].nz = nz;
+
+        vertices[11].x = 1.0;
+        vertices[11].y = -1.0;
+        vertices[11].z = -1.0;
+        vertices[11].nx = nx;
+        vertices[11].ny = ny;
+        vertices[11].nz = nz;
+
+        // back face
+        nx = -1;
+        ny = 0;
+        nz = 0;
+
+        vertices[12].x = -1.0;
+        vertices[12].y = -1.0;
+        vertices[12].z = 1.0;
+        vertices[12].nx = nx;
+        vertices[12].ny = ny;
+        vertices[12].nz = nz;
+
+        vertices[13].x = -1.0;
+        vertices[13].y = 1.0;
+        vertices[13].z = 1.0;
+        vertices[13].nx = nx;
+        vertices[13].ny = ny;
+        vertices[13].nz = nz;
+
+        vertices[14].x = 1.0;
+        vertices[14].y = 1.0;
+        vertices[14].z = 1.0;
+        vertices[14].nx = nx;
+        vertices[14].ny = ny;
+        vertices[14].nz = nz;
+
+        vertices[15].x = 1.0;
+        vertices[15].y = -1.0;
+        vertices[15].z = 1.0;
+        vertices[15].nx = nx;
+        vertices[15].ny = ny;
+        vertices[15].nz = nz;
+
+        // right face
+        nx = 0;
+        ny = 0;
+        nz = 1;
+
+
+        vertices[16].x = 1.0;
+        vertices[16].y = -1.0;
+        vertices[16].z = -1.0;
+        vertices[16].nx = nx;
+        vertices[16].ny = ny;
+        vertices[16].nz = nz;
+
+        vertices[17].x = 1.0;
+        vertices[17].y = 1.0;
+        vertices[17].z = -1.0;
+        vertices[17].nx = nx;
+        vertices[17].ny = ny;
+        vertices[17].nz = nz;
+
+        vertices[18].x = 1.0;
+        vertices[18].y = 1.0;
+        vertices[18].z = 1.0;
+        vertices[18].nx = nx;
+        vertices[18].ny = ny;
+        vertices[18].nz = nz;
+
+        vertices[19].x = 1.0;
+        vertices[19].y = -1.0;
+        vertices[19].z = 1.0;
+        vertices[19].nx = nx;
+        vertices[19].ny = ny;
+        vertices[19].nz = nz;
+
+
+
 
   unsigned short indices[] = {
       0, 1, 2,
       0, 2, 3,
-      0, 3, 4,
-      4, 3, 5,
-      0, 4, 6,
-      0, 6, 1
+      4, 5, 6,
+      4, 6, 7,
+      8, 9, 10,
+      8, 10, 11,
+      12, 13, 14,
+      12, 14, 15,
+      16, 17, 18,
+      16, 18, 19
             
     };
 
-  numIndices = 18;
+  numIndices = 39;
   glGenVertexArrays(1, &vaoId);
   glBindVertexArray(vaoId);
 
@@ -63,7 +258,12 @@ void CubeMesh::init( void )
   glBindBuffer(GL_ARRAY_BUFFER, vboId);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, NULL);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(12));
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
  
   glBindVertexArray(0);
 
@@ -104,7 +304,7 @@ void CubeMesh::draw(const SceneNode& node)
   //std::cout << "draw cube with indices " << numIndices << std::endl;
 
   //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
-  glDrawElements(GL_TRIANGLE_STRIP, numIndices, GL_UNSIGNED_SHORT, NULL);
+  glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, NULL);
 
   glDisableVertexAttribArray(0);
   glBindVertexArray(0);

@@ -154,7 +154,7 @@ int main()
 	terrainNode->setAsset(t);
 	terrainNode->setPosition(0,1,0);
 	//terrainNode->setScale(20);
-	rootNode->addChild( std::move(terrainNode));
+	//rootNode->addChild( std::move(terrainNode));
     //  }
 
     // make the cube node

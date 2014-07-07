@@ -4,8 +4,11 @@
 #include <string>
 #include <memory>
 
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 namespace Hodhr {
+
+
 
 struct HodhrVertex
 {

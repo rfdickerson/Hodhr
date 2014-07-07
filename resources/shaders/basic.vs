@@ -9,9 +9,11 @@ layout(location = 1) in vec3 in_Normals;
 layout(location = 1) in vec2 in_tex_coord;
 
 out vec4 color;
+out vec3 normal;
 out vec2 vs_tex_coord;
 
 void main() {
+    normal = in_Normals;
     gl_Position = MVPMatrix * in_Position;
     //gl_Position = in_Position;
     color = vec4(.5, .85, 0.15, 1);

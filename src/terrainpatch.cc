@@ -13,7 +13,7 @@
 /**
  * Terrain Patch is a section of terrain that can be swapped in and out of memory
  **/
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
 
 using namespace std;
 
