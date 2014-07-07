@@ -16,11 +16,11 @@ class TextureManager
 public:
 TextureManager();
 
-void loadTexture(std::string name, std::string filename);
+void LoadTexture(std::string texture_name, std::string filename);
 
 protected:
 
-std::map<std::string, std::unique_ptr<Texture>> textures;
+std::map<std::string, std::unique_ptr<Texture>> textures_;
 };
 
 }

@@ -47,7 +47,12 @@ void SceneNode::draw()
 
 void SceneNode::setPosition(float x, float y, float z)
 {
-  this->Position = glm::vec3(x,y,z);
+  this->position_ = glm::vec3(x,y,z);
+}
+
+void SceneNode::setScale(float scale)
+{
+  this->scale_ = glm::vec3(scale, scale, scale);
 }
 
 void SceneNode::addChild(std::unique_ptr<SceneNode> node)
@@ -71,11 +76,15 @@ glm::mat4 SceneNode::getMVPMatrix() const
 void SceneNode::updateLocal(Camera& camera)
 {
     //std::cout << "Updating transformation matrix" << std::endl;
-  glm::mat4 Model = glm::translate(
+  glm::mat4 t = glm::translate(
 				   glm::mat4(1.0f),
-				   Position);
+				   position_);
+
+  glm::mat4 s = glm::scale(glm::mat4(1.0f), scale_);
+
+  glm::mat4 Model = t * s;
     
-    MVPMatrix = camera.getProjectionMatrix() * camera.getViewMatrix() * Model;
+  MVPMatrix = camera.getProjectionMatrix() * camera.getViewMatrix() * Model;
 }
 
 void SceneNode::updateAll(Camera& camera)

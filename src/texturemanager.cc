@@ -10,11 +10,11 @@ TextureManager::TextureManager()
 {
 }
 
-void TextureManager::loadTexture(std::string name, std::string filename)
+void TextureManager::LoadTexture(std::string texture_name, std::string filename)
 {
 
-    auto texture = std::make_unique<Texture>(name);
+    auto texture = std::make_unique<Texture>(texture_name);
 
-    textures[name] = move(texture);
+    textures_[texture_name] = move(texture);
 
 }

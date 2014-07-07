@@ -19,7 +19,7 @@ class ShaderLibrary
 
     //static ShaderLibrary *instance;
 
-    std::map<std::string, unique_ptr<Shader>> shaders;
+    std::map<std::string, unique_ptr<Shader>> shaders_;
 
 public:
 
@@ -29,9 +29,9 @@ public:
     ShaderLibrary& operator=(ShaderLibrary const& copy) = delete;
 
 
-    void addShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc);
+    void AddShader(std::string shader_name, std::string vs_src, std::string fs_src);
 
-    Shader* getShader(std::string shaderName);
+    Shader* GetShader(std::string shader_name) ;
 
 
     ~ShaderLibrary();

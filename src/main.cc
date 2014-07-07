@@ -59,8 +59,13 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+    // multisample antialiasing
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -105,8 +110,8 @@ int main()
     SDL_Event event;
 
     auto sl = make_unique<Hodhr::ShaderLibrary>();
-    sl->addShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
-    sl->addShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
+    sl->AddShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
+    sl->AddShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
 
     auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
     renderer->init();
@@ -114,10 +119,10 @@ int main()
 
     auto camera = make_unique<Hodhr::Camera> (WIDTH, HEIGHT);
 
-    Hodhr::Shader* screenShader = sl->getShader("screen");
+    Hodhr::Shader* screenShader = sl->GetShader("screen");
     renderer->setScreenShader(screenShader);
 
-    Hodhr::Shader* basicShader = sl->getShader("basic");
+    Hodhr::Shader* basicShader = sl->GetShader("basic");
 
     // load the assets
     auto assets = make_unique<Hodhr::AssetLibrary>();
@@ -128,12 +133,12 @@ int main()
     assets->addAsset("terrain", std::move(terrainModel));
 
 
-    //auto cubeMesh = make_unique<CubeMesh>();
-    //cubeMesh->setShader(basicShader);
-    //cubeMesh->init();
-    //assets->addAsset("cube", std::move(cubeMesh));
+    auto cubeMesh = make_unique<Hodhr::CubeMesh>();
+    cubeMesh->setShader(basicShader);
+    cubeMesh->init();
+    assets->addAsset("cube", std::move(cubeMesh));
 
-    //Model* c = assets->getModel("cube");
+    Hodhr::Model* c = assets->getModel("cube");
     Hodhr::Model* t = assets->getModel("terrain");
 
     //t->setShader(basicShader);
@@ -148,19 +153,21 @@ int main()
     auto terrainNode = make_unique<Hodhr::SceneNode>( "terrain node");
 	terrainNode->setAsset(t);
 	terrainNode->setPosition(0,0,0);
+	//terrainNode->setScale(20);
 	rootNode->addChild( std::move(terrainNode));
     //  }
 
     // make the cube node
-    /**
+
     for (int i=0;i<9;i++)
       {
-	auto cubeNode = make_unique<SceneNode>("cube node");
+        auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
 	cubeNode->setAsset(c);
-	cubeNode->setPosition(i, i, i);
-	//rootNode->addChild( std::move(cubeNode));
+	cubeNode->setPosition(i, 0, i);
+	cubeNode->setScale(0.2);
+	rootNode->addChild( std::move(cubeNode));
       }
-    **/
+
 
     // rootNode->addChild( std::move(terrainNode) );
     // rootNode->addChild( std::move(cubeNode) );

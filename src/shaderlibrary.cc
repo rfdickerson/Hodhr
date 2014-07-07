@@ -43,7 +43,7 @@ std::string loadFile(std::string filename)
     throw (errno);
 }
 
-void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc)
+void ShaderLibrary::AddShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc)
 {
 
   //cout << "Added shader " << vertexShaderSrc << endl;
@@ -77,13 +77,13 @@ void ShaderLibrary::addShader(std::string shaderName, std::string vertexShaderSr
 
     auto newShader = make_unique<Shader>(shaderName, pId);
 
-    shaders[std::string(shaderName)] = move(newShader);
+    shaders_[std::string(shaderName)] = move(newShader);
 
 }
 
-Shader* ShaderLibrary::getShader(std::string shaderName)
+Shader* ShaderLibrary::GetShader(std::string shader_name)
 {
-    return shaders[shaderName].get();
+    return shaders_[shader_name].get();
 
 }
 
