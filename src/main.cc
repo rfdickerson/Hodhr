@@ -111,7 +111,7 @@ int main()
 
     auto sl = make_unique<Hodhr::ShaderLibrary>();
     sl->AddShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
-    sl->AddShader("screen", "resources/shaders/screen.vs", "resources/shaders/screen.fs");
+    sl->AddShader("screen", "resources/shaders/screen.vert", "resources/shaders/screen.frag");
 
     auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
     renderer->init();
