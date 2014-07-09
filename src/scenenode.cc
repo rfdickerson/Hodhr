@@ -86,18 +86,22 @@ void SceneNode::updateLocal(Camera& camera)
 
   glm::mat4 s = glm::scale(glm::mat4(1.0f), scale_);
 
-  glm::mat4 model_matrix = t * s;
+  glm::mat4 model_matrix = t*s;
 
+  //mv_matrix_ = camera.getViewMatrix() * model_matrix;
   mv_matrix_ = camera.getViewMatrix() * model_matrix;
     
   mvp_matrix_ = camera.getProjectionMatrix() * mv_matrix_;
 
-  normal_matrix_ = glm::transpose(glm::inverse(glm::mat3(mv_matrix_)));
+  //normal_matrix_ = glm::mat3(glm::transpose(glm::inverse(mv_matrix_)));
+  //normal_matrix_ = glm::transpose(glm::inverse(glm::mat3(mv_matrix_)));
+  normal_matrix_ = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
 }
 
 void SceneNode::updateAll(Camera& camera)
 {
     updateLocal(camera);
+
     for (std::vector<std::unique_ptr<SceneNode>>::iterator it = children.begin(); it != children.end(); ++it)
     {
         (*it)->updateAll(camera);

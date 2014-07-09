@@ -29,6 +29,7 @@ void main() {
     vec3 rgb = min(Color.rgb * scatteredLight + reflectedLight, vec3(1.0));
     
     FragColor = vec4(rgb, Color.a);
+    //FragColor = vec4(Normal, 1);
     
 
 }

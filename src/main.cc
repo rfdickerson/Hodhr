@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "cubemesh.h"
 #include "model.h"
+#include "objmodel.h"
 
 #define PROGRAM_NAME "Hodhr"
 
@@ -138,6 +139,20 @@ int main()
     cubeMesh->init();
     assets->addAsset("cube", std::move(cubeMesh));
 
+
+    // make the obj model
+    auto custom_model = make_unique<Hodhr::ObjModel>();
+    custom_model->setShader(basicShader);
+    custom_model->LoadFile("resources/models/cubey.obj");
+    assets->addAsset("gadget", std::move(custom_model));
+
+
+    Hodhr::Model* custom_m = assets->getModel("gadget");
+    if (custom_m == NULL)
+      {
+        cerr << "Model could not be found" << endl;
+      }
+
     Hodhr::Model* c = assets->getModel("cube");
     Hodhr::Model* t = assets->getModel("terrain");
 
@@ -153,26 +168,34 @@ int main()
     auto terrainNode = make_unique<Hodhr::SceneNode>( "terrain node");
 	terrainNode->setAsset(t);
 	terrainNode->setPosition(0,1,0);
-	//terrainNode->setScale(20);
+	terrainNode->setScale(20);
 	//rootNode->addChild( std::move(terrainNode));
     //  }
 
     // make the cube node
 
-    for (int j=0; j<20;j++) {
-    for (int i=0;i<20;i++)
-      {
-        auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
-	cubeNode->setAsset(c);
-	cubeNode->setPosition(i, 0, j);
-	cubeNode->setScale(0.2);
-	rootNode->addChild( std::move(cubeNode));
-      }
-      }
 
 
-    // rootNode->addChild( std::move(terrainNode) );
-    // rootNode->addChild( std::move(cubeNode) );
+	for (int j=0; j<20;j++) 
+	  {
+	    for (int i=0;i<20;i++)
+	      {
+		auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
+		cubeNode->setAsset(custom_m);
+		cubeNode->setPosition(i*1.5, 0, j*1.5);
+		cubeNode->setScale(0.2);
+		rootNode->addChild( std::move(cubeNode));
+	      }
+	  }
+		
+
+    
+
+    auto custom_model_node = make_unique<Hodhr::SceneNode>("custom object");
+    custom_model_node->setAsset(custom_m);
+    custom_model_node->setScale(.2);
+    rootNode->addChild( std::move (custom_model_node));
+
 
     renderer->setRootSceneNode( std::move(rootNode));
     renderer->setCamera( camera.get() );

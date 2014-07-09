@@ -67,6 +67,7 @@ set(SOURCE
     src/texturemanager.cc
     src/texture.cc
     src/common.cc
+    src/objmodel.cc
     )
     
 set(HEADERS
@@ -84,6 +85,7 @@ set(HEADERS
     include/texturemanager.h
     include/texture.h
     include/common.h
+    include/objmodel.h
     )
 
 ADD_LIBRARY( Hodhr ${SOURCE} ${HEADERS})

@@ -134,9 +134,9 @@ void CubeMesh::init( void )
 
         // front face
 
-        nx = -1;
+        nx = 0;
         ny = 0;
-        nz = 0;
+        nz = 1;
 
         vertices[8].x = -1.0;
         vertices[8].y = -1.0;
@@ -167,9 +167,9 @@ void CubeMesh::init( void )
         vertices[11].nz = nz;
 
         // back face
-        nx = 1;
+        nx = 0;
         ny = 0;
-        nz = 0;
+        nz = -1;
 
         vertices[12].x = -1.0;
         vertices[12].y = -1.0;
@@ -200,9 +200,9 @@ void CubeMesh::init( void )
         vertices[15].nz = nz;
 
         // right face
-        nx = 0;
+        nx = 1;
         ny = 0;
-        nz = -1;
+        nz = 0;
 
 
         vertices[16].x = 1.0;
@@ -233,20 +233,56 @@ void CubeMesh::init( void )
         vertices[19].ny = ny;
         vertices[19].nz = nz;
 
+        // left face
+        nx = -1;
+        ny = 0;
+        nz = 0;
+
+
+        vertices[20].x = -1.0;
+        vertices[20].y = -1.0;
+        vertices[20].z = -1.0;
+        vertices[20].nx = nx;
+        vertices[20].ny = ny;
+        vertices[20].nz = nz;
+
+        vertices[21].x = -1.0;
+        vertices[21].y = 1.0;
+        vertices[21].z = -1.0;
+        vertices[21].nx = nx;
+        vertices[21].ny = ny;
+        vertices[21].nz = nz;
+
+        vertices[22].x = -1.0;
+        vertices[22].y = 1.0;
+        vertices[22].z = 1.0;
+        vertices[22].nx = nx;
+        vertices[22].ny = ny;
+        vertices[22].nz = nz;
+
+        vertices[23].x = -1.0;
+        vertices[23].y = -1.0;
+        vertices[23].z = 1.0;
+        vertices[23].nx = nx;
+        vertices[23].ny = ny;
+        vertices[23].nz = nz;
+
 
 
 
   unsigned short indices[] = {
-      0, 1, 2,
-      0, 2, 3,
+      2, 1, 0,
+      3, 2, 0,
       4, 5, 6,
       4, 6, 7,
       8, 9, 10,
       8, 10, 11,
-      12, 13, 14,
-      12, 14, 15,
+      14, 13, 12,
+      15, 14, 12,
       16, 17, 18,
-      16, 18, 19
+      16, 18, 19,
+      22, 21, 20,
+      23, 22, 20
             
     };
 
@@ -281,8 +317,8 @@ void CubeMesh::init( void )
 void CubeMesh::draw(const SceneNode& node)
 {
 
-  glm::vec3 light_position = glm::vec3(0,5,0);
-  glm::vec3 light_color = glm::vec3(0.2,0.7,0.2);
+  glm::vec3 light_position = glm::vec3(-5, 5,5);
+  glm::vec3 light_color = glm::vec3(249.0/256.0,240.0/256.0,182.0/256.0);
   glm::vec3 ambient_light = glm::vec3(0.2,0.2,0.3);
 
   if (!initialized)

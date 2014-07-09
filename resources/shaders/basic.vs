@@ -1,7 +1,7 @@
 #version 430 core
 
 uniform mat4 MVPMatrix;
-uniform mat4 MVMatrix;
+//uniform mat4 MVMatrix;
 uniform mat3 NormalMatrix;
 
 uniform vec3 LightPosition;

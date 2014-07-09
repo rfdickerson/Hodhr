@@ -11,7 +11,7 @@ const float density = 0.04;
 const float zNear = 0.1;
 const float zFar = 100.0;
 
-uniform vec2 inverseFilterTextureSize = vec2(1/1280,1/768);
+uniform vec2 inverseFilterTextureSize = vec2(1.0/1280.0,1.0/768.0);
 uniform float FXAA_SPAN_MAX = 8.0;
 uniform float FXAA_REDUCE_MIN = (1.0/128.0);
 uniform float FXAA_REDUCE_MUL = 1.0/8.0;
@@ -22,10 +22,10 @@ layout (location = 0) out vec4 color;
 void main(void) {
 
     // fog
-    vec4 dcolor = texture(depthTex, texCoord0);
-    vec4 rcolor = texture(tex, texCoord0);
+    vec4 dcolor = texture2D(depthTex, texCoord0);
+    vec4 rcolor = texture2D(tex, texCoord0);
 
-    vec4 fogcolor = vec4(195/255, 228/255, 233/255, 0.0);
+    vec4 fogcolor = vec4(195.0/255.0, 228.0/255.0, 243.0/255.0, 0.01);
 
     float z_b = dcolor.x;
     float z_n = 2.0 * z_b - 1.0;
@@ -82,5 +82,6 @@ void main(void) {
     else
         color = vec4(result2, 1.0);
 
+    color = mix(fogcolor, color, fogFactor);
     //color = rcolor;
 }
