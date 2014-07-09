@@ -12,6 +12,7 @@ const float zNear = 0.1;
 const float zFar = 100.0;
 
 uniform vec2 inverseFilterTextureSize = vec2(1.0/1280.0,1.0/768.0);
+// uniform vec2 inverseFilterTextureSize = vec2(0.004,.002);
 uniform float FXAA_SPAN_MAX = 8.0;
 uniform float FXAA_REDUCE_MIN = (1.0/128.0);
 uniform float FXAA_REDUCE_MUL = 1.0/8.0;
