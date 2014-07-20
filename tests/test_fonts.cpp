@@ -1,11 +1,13 @@
 #include <iostream>
+#include <string>
 #include <math.h>
 #include <pango/pangocairo.h>
 
 static void
-draw_text(cairo_t *cr)
+draw_text(cairo_t *cr, std::string textmessage)
 {
-  #define FONT "Nimbus Sans Bold 36"
+  //#define FONT "Nimbus Sans Bold 36"
+#define FONT "Neris Black 36"
   PangoLayout *layout;
   PangoFontDescription *desc;
   int i;
@@ -13,7 +15,7 @@ draw_text(cairo_t *cr)
   /* Create a pango layout */
   layout = pango_cairo_create_layout (cr);
 
-  pango_layout_set_text(layout, "Leveled Up!", -1);
+  pango_layout_set_text(layout, textmessage.c_str(), -1);
   desc = pango_font_description_from_string (FONT);
   pango_layout_set_font_description (layout, desc);
   pango_font_description_free(desc);
@@ -41,9 +43,9 @@ int main(int argc, char **argv)
   cairo_status_t status;
   cairo_surface_t *surface;
 
-  if (argc !=2)
+  if (argc <2)
     {
-      std::cerr << "Usage: testFonts outputFilename\n";
+      std::cerr << "Usage: testFonts outputFilename textmessage";
       return 1;
     }
 
@@ -55,7 +57,7 @@ int main(int argc, char **argv)
 
   cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
   cairo_paint (cr);
-  draw_text (cr);
+  draw_text (cr, std::string(argv[2]));
   cairo_destroy (cr);
 
   status = cairo_surface_write_to_png (surface, filename);
