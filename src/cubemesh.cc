@@ -1,26 +1,23 @@
-#include <iostream>
+// Copyright Robert Dickerson 2014
 
-#include "common.h"
-#include "shader.h"
-#include "cubemesh.h"
 
-using namespace std;
+
+#include "include/common.h"
+#include "include/shader.h"
+#include "include/cubemesh.h"
 
 namespace Hodhr {
 
 
-CubeMesh::CubeMesh ()
-{
-  cout << "Created a cube mesh asset" << endl;
+CubeMesh::CubeMesh() {
 }
 
 /**
  * Destroy the cube mesh buffers
  **/
-CubeMesh::~CubeMesh ()
-{
+CubeMesh::~CubeMesh() {
 
-  cout << "Destroying the cube mesh" << endl;
+  fprintf(stderr, "Destroying the cube mesh\n");
   glDisableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vboId);
@@ -28,13 +25,9 @@ CubeMesh::~CubeMesh ()
   glDeleteBuffers(1, &vboiId);
   glBindVertexArray(0);
   glDeleteVertexArrays(1, &vaoId);
-
-
 }
 
-void CubeMesh::init( void )
-{
-
+void CubeMesh::init(void ) {
   HodhrVertex vertices[30];
 
   /*
@@ -295,17 +288,23 @@ void CubeMesh::init( void )
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
+  glVertexAttribPointer(0, 3, GL_FLOAT,
+                        GL_FALSE, sizeof(HodhrVertex),
+                        BUFFER_OFFSET(0));
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(12));
+  glVertexAttribPointer(1, 3, GL_FLOAT,
+                        GL_FALSE, sizeof(HodhrVertex),
+                        BUFFER_OFFSET(12));
   glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
+  glVertexAttribPointer(2, 2, GL_FLOAT,
+                        GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
  
   glBindVertexArray(0);
 
   glGenBuffers(1, &vboiId);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices),
+               indices, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
@@ -314,32 +313,30 @@ void CubeMesh::init( void )
 
 }
 
-void CubeMesh::draw(const SceneNode& node)
-{
+void CubeMesh::draw(const SceneNode& node) {
+  glm::vec3 light_position = glm::vec3(-5.0f, 5.0f, 5.0f);
+  glm::vec3 light_color = glm::vec3(249.0/256.0, 240.0/256.0, 182.0/256.0);
+  glm::vec3 ambient_light = glm::vec3(0.2f, 0.2f, 0.3f);
 
-  glm::vec3 light_position = glm::vec3(-5, 5,5);
-  glm::vec3 light_color = glm::vec3(249.0/256.0,240.0/256.0,182.0/256.0);
-  glm::vec3 ambient_light = glm::vec3(0.2,0.2,0.3);
-
-  if (!initialized)
-    {
-      cerr << "Cube is not initialized yet" << endl;
-      return;
-    }
+  if (!initialized) {
+    fprintf(stderr, "Cube is not initialized yet\n");
+    return;
+  }
 
   glUseProgram(shader->getProgramID());
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();
   glm::mat3 normal_matrix = node.getNormalMatrix();
 
-  glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
-  glUniformMatrix3fv( normal_matrix_loc_, 1, GL_FALSE, &normal_matrix[0][0]);
-  glUniform3f( ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
-  glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
-  glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
+  glUniformMatrix4fv(MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
+  glUniformMatrix3fv(normal_matrix_loc_, 1, GL_FALSE, &normal_matrix[0][0]);
+  glUniform3f(ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
+  glUniform3f(light_color_loc_, light_color.x, light_color.y, light_color.z);
+  glUniform3f(light_position_loc_, light_position.x,
+              light_position.y, light_position.z);
 
-  glUniform1f( constant_attenuation_loc_, .2);
-  glUniform1f( linear_attenuation_loc_, .2);
+  glUniform1f(constant_attenuation_loc_, .2);
+  glUniform1f(linear_attenuation_loc_, .2);
 
   glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
   glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
@@ -352,9 +349,9 @@ void CubeMesh::draw(const SceneNode& node)
 
   glUseProgram(shader->getProgramID());
   
-  //std::cout << "draw cube with indices " << numIndices << std::endl;
+  //  std::cout << "draw cube with indices " << numIndices << std::endl;
 
-  //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
+  //  glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, NULL);
 
   glDisableVertexAttribArray(0);
@@ -362,27 +359,25 @@ void CubeMesh::draw(const SceneNode& node)
   glBindVertexArray(0);
 }
 
-void CubeMesh::setShader(Shader* shader)
-{
+void CubeMesh::setShader(Shader* shader) {
   Model::setShader(shader);
   MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
-  normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
-  light_position_loc_ = glGetUniformLocation(shader->getProgramID(), "LightPosition");
-  eye_direction_loc_ = glGetUniformLocation(shader->getProgramID(), "EyeDirection");
-  constant_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "ConstantAttenuation");
-  linear_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "LinearAttenuation");
-  quadratic_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "QuadraticAttenuation");
+  normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                            "NormalMatrix");
+  light_position_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                             "LightPosition");
+  eye_direction_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                            "EyeDirection");
+  constant_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                                   "ConstantAttenuation");
+  linear_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                                 "LinearAttenuation");
+  quadratic_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(),
+                                                    "QuadraticAttenuation");
   shininess_loc_ = glGetUniformLocation(shader->getProgramID(), "Shininess");
   strength_loc_ = glGetUniformLocation(shader->getProgramID(), "Strength");
   light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
   ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
-
-  cout << "Set cube shader " << shader->getName() 
-       << " with pID " << shader->getProgramID() 
-       << " mvp_matrix: " << MVPMatrixLocation
-       << " normal matrix: " << normal_matrix_loc_
-       << ", ambient light: " << ambient_loc_ <<  endl;
-  
 }
 
-}
+}  // namespace Hodhr

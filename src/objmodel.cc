@@ -1,4 +1,6 @@
-#include "objmodel.h"
+// Copyright Robert Dickerson 2014
+
+
 
 #include <GL/glew.h>
 
@@ -7,7 +9,8 @@
 #include <iostream>
 #include <vector>
 
-#include "shader.h"
+#include "include/objmodel.h"
+#include "include/shader.h"
 
 namespace Hodhr {
 
@@ -32,8 +35,7 @@ namespace Hodhr {
       return elems;
   }
 
-ObjModel::ObjModel ()
-{
+ObjModel::ObjModel () {
   vbo_id_ = 0;
   vao_id_ = 0;
   vboi_id_ = 0;

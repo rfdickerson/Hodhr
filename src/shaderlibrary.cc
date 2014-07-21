@@ -1,4 +1,6 @@
-#include <iostream>
+// Copyright Robert Dickerson 2014
+
+// #include <iostream>
 #include <cstring>
 #include <string>
 #include <fstream>
@@ -6,22 +8,17 @@
 #include <memory>
 #include <utility>
 
-#include "shaderlibrary.h"
+#include "include/shaderlibrary.h"
 
-using namespace std;
 
 namespace Hodhr {
 
-ShaderLibrary::ShaderLibrary()
-{
+ShaderLibrary::ShaderLibrary() { }
 
 
-}
-
-
-ShaderLibrary::~ShaderLibrary()
-{
-    cout << "Cleaning up shader library" << endl;
+ShaderLibrary::~ShaderLibrary() {
+  // cout << "Cleaning up shader library" << endl;
+  fprintf(stderr, "Cleaning up shader library\n");
 }
 
 
@@ -40,15 +37,16 @@ std::string loadFile(std::string filename)
         return (contents);
     }
 
-    throw (errno);
+    throw(errno);
 }
 
-void ShaderLibrary::AddShader(std::string shaderName, std::string vertexShaderSrc, std::string fragmentShaderSrc)
-{
+void ShaderLibrary::AddShader(std::string shaderName,
+                              std::string vertexShaderSrc,
+                              std::string fragmentShaderSrc) {
 
-  //cout << "Added shader " << vertexShaderSrc << endl;
+  // cout << "Added shader " << vertexShaderSrc << endl;
   string shaderSrc = loadFile(vertexShaderSrc);
-  //cout << "Loaded " << shaderSrc << endl;
+  // cout << "Loaded " << shaderSrc << endl;
 
     const char *c_str = shaderSrc.c_str();
 
@@ -73,13 +71,13 @@ void ShaderLibrary::AddShader(std::string shaderName, std::string vertexShaderSr
 
     char logInfo[128];
     glGetProgramInfoLog(pId, 128, NULL, logInfo);
-    cout << "Compiled " << shaderName << endl;
-    cout << logInfo << endl;
-
+    // cout << "Compiled " << shaderName << endl;
+    // cout << logInfo << endl;
+    fprintf(stderr, "Compiled %s\n", shaderName.c_str());
+    fprintf(stderr, "Compilation log: %s", logInfo);
     auto newShader = make_unique<Shader>(shaderName, pId);
 
     shaders_[std::string(shaderName)] = move(newShader);
-
 }
 
 Shader* ShaderLibrary::GetShader(std::string shader_name)

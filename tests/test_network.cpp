@@ -1,19 +1,16 @@
-#include <iostream>
+// Copyright Robert Dickerson 2014
+
 #include <memory>
 #include <utility>
 
-#include "networkmanager.h"
+#include "include/networkmanager.h"
 
-using namespace std;
+int main(int argc, char** argv)  {
+  fprintf(stdout, "Testing the network manager\n");
 
-int main(int argc, char** argv) 
-{
-  cout << "Testing the network library" << endl;
-
-  auto networkMgr = make_unique<Hodhr::NetworkManager>();
+  auto networkMgr = std::make_unique<Hodhr::NetworkManager>();
 
   networkMgr->connectServer("localhost", 1337);
 
   return 0;
-
 }

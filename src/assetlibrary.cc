@@ -1,12 +1,13 @@
-#include <iostream>
+// Copyright Robert Dickerson 2014
+
+// #include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "assetlibrary.h"
-#include "terrainpatch.h"
+#include "include/assetlibrary.h"
+#include "include/terrainpatch.h"
 
-using namespace std;
 
 namespace Hodhr {
 
@@ -17,40 +18,34 @@ AssetLibrary::AssetLibrary()
     
 }
 
-AssetLibrary::~AssetLibrary()
-{
-    cout << "Cleaning up the asset Library" << endl;
-    // models.erase();
+AssetLibrary::~AssetLibrary() {
+  //  cout << "Cleaning up the asset Library" << endl;
+  fprintf(stderr, "Cleaning up the asset library");
+  // models.erase();
 
-    /*
+  /*
     for (auto iter = models.begin(); iter != models.end(); ++iter)
     {
-        iter->second.release();
-
+    iter->second.release();
+    
     }
-
+    
     models.clear();
-    */
+  */
 }
 
-void AssetLibrary::addTerrainPatch(std::string name)
-{
-
-    auto terrain = make_unique<TerrainPatch>();
-    models[name] = move(terrain);
+void AssetLibrary::addTerrainPatch(std::string name) {
+  auto terrain = make_unique<TerrainPatch>();
+  models[name] = move(terrain);
 }
 
 
-Model* AssetLibrary::getModel(std::string assetName)
-{
-
+Model* AssetLibrary::getModel(std::string assetName) {
   return models[assetName].get();
 }
 
-void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model)
-{
+void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model) {
   models[name] = std::move(model);
-
 }
 
-}
+}  // namespace Hodhr

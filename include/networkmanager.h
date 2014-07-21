@@ -1,17 +1,16 @@
-#ifndef NETWORKMANAGER_H
-#define NETWORKMANAGER_H
+// Copyright Robert Dickerson 2014
 
+#ifndef INCLUDE_NETWORKMANAGER_H_
+#define INCLUDE_NETWORKMANAGER_H_
+
+#include <SDL_net.h>
 #include <string>
-
-#include "SDL_net.h"
 
 namespace Hodhr {
 
 
-class NetworkManager
-{
+class NetworkManager {
  public:
-
   NetworkManager();
   virtual ~NetworkManager();
 
@@ -19,13 +18,11 @@ class NetworkManager
   void disconnectServer();
 
  private:
-
   // handle to the socket
   int sockfd;
   TCPsocket tcpsock;
-
 };
 
-}
+}  // namespace Hodhr
 
-#endif
+#endif  // INCLUDE_NETWORKMANAGER_H_

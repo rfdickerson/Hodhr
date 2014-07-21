@@ -53,7 +53,7 @@ include_directories( ${GLM_INCLUDE_DIRS} )
 include_directories( ${SDL2_INCLUDE_DIRS} )
 include_directories( ${PANGOCAIRO_INCLUDE_DIRS} )
 
-include_directories( include )
+include_directories( . )
 
 set(SOURCE
     ${SOURCE}
@@ -71,6 +71,7 @@ set(SOURCE
     src/texture.cc
     src/common.cc
     src/objmodel.cc
+    src/uilabel.cc
     )
     
 set(HEADERS
@@ -89,6 +90,7 @@ set(HEADERS
     include/texture.h
     include/common.h
     include/objmodel.h
+    include/uilabel.h
     )
 
 ADD_LIBRARY( Hodhr ${SOURCE} ${HEADERS})
@@ -113,6 +115,7 @@ TARGET_LINK_LIBRARIES(OpenWorld ${GLFW_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld ${GLEW_LIBRARY})
 TARGET_LINK_LIBRARIES(OpenWorld ${EXTRA_LIBS})
 TARGET_LINK_LIBRARIES(OpenWorld ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(OpenWorld ${PANGOCAIRO_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld Hodhr)
 
 TARGET_LINK_LIBRARIES(testNetwork Hodhr)

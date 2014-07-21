@@ -1,5 +1,7 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+// Copyright Robert Dickerson 2014
+
+#ifndef INCLUDE_CAMERA_H_
+#define INCLUDE_CAMERA_H_
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -14,15 +16,10 @@ class Camera
  public:
   Camera(int width, int height);
   virtual ~Camera();
-  
-  void rotate( float deltaTime, float dx, float dy);
-
-  void move( float deltaTime, float speed );
-  
-  glm::mat4 const& getViewMatrix();
-  
-  glm::mat4 const& getProjectionMatrix();
-  
+  void rotate(float deltaTime, float dx, float dy);
+  void move(float deltaTime, float speed);
+  glm::mat4 getViewMatrix() const;
+  glm::mat4 getProjectionMatrix() const;
  protected:
  
  private:
@@ -49,6 +46,6 @@ class Camera
 
 };
 
-}
+}  // namespace Hodhr
 
-#endif // CAMERA_H
+#endif  // INCLUDE_CAMERA_H_

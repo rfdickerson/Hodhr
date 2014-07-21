@@ -1,4 +1,4 @@
-#include <iostream>
+// Copyright Robert Dickerson 2014
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -6,73 +6,71 @@
 #include <SDL.h>
 #include <memory>
 
-#include "scenenode.h"
-#include "shaderlibrary.h"
-#include "terrainpatch.h"
-#include "assetlibrary.h"
-#include "renderer.h"
-#include "camera.h"
-#include "cubemesh.h"
-#include "model.h"
-#include "objmodel.h"
+#include "include/scenenode.h"
+#include "include/shaderlibrary.h"
+#include "include/terrainpatch.h"
+#include "include/assetlibrary.h"
+#include "include/renderer.h"
+#include "include/camera.h"
+#include "include/cubemesh.h"
+#include "include/model.h"
+#include "include/objmodel.h"
+#include "include/uilabel.h"
 
 #define PROGRAM_NAME "Hodhr"
 
 const int WIDTH = 1280;
 const int HEIGHT = 768;
 
-using namespace std;
 
-void sdldie(const char *msg)
-{
+void sdldie(const char *msg) {
     printf("%s: %s\n", msg, SDL_GetError());
     SDL_Quit();
     exit(1);
 }
 
-void checkSDLError(int line = -1)
-{
-        const char *error = SDL_GetError();
-        if (*error != '\0')
-        {
-                printf("SDL Error: %s\n", error);
-                if (line != -1)
-                        printf(" + line: %i\n", line);
-                SDL_ClearError();
-        }
+void checkSDLError(int line = -1) {
+  const char *error = SDL_GetError();
+  if (*error != '\0') {
+    printf("SDL Error: %s\n", error);
+    if (line != -1)
+      printf(" + line: %i\n", line);
+    SDL_ClearError();
+  }
 }
 
 
-int main()
-{
+int main() {
+  // int oldTicks = 0;
 
-    int oldTicks=0;
+  SDL_Window *mainwindow;
+  SDL_GLContext maincontext;
 
-    SDL_Window *mainwindow;
-    SDL_GLContext maincontext;
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) <0)
-    {
-        cout << "err";
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) <0) {
+    fprintf(stderr, "Could not initialize SDL\n");
+  }
+  
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
+                      SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+  
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+  
     // multisample antialiasing
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    mainwindow = SDL_CreateWindow(PROGRAM_NAME,
+                                  SDL_WINDOWPOS_CENTERED,
+                                  SDL_WINDOWPOS_CENTERED,
+                                  WIDTH, HEIGHT,
+                                  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if (!mainwindow) /* Die if creation failed */
-        sdldie("Unable to create window");
-
+      sdldie("Unable to create window");
+    
 
     maincontext = SDL_GL_CreateContext(mainwindow);
     checkSDLError(__LINE__);
@@ -81,38 +79,40 @@ int main()
 
     SDL_GL_SetSwapInterval(1);
     SDL_SetRelativeMouseMode(SDL_TRUE);
-
+    
     glewExperimental = GL_TRUE;
     GLenum result = glewInit();
-    if (result != GLEW_OK)
-      {
-	cerr << "Problem initializing GLEW" << endl;
-      }
+    if (result != GLEW_OK) {
+      fprintf(stderr, "Problem initializing GLEW\n");
+    }
 
-    if (GLEW_VERSION_1_1)
-      {
-	cout << "Graphics Successfully Initialized" << endl;
-	cout << "  Version: " << glGetString(GL_VERSION) << endl;
-	cout << "  Vendor: " << glGetString(GL_VENDOR) << endl;
-	cout << " Renderer: " << glGetString(GL_RENDERER) << endl;
-      }
+    if (GLEW_VERSION_1_1) {
+      fprintf(stderr, "Graphics successfully initialized\n");
+      fprintf(stderr, "Version: %s", glGetString(GL_VERSION));
+      fprintf(stderr, "Vendor: %s", glGetString(GL_VENDOR));
+      fprintf(stderr, "Renderer: %s", glGetString(GL_RENDERER));
+    }
 
-    if (SDL_HasSSE42)
-      {
-	cout << "CPU has SSE4.2 features!" << endl;
-      }
+    if (SDL_HasSSE42())      {
+      fprintf(stderr, "CPU has SSE4.2 features!\n");
+    }
 
-    cout << "Number of logical CPU cores: " << SDL_GetCPUCount() << endl;
-    cout << "System has " << SDL_GetSystemRAM() << " memory" << endl;
-    //ShaderLibrary *sl = &ShaderLibrary::getInstance();
+    fprintf(stderr, "CPU has %i logical CPU cores\n", SDL_GetCPUCount());
+    fprintf(stderr, "System has %i MB of memory\n", SDL_GetSystemRAM());
 
-
+    // initialize the UI
+    auto custom_label = make_unique<Hodhr::UILabel>();
+    custom_label->create_text("Hodhr");
 
     SDL_Event event;
 
     auto sl = make_unique<Hodhr::ShaderLibrary>();
-    sl->AddShader("basic", "resources/shaders/basic.vs", "resources/shaders/basic.fs");
-    sl->AddShader("screen", "resources/shaders/screen.vert", "resources/shaders/screen.frag");
+    sl->AddShader("basic",
+                  "resources/shaders/basic.vs",
+                  "resources/shaders/basic.fs");
+    sl->AddShader("screen",
+                  "resources/shaders/screen.vert",
+                  "resources/shaders/screen.frag");
 
     auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
     renderer->init();
@@ -148,62 +148,51 @@ int main()
 
 
     Hodhr::Model* custom_m = assets->getModel("gadget");
-    if (custom_m == NULL)
-      {
-        cerr << "Model could not be found" << endl;
-      }
+    if (custom_m == NULL) {
+      fprintf(stderr, "Model could not be found\n");
+     
+    }
 
     Hodhr::Model* c = assets->getModel("cube");
     Hodhr::Model* t = assets->getModel("terrain");
 
-    //t->setShader(basicShader);
-    //t->init();
+    // t->setShader(basicShader);
+    // t->init();
 
     // make the scene graph
     auto rootNode = make_unique<Hodhr::SceneNode>("root node");
 
     // make the terrain node
-    //for (int i=0;i<9;i++)
-    //  {
-    auto terrainNode = make_unique<Hodhr::SceneNode>( "terrain node");
-	terrainNode->setAsset(t);
-	terrainNode->setPosition(0,1,0);
-	terrainNode->setScale(20);
-	//rootNode->addChild( std::move(terrainNode));
-    //  }
-
-    // make the cube node
 
 
+    auto terrainNode = make_unique<Hodhr::SceneNode>("terrain node");
+    terrainNode->setAsset(t);
+    terrainNode->setPosition(0.0f, 1.0f, 0.0f);
+    terrainNode->setScale(20.0f);
+    // rootNode->addChild( std::move(terrainNode));
 
-	for (int j=0; j<20;j++) 
-	  {
-	    for (int i=0;i<20;i++)
-	      {
-		auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
-		cubeNode->setAsset(custom_m);
-		cubeNode->setPosition(i*1.5, 0, j*1.5);
-		cubeNode->setScale(0.2);
-		rootNode->addChild( std::move(cubeNode));
-	      }
-	  }
-		
-
-    
+    for (int j = 0; j < 20; ++j) {
+      for (int i = 0; i < 20; i++) {
+        auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
+        cubeNode->setAsset(custom_m);
+        cubeNode->setPosition(i*1.5, 0, j*1.5);
+        cubeNode->setScale(0.2);
+        rootNode->addChild(std::move(cubeNode));
+      }
+    }
 
     auto custom_model_node = make_unique<Hodhr::SceneNode>("custom object");
     custom_model_node->setAsset(custom_m);
     custom_model_node->setScale(.2);
-    rootNode->addChild( std::move (custom_model_node));
+    rootNode->addChild(std::move(custom_model_node));
 
-
-    renderer->setRootSceneNode( std::move(rootNode));
-    renderer->setCamera( camera.get() );
+    renderer->setRootSceneNode(std::move(rootNode));
+    renderer->setCamera(camera.get() );
 
     int done = 0;
     int interval = 20;
 
-    int x,y;
+    int x, y;
 
     int currentTick;
     int lastTick;
@@ -211,73 +200,55 @@ int main()
 
     bool keysHeld[323] = {false};
 
-    while (done == 0)
-    {
-
-        currentTick = SDL_GetTicks();
-        dt = ((float)(currentTick-lastTick))*0.1;
-        lastTick = currentTick;
-        //waitTicks = (oldTicks + interval) - currentTick;
-        //oldTicks = currentTick;
-
-        //if (waitTicks>0)
-        //{
-        //    SDL_Delay(1);
-        //}
-
-        while (SDL_PollEvent(&event))
+    while (done == 0) {
+      currentTick = SDL_GetTicks();
+      dt = static_cast<float>((currentTick-lastTick))*0.1f;
+      lastTick = currentTick;
+      // waitTicks = (oldTicks + interval) - currentTick;
+      // oldTicks = currentTick;
+      
+      while (SDL_PollEvent(&event))        {
+        if ( event.type == SDL_MOUSEMOTION )
         {
-            if ( event.type == SDL_MOUSEMOTION )
-            {
-                x = event.motion.x;
-                y = event.motion.y;
+          x = event.motion.x;
+          y = event.motion.y;
+          
+          //cout << "dt:" << dt << " dx: "
+          //     << event.motion.xrel << " dy: " << event.motion.yrel << endl;
 
-		//cout << "dt:" << dt << " dx: "
-		//     << event.motion.xrel << " dy: " << event.motion.yrel << endl;
-            camera->rotate( dt, event.motion.xrel, event.motion.yrel);
+          camera->rotate(dt, event.motion.xrel, event.motion.yrel);
 
-                //cout << "X: " << x << " Y: " << y << endl;
-            }
-
-            if (event.type == SDL_QUIT) { done = 1;}
-            if (event.type == SDL_KEYDOWN)
-            {
-                keysHeld[event.key.keysym.sym] = true;
-            }
-            if (event.type == SDL_KEYUP)
-            {
-                keysHeld[event.key.keysym.sym] = false;
-            }
-	      //done = 1;
-
+          //cout << "X: " << x << " Y: " << y << endl;
         }
 
-        if (keysHeld[SDLK_ESCAPE])
-        {
-            done = 1;
+        if (event.type == SDL_QUIT) { done = 1;}
+        if (event.type == SDL_KEYDOWN) {
+          keysHeld[event.key.keysym.sym] = true;
         }
-        if (keysHeld[SDLK_w])
-        {
-            camera->move( dt, .02);
+        if (event.type == SDL_KEYUP) {
+          keysHeld[event.key.keysym.sym] = false;
         }
-        if (keysHeld[SDLK_s])
-        {
-            camera->move( dt, -.02);
+        //done = 1;
 
-        }
+      }
 
-	/* draw the scene */
-        renderer->draw();
+      if (keysHeld[SDLK_ESCAPE]) {
+        done = 1;
+      }
+      if (keysHeld[SDLK_w]) {
+        camera->move(dt, .02);
+      }
+      if (keysHeld[SDLK_s]) {
+        camera->move(dt, -.02);
+      }
 
-        SDL_GL_SwapWindow(mainwindow);
+      /* draw the scene */
+      renderer->draw();
 
-        SDL_Delay(6);
+      SDL_GL_SwapWindow(mainwindow);
 
+      SDL_Delay(1);
     }
-
-    //delete terrain;
-    // delete renderer;
-
 
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);

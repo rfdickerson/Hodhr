@@ -22,70 +22,64 @@
    THE SOFTWARE.
 **/
 
+#include <GL/glew.h>
 
-#include <iostream>
-#include <fstream>
+// #include <iostream>
+// #include <fstream>
 #include <string>
 #include <memory>
 
-#include <GL/glew.h>
 
-#include "common.h"
-#include "renderer.h"
-#include "shader.h"
-#include "shaderlibrary.h"
-#include "terrainpatch.h"
+
+#include "include/common.h"
+#include "include/renderer.h"
+#include "include/shader.h"
+#include "include/shaderlibrary.h"
+#include "include/terrainpatch.h"
 
 
 namespace Hodhr {
 
 
-Renderer::Renderer (GLuint targetWidth, GLuint targetHeight)
-{
+Renderer::Renderer(GLuint targetWidth, GLuint targetHeight) {
+this->targetWidth = targetWidth;
+this->targetHeight = targetHeight;
 
-    this->targetWidth = targetWidth;
-    this->targetHeight = targetHeight;
-
-    textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
-
+textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
 }
 
-Renderer::~Renderer ()
-{
-    std::cout << "Cleaning up render system" << std::endl;
-    //delete terrain;
+Renderer::~Renderer() {
+// std::cout << "Cleaning up render system" << std::endl;
+//  delete terrain;
+fprintf(stderr, "Cleaning up render system");
 
+glDeleteFramebuffers(2, frameBufferID);
+glDeleteRenderbuffers(2, renderBufferID);
 
-    glDeleteFramebuffers(2, frameBufferID);
-    glDeleteRenderbuffers(2, renderBufferID);
+glDeleteTextures(2, textureIDs);
+glDeleteBuffers(1, &vaoID);
+glDeleteBuffers(1, &vboID);
 
-    glDeleteTextures(2, textureIDs);
-    glDeleteBuffers(1,&vaoID);
-    glDeleteBuffers(1,&vboID);
-
-    printOglError("Clean up render system");
-
+printOglError("Clean up render system");
 }
 
-void Renderer::draw ()
-{
-
+void Renderer::draw() {
 // draw the scene first
-    if (!camera)
-    {
-        cout << "No camera attached!!" << endl;
-        return;
-    }
+if (!camera) {
+// cout << "No camera attached!!" << endl;
+fprintf(stderr, "No camera attached\n");
+return;
+}
 
-    // update the transformation matrices
-    rootSceneNode->updateAll(*camera);
+// update the transformation matrices
+rootSceneNode->updateAll(*camera);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1);
 
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    //glBindTexture(GL_TEXTURE_2D, 0);
+//  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//  glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
 
     if (rootSceneNode != NULL) {
@@ -106,8 +100,8 @@ void Renderer::draw ()
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glViewport(0,0, targetWidth, targetHeight);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, targetWidth, targetHeight);
 
     glUseProgram(screenShader->getProgramID());
 
@@ -125,7 +119,7 @@ void Renderer::draw ()
     texLoc = glGetUniformLocation(screenShader->getProgramID(), "depthTex");
     glUniform1i(texLoc, 1);
 
-    //glReadBuffer(GL_COLOR_ATTACHMENT0);
+    //  glReadBuffer(GL_COLOR_ATTACHMENT0);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 
@@ -135,54 +129,48 @@ void Renderer::draw ()
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
-
-
 }
 
-void Renderer::init ()
-{
-
+void Renderer::init() {
   printOglError("Begin Render System init");
+  /* Create the render buffers */
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_TEXTURE_2D);
 
-    /* Create the render buffers */
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
+  // culling stuff
+  //  glFrontFace(GL_CW);
+  //  glCullFace(GL_BACK);
+  //  glEnable(GL_CULL_FACE);
 
-    // culling stuff
-    //glFrontFace(GL_CW);
-    //glCullFace(GL_BACK);
-    //glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_CLAMP);
+  // Accept fragment if it closer to the camera than the former one
+  glDepthFunc(GL_LESS);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_DEPTH_CLAMP);
-    // Accept fragment if it closer to the camera than the former one
-    glDepthFunc(GL_LESS);
+  glGenTextures(2, textureIDs);
 
-    glGenTextures(2, textureIDs);
+  fprintf(stderr, "Texture ID for color channel is %d\n", textureIDs[0]);
 
-    std::cout << "Texture ID for Color Channel is " << textureIDs[0] << std::endl;
-
-    glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-
-    glTexImage2D(GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            targetWidth,
-            targetHeight,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            textureBuffer);
+  glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
+  glTexImage2D(GL_TEXTURE_2D,
+               0,
+               GL_RGBA,
+               targetWidth,
+               targetHeight,
+               0,
+               GL_RGBA,
+               GL_UNSIGNED_BYTE,
+               textureBuffer);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    std::cout << "Texture ID for Depth Channel is "
-	      << textureIDs[1] << std::endl;
 
+    fprintf(stderr, "Texture ID for depth channel is %d\n", textureIDs[1]);
+    
     printOglError("Create deferred rendering color texture");
 
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
@@ -234,7 +222,7 @@ void Renderer::init ()
     glBindRenderbuffer(GL_FRAMEBUFFER, 0);
     */
 
-    glGenFramebuffers(2,frameBufferID);
+    glGenFramebuffers(2, frameBufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
 
     glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
@@ -269,34 +257,32 @@ void Renderer::init ()
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*20, quadData, GL_STATIC_DRAW);
-    cout << "Screen vertex buffer is " << vboID << endl;
-
+    // cout << "Screen vertex buffer is " << vboID << endl;
+    fprintf(stderr, "Screen vertex buffer is %d\n", vboID);
+    
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, (void*)0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, false, 20, (void*)12);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 20,
+                          reinterpret_cast<void*>(0));
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 20,
+                          reinterpret_cast<void*>(12));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     printOglError("Create deferred rendering surface");
-
-
 }
 
-void Renderer::setScreenShader(Shader* s)
-{
+void Renderer::setScreenShader(Shader* s) {
     this->screenShader = s;
 }
 
-void Renderer::setCamera(Camera* c)
-{
+void Renderer::setCamera(Camera* c) {
     this->camera = c;
 }
 
-void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode)
-{
+void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode) {
     this->rootSceneNode = std::move(sceneNode);
 }
 
-}
+}  // namespace Hodhr

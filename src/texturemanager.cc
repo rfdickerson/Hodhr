@@ -1,20 +1,23 @@
-#include <utility>
+// copyright
+
+#include "include/texturemanager.h"
+
 #include <algorithm>
 #include <memory>
+#include <utility>
 
-#include "texturemanager.h"
 
-using namespace Hodhr;
 
-TextureManager::TextureManager()
-{
+namespace Hodhr {
+
+TextureManager::TextureManager() {
 }
 
-void TextureManager::LoadTexture(std::string texture_name, std::string filename)
-{
+void
+TextureManager::LoadTexture(std::string texture_name, std::string filename) {
+  auto texture = std::make_unique<Texture>(texture_name);
 
-    auto texture = std::make_unique<Texture>(texture_name);
-
-    textures_[texture_name] = move(texture);
-
+  textures_[texture_name] = move(texture);
 }
+
+}   // namespace Hodhr

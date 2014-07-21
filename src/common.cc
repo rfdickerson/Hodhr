@@ -1,19 +1,21 @@
-#include "common.h"
-
-#include <iostream>
+// Copyright Robert Dickerson
 
 #include <GL/glew.h>
+#include "include/common.h"
 
-int printOglError(std::string instruction)
-{
-  int retCode = 0;
-  GLenum glErr = glGetError();
-  if (glErr != GL_NO_ERROR)
-  {
-      std::cerr << "glError after " << instruction << " error: " << gluErrorString(glErr) << std::endl;
-      retCode = 1;
-  }
+namespace Hodhr {
 
-  return retCode;
-
+int
+printOglError(std::string instruction) {
+int retCode = 0;
+GLenum glErr = glGetError();
+if (glErr != GL_NO_ERROR) {
+fprintf(stderr,
+          "OpenGL error after %s, error was %s\n",
+          instruction.c_str(), gluErrorString(glErr));
+retCode = 1;
 }
+return retCode;
+}
+
+}  // namespace Hodhr
