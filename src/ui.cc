@@ -29,6 +29,7 @@ namespace Hodhr {
   void UI::draw() {
     for (unsigned int index = 0; index < widgets_.size(); ++index) {
       widgets_[index]->draw();
+      widgets_[index]->update();
       }
   }
 

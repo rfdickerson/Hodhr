@@ -5,6 +5,7 @@
 
 #include <pango/pangocairo.h>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include <string>
 
@@ -20,6 +21,7 @@ class UILabel {
   virtual ~UILabel(void);
   void create_text(std::string);
   void draw();
+  void update();
   void setShader(Shader* shader);
 
  private:
@@ -27,6 +29,10 @@ class UILabel {
   GLuint texture_id_;
   GLuint vbo_id_, vboi_id_, vao_id_;
   // GLint shader_id_;
+  glm::mat4 mv_matrix_;
+
+  float time_;
+  float opacity_;
 
   Shader* active_shader_;
 

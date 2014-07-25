@@ -135,6 +135,7 @@ void Renderer::drawUI()
   // draw the UI on top of this
   if (ui_) {
       ui_->draw();
+
     }
 }
 

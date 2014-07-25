@@ -137,7 +137,7 @@ int main() {
 
     auto custom_label = std::make_unique<Hodhr::UILabel>();
     custom_label->setShader(flatShader);
-    custom_label->create_text("Levelled Up!");
+    custom_label->create_text("Leveled Up!");
 
     user_interface->addWidget(std::move(custom_label));
     renderer->setUserInterface(user_interface.get());

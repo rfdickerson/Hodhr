@@ -9,8 +9,15 @@
 #include <stdlib.h>
 #include <vector>
 
-#define FONT "Sans Bold 18"
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+
+// #define FONT "Sans Bold 38"
+#define FONT "Alegreya Sans SC Black 28"
 #define TEXT "The quick brown fox is so かわいい!"
+// #define TEXT "The 1st was Pompey the Great’s most elite and loyal legion. It fought against Caesar in major civil war battles at Pharsalus, Thapsus and Munda. It is very likely that Imperial 1st Legion of Augustus have been the direct descendant of Pompey’s 1st. In the year of 29 BC it began its service in Cantabrian War in Spain, around 25 BC emperor granted it the title “Augusta” in recognition for its meritorious service. However, in 19 BC Legion was stripped of “Augusta” title for cowardice by Marcus Agrippa. This punishment was dealt to Legion because of cowardice during one of the battle in Cantabrian War. That same year, legion was transferred to Gaul."
+#define TEXT "The 1st was Pompey the Great’s most elite and loyal legion. It fought against Caesar in major civil war battles at Pharsalus"
 
 namespace Hodhr {
 
@@ -19,6 +26,9 @@ UILabel::UILabel() {
   vbo_id_ = 0;
   vao_id_ = 0;
   vboi_id_ = 0;
+  opacity_ = 0.2f;
+  time_ = 0.0f;
+
 }
 
 UILabel::~UILabel() {
@@ -45,10 +55,26 @@ void UILabel::setShader(Shader *shader) {
 
 void
 UILabel::create_text(std::string text_string) {
+  render_text(TEXT,
+                &this->texture_id_,
+                &this->text_width,
+                &this->text_height);
+
+  glm::vec3 Scale = glm::vec3(this->text_width/1280.0f, this->text_height/720.0f, 1);
+    glm::vec3 Position = glm::vec3(0.2f, 0.2f, 0.0f);
+    mv_matrix_ = glm::translate(
+          glm::mat4(1.0f),
+          Position);
+
+    mv_matrix_ = glm::scale(
+          mv_matrix_,
+          Scale);
+  /*
   render_text(text_string.c_str(),
               &this->texture_id_,
               &this->text_width,
               &this->text_height);
+              */
 
   createQuad();
 }
@@ -61,6 +87,13 @@ void UILabel::draw() {
       this->text_width,
       this->text_height,
       this->texture_id_);
+}
+
+void UILabel::update()
+{
+  opacity_ = sin(time_/10);
+  time_ += .01f;
+
 }
 
 /* Create a texture from the pixels for OpenGL */
@@ -179,13 +212,18 @@ void UILabel::draw_texture(int width,
 
   GLint texLoc = glGetUniformLocation(active_shader_->getProgramID(), "tex");
   glUniform1i(texLoc, 0);
-  fprintf(stderr, "Coord for texture is %d\n", texLoc);
+  // fprintf(stderr, "Coord for texture is %d\n", texLoc);
 
   GLint opacityLoc = glGetUniformLocation(active_shader_->getProgramID(),
                                           "Opacity");
-  glUniform1f(opacityLoc, 0.8f);
-  fprintf(stderr, "Coord for opacity is %d\n", opacityLoc);
+  glUniform1f(opacityLoc, opacity_);
+  // fprintf(stderr, "Coord for opacity is %d\n", opacityLoc);
   printOglError("set uniforms");
+
+  GLint mv_matrix_loc = glGetUniformLocation(active_shader_->getProgramID(),
+                                             "MVMatrix");
+  //glUniform4(mv_matrix_loc, mv_matrix_);
+  glUniformMatrix4fv( mv_matrix_loc, 1, GL_FALSE, &mv_matrix_[0][0]);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo_id_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
