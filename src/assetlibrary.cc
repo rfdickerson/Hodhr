@@ -20,7 +20,7 @@ AssetLibrary::AssetLibrary()
 
 AssetLibrary::~AssetLibrary() {
   //  cout << "Cleaning up the asset Library" << endl;
-  fprintf(stderr, "Cleaning up the asset library");
+  fprintf(stderr, "Cleaning up the asset library\n");
   // models.erase();
 
   /*

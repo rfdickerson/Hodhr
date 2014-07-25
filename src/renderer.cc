@@ -29,106 +29,128 @@
 #include <string>
 #include <memory>
 
-
-
 #include "include/common.h"
 #include "include/renderer.h"
 #include "include/shader.h"
 #include "include/shaderlibrary.h"
 #include "include/terrainpatch.h"
-
+#include "include/ui.h"
 
 namespace Hodhr {
 
 
 Renderer::Renderer(GLuint targetWidth, GLuint targetHeight) {
-this->targetWidth = targetWidth;
-this->targetHeight = targetHeight;
+  this->targetWidth = targetWidth;
+  this->targetHeight = targetHeight;
 
-textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
+  textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
 }
 
 Renderer::~Renderer() {
-// std::cout << "Cleaning up render system" << std::endl;
-//  delete terrain;
-fprintf(stderr, "Cleaning up render system");
 
-glDeleteFramebuffers(2, frameBufferID);
-glDeleteRenderbuffers(2, renderBufferID);
+  fprintf(stderr, "Cleaning up render system\n");
 
-glDeleteTextures(2, textureIDs);
-glDeleteBuffers(1, &vaoID);
-glDeleteBuffers(1, &vboID);
+  glDeleteFramebuffers(2, frameBufferID);
+  glDeleteRenderbuffers(2, renderBufferID);
 
-printOglError("Clean up render system");
+  glDeleteTextures(2, textureIDs);
+  glDeleteBuffers(1, &vaoID);
+  glDeleteBuffers(1, &vboID);
+
+  printOglError("Clean up render system");
+}
+
+/*
+ * Draw the Scene
+ */
+void Renderer::drawScene()
+{
+  if (!camera) {
+      fprintf(stderr, "No camera attached\n");
+      return;
+    }
+
+  // update the transformation matrices
+  rootSceneNode->updateAll(*camera);
+
+  glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glUseProgram(0);
+
+  if (rootSceneNode != NULL) {
+      rootSceneNode->draw();
+  }
+
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glBindVertexArray(0);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glUseProgram(0);
+}
+
+void Renderer::drawOffscreenSurface()
+{
+  // draw the deferred texture rendering
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+     glUseProgram(screenShader->getProgramID());
+
+
+     glBindVertexArray(vaoID);
+     glEnableVertexAttribArray(0);
+     glEnableVertexAttribArray(1);
+
+     glActiveTexture(GL_TEXTURE0);
+     glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
+     int texLoc = glGetUniformLocation(screenShader->getProgramID(), "tex");
+     glUniform1i(texLoc, 0);
+     fprintf(stderr, "Location of texture for deferred surface is %d\n", texLoc);
+
+     glActiveTexture(GL_TEXTURE1);
+     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
+     texLoc = glGetUniformLocation(screenShader->getProgramID(), "depthTex");
+     glUniform1i(texLoc, 1);
+
+     //  glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+     glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+
+     glDisableVertexAttribArray(0);
+     glDisableVertexAttribArray(1);
+     glBindVertexArray(0);
+
+     glBindTexture(GL_TEXTURE_2D, 0);
+     glUseProgram(0);
+     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+}
+
+
+void Renderer::drawUI()
+{
+  // draw the UI on top of this
+  if (ui_) {
+      ui_->draw();
+    }
 }
 
 void Renderer::draw() {
-// draw the scene first
-if (!camera) {
-// cout << "No camera attached!!" << endl;
-fprintf(stderr, "No camera attached\n");
-return;
-}
 
-// update the transformation matrices
-rootSceneNode->updateAll(*camera);
+  drawScene();
 
-    glClearColor(0.2f, 0.2f, 0.2f, 1);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glViewport(0, 0, targetWidth, targetHeight);
 
-//  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//  glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
+  drawOffscreenSurface();
 
-    if (rootSceneNode != NULL) {
-        rootSceneNode->draw();
-    }
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glBindVertexArray(0);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
-
-    // draw the deferred texture rendering
+  drawUI();
 
 
-    glUseProgram(screenShader->getProgramID());
-
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glViewport(0, 0, targetWidth, targetHeight);
-
-    glUseProgram(screenShader->getProgramID());
-
-    glBindVertexArray(vaoID);
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-    int texLoc = glGetUniformLocation(screenShader->getProgramID(), "tex");
-    glUniform1i(texLoc, 0);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
-    texLoc = glGetUniformLocation(screenShader->getProgramID(), "depthTex");
-    glUniform1i(texLoc, 1);
-
-    //  glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
-
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glBindVertexArray(0);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glUseProgram(0);
 }
 
 void Renderer::init() {
@@ -139,13 +161,14 @@ void Renderer::init() {
   glEnable(GL_TEXTURE_2D);
 
   // culling stuff
-  //  glFrontFace(GL_CW);
-  //  glCullFace(GL_BACK);
-  //  glEnable(GL_CULL_FACE);
+  /*
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+  */
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_DEPTH_CLAMP);
-  // Accept fragment if it closer to the camera than the former one
   glDepthFunc(GL_LESS);
 
   glGenTextures(2, textureIDs);
@@ -170,7 +193,7 @@ void Renderer::init() {
 
 
     fprintf(stderr, "Texture ID for depth channel is %d\n", textureIDs[1]);
-    
+
     printOglError("Create deferred rendering color texture");
 
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
@@ -270,6 +293,7 @@ void Renderer::init() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+
     printOglError("Create deferred rendering surface");
 }
 
@@ -283,6 +307,10 @@ void Renderer::setCamera(Camera* c) {
 
 void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode) {
     this->rootSceneNode = std::move(sceneNode);
+}
+
+void Renderer::setUserInterface(UI* ui) {
+  this->ui_ = ui;
 }
 
 }  // namespace Hodhr

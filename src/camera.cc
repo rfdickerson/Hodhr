@@ -29,7 +29,7 @@ Camera::Camera(int width, int height) {
       0.1f,
       100.0f);
 
-  fprintf(stderr, "Created a camera with FoV of %f", fieldOfView);
+  fprintf(stderr, "Created a camera with FoV of %5.2f\n", fieldOfView);
 }
 
 

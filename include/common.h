@@ -13,7 +13,7 @@ namespace Hodhr {
 struct HodhrVertex {
   float x, y, z;
   float nx, ny, nz;
-  float s0, t0;
+  float s, t;
 };
 
 int printOglError(std::string instruction);

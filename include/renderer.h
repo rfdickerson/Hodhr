@@ -1,34 +1,41 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+// Copyright Robert Dickerson 2014
 
-#include <memory>
+#ifndef INCLUDE_RENDERER_H_
+#define INCLUDE_RENDERER_H_
 
 #include <GL/glew.h>
 
-#include "scenenode.h"
+#include <memory>
+
+#include "include/scenenode.h"
 
 namespace Hodhr {
 
 class Camera;
 class Shader;
-
+class UI;
 
 class Renderer
 {
 
-    public:
+ public:
     Renderer(GLuint targetWidth, GLuint targetHeight);
     virtual ~Renderer();
 
-    void init ();
-    void draw ();
+    void init();
+    void draw();
 
-    void setCamera( Camera* c);
-    void setScreenShader( Shader* s);
+    void drawOffscreenSurface();
+    void drawScene();
+    void drawUI();
 
-    void setRootSceneNode( std::unique_ptr<SceneNode> sceneNode);
+    void setCamera(Camera* c);
+    void setScreenShader(Shader* s);
 
-    private:
+    void setRootSceneNode(std::unique_ptr<SceneNode> sceneNode);
+    void setUserInterface(UI* ui);
+
+ private:
 
     GLuint targetWidth;
     GLuint targetHeight;
@@ -39,18 +46,18 @@ class Renderer
     GLuint renderBufferID[2];
     GLuint frameBufferID[2];
 
-    //GLuint screenShaderProgram;
+    // GLuint screenShaderProgram;
 
     GLfloat* textureBuffer;
 
     std::unique_ptr<SceneNode> rootSceneNode;
 
     Shader* screenShader;
-    
     Camera* camera;
+    UI* ui_;
 
 };
 
-}
+}  // namespace Hodhr
 
-#endif
+#endif  // INCLUDE_RENDERER_H_

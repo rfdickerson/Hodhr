@@ -72,6 +72,7 @@ set(SOURCE
     src/common.cc
     src/objmodel.cc
     src/uilabel.cc
+    src/ui.cc
     )
     
 set(HEADERS
@@ -91,6 +92,7 @@ set(HEADERS
     include/common.h
     include/objmodel.h
     include/uilabel.h
+    include/ui.h
     )
 
 ADD_LIBRARY( Hodhr ${SOURCE} ${HEADERS})

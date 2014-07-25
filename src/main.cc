@@ -16,17 +16,17 @@
 #include "include/model.h"
 #include "include/objmodel.h"
 #include "include/uilabel.h"
+#include "include/ui.h"
 
 #define PROGRAM_NAME "Hodhr"
 
 const int WIDTH = 1280;
 const int HEIGHT = 768;
 
-
 void sdldie(const char *msg) {
-    printf("%s: %s\n", msg, SDL_GetError());
-    SDL_Quit();
-    exit(1);
+  printf("%s: %s\n", msg, SDL_GetError());
+  SDL_Quit();
+  exit(1);
 }
 
 void checkSDLError(int line = -1) {
@@ -88,9 +88,9 @@ int main() {
 
     if (GLEW_VERSION_1_1) {
       fprintf(stderr, "Graphics successfully initialized\n");
-      fprintf(stderr, "Version: %s", glGetString(GL_VERSION));
-      fprintf(stderr, "Vendor: %s", glGetString(GL_VENDOR));
-      fprintf(stderr, "Renderer: %s", glGetString(GL_RENDERER));
+      fprintf(stderr, "Version: %s\n", glGetString(GL_VERSION));
+      fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
+      fprintf(stderr, "Renderer: %s\n", glGetString(GL_RENDERER));
     }
 
     if (SDL_HasSSE42())      {
@@ -100,9 +100,7 @@ int main() {
     fprintf(stderr, "CPU has %i logical CPU cores\n", SDL_GetCPUCount());
     fprintf(stderr, "System has %i MB of memory\n", SDL_GetSystemRAM());
 
-    // initialize the UI
-    auto custom_label = make_unique<Hodhr::UILabel>();
-    custom_label->create_text("Hodhr");
+
 
     SDL_Event event;
 
@@ -113,6 +111,9 @@ int main() {
     sl->AddShader("screen",
                   "resources/shaders/screen.vert",
                   "resources/shaders/screen.frag");
+    sl->AddShader("flat",
+                      "resources/shaders/flat.vert",
+                      "resources/shaders/flat.frag");
 
     auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
     renderer->init();
@@ -124,9 +125,23 @@ int main() {
     renderer->setScreenShader(screenShader);
 
     Hodhr::Shader* basicShader = sl->GetShader("basic");
+    Hodhr::Shader* flatShader = sl->GetShader("flat");
 
     // load the assets
     auto assets = make_unique<Hodhr::AssetLibrary>();
+
+
+    // initialize the UI
+
+    auto user_interface = std::make_unique<Hodhr::UI>(WIDTH, HEIGHT);
+
+    auto custom_label = std::make_unique<Hodhr::UILabel>();
+    custom_label->setShader(flatShader);
+    custom_label->create_text("Levelled Up!");
+
+    user_interface->addWidget(std::move(custom_label));
+    renderer->setUserInterface(user_interface.get());
+
 
     auto terrainModel = make_unique<Hodhr::TerrainPatch>();
     terrainModel->setShader(basicShader);
@@ -200,6 +215,9 @@ int main() {
 
     bool keysHeld[323] = {false};
 
+    glClearColor(0.2f, 0.2f, 0.3f, 0.0f);
+
+
     while (done == 0) {
       currentTick = SDL_GetTicks();
       dt = static_cast<float>((currentTick-lastTick))*0.1f;
@@ -208,17 +226,14 @@ int main() {
       // oldTicks = currentTick;
       
       while (SDL_PollEvent(&event))        {
-        if ( event.type == SDL_MOUSEMOTION )
-        {
+        if ( event.type == SDL_MOUSEMOTION ) {
           x = event.motion.x;
           y = event.motion.y;
           
-          //cout << "dt:" << dt << " dx: "
-          //     << event.motion.xrel << " dy: " << event.motion.yrel << endl;
 
           camera->rotate(dt, event.motion.xrel, event.motion.yrel);
 
-          //cout << "X: " << x << " Y: " << y << endl;
+          
         }
 
         if (event.type == SDL_QUIT) { done = 1;}
@@ -228,7 +243,7 @@ int main() {
         if (event.type == SDL_KEYUP) {
           keysHeld[event.key.keysym.sym] = false;
         }
-        //done = 1;
+        
 
       }
 
@@ -241,6 +256,10 @@ int main() {
       if (keysHeld[SDLK_s]) {
         camera->move(dt, -.02);
       }
+
+
+      //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      //glViewport(0, 0, WIDTH, HEIGHT);
 
       /* draw the scene */
       renderer->draw();

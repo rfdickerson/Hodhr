@@ -1,38 +1,66 @@
 // Copyright Robert Dickerson 2014
 
+#include "include/common.h"
 #include "include/uilabel.h"
+#include "include/shader.h"
 
 #include <pango/pangocairo.h>
 
 #include <stdlib.h>
+#include <vector>
 
 #define FONT "Sans Bold 18"
 #define TEXT "The quick brown fox is so かわいい!"
 
 namespace Hodhr {
 
-UILabel::UILabel() {}
-
-UILabel::~UILabel() {
-  glDeleteTextures(1, &texture_id);
-  fprintf(stderr, "Removing label\n");
+UILabel::UILabel() {
+  // createQuad();
+  vbo_id_ = 0;
+  vao_id_ = 0;
+  vboi_id_ = 0;
 }
 
+UILabel::~UILabel() {
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &vbo_id_);
+
+  glDeleteTextures(1, &texture_id_);
+  glDeleteBuffers(1, &vao_id_);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &vboi_id_);
+
+
+  fprintf(stderr, "Destroyed the label\n");
+}
+
+void UILabel::setShader(Shader *shader) {
+  fprintf(stderr, "Setting the shader for the text label to %s\n", shader->getName().c_str());
+  // shader_id_ = shader->getProgramID();
+  active_shader_ = shader;
+
+}
 
 void
 UILabel::create_text(std::string text_string) {
   render_text(text_string.c_str(),
-              &this->texture_id,
+              &this->texture_id_,
               &this->text_width,
               &this->text_height);
+
+  createQuad();
 }
 
 /* Draw the UI Label onto a surface */
 void UILabel::draw() {
+  // fprintf(stderr, "Drawing texture id: %d", texture_id);
+
   draw_texture(
       this->text_width,
       this->text_height,
-      this->texture_id);
+      this->texture_id_);
 }
 
 /* Create a texture from the pixels for OpenGL */
@@ -41,6 +69,7 @@ UILabel::create_texture(
     unsigned int width,
     unsigned int height,
     unsigned char *pixels) {
+
   unsigned int texture_id;
 
   glGenTextures(1, &texture_id);
@@ -60,13 +89,128 @@ UILabel::create_texture(
   return texture_id;
 }
 
-void
-UILabel::draw_texture(int width,
-                      int height,
-                      unsigned int texture_id) {
+void UILabel::createQuad() {
+  // create the render quad surface
+
+  /*
+    static const GLfloat quadData[] = {
+           -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+           1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+           1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+          -1.0f, 1.0f, 0.0f, 0.0f, 1.0f
+     };
+*/
+
+  std::vector<HodhrVertex> quadData(4);
+  HodhrVertex v1, v2, v3, v4;
+  v1.x = -1.0f; v1.y = -1.0f; v1.z = 0.0f; v1.s = 0.0f; v1.t = 1.0f; v1.nx = 0; v1.ny = 0; v1.nz = 0;
+  v2.x = 1.0f; v2.y = -1.0f; v2.z = 0.0f; v2.s = 1.0f; v2.t = 1.0f; v2.nx = 0; v2.ny = 0; v2.nz = 0;
+  v3.x = 1.0f; v3.y = 1.0f;  v3.z = 0.0f; v3.s = 1.0f; v3.t = 0.0f; v3.nx = 0; v3.ny = 0; v3.nz = 0;
+  v4.x = -1.0f; v4.y = 1.0f;  v4.z = 0.0f; v4.s = 0.0f; v4.t = 0.0f; v4.nx = 0; v4.ny = 0; v4.nz = 0;
+
+  quadData[0] = v1;
+  quadData[1] = v2;
+  quadData[2] = v3;
+  quadData[3] = v4;
+
+  std::vector<GLushort> pindices(6);
+  pindices[0] = 0;
+  pindices[1] = 3;
+  pindices[2] = 1;
+  pindices[3] = 1;
+  pindices[4] = 3;
+  pindices[5] = 2;
+
+  glGenVertexArrays(1, &vao_id_);
+  glBindVertexArray(vao_id_);
+
+  glGenBuffers(1, &vbo_id_);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_id_);
+  glBufferData(GL_ARRAY_BUFFER, quadData.size()*sizeof(HodhrVertex),
+               &quadData[0].x, GL_STATIC_DRAW);
+
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex),
+                         BUFFER_OFFSET(0));
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex),
+                         BUFFER_OFFSET(12));
+
+  glEnableVertexAttribArray(2);
+   
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex),
+                        BUFFER_OFFSET(24));
+
+
+  glGenBuffers(1, &vboi_id_);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
+
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, pindices.size()*sizeof(GLushort),
+               &pindices[0], GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+
+  fprintf(stderr, "Created quad for label, VBO id %d\n", vbo_id_);
+}
+
+void UILabel::draw_texture(int width,
+                           int height,
+                           unsigned int texture_id) {
+
+  // glClear (GL_DEPTH_BUFFER_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
+  //glClear(GL_DEPTH_BUFFER_BIT);
+
+  // glViewport (0, 0, 1280, 720);
+  
+  glUseProgram(active_shader_->getProgramID());
+
+  glBindVertexArray(vao_id_);
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_id);
 
+  GLint texLoc = glGetUniformLocation(active_shader_->getProgramID(), "tex");
+  glUniform1i(texLoc, 0);
+  fprintf(stderr, "Coord for texture is %d\n", texLoc);
+
+  GLint opacityLoc = glGetUniformLocation(active_shader_->getProgramID(),
+                                          "Opacity");
+  glUniform1f(opacityLoc, 0.8f);
+  fprintf(stderr, "Coord for opacity is %d\n", opacityLoc);
+  printOglError("set uniforms");
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_id_);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
+  printOglError("bind buffer");
+
+  // glDrawElements(GL_LINES, 6, GL_UNSIGNED_SHORT, NULL);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));
+
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
+
   glBindTexture(GL_TEXTURE_2D, 0);
+
+  glUseProgram(0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+
+
+  printOglError("draw UILabel");
+
+  glEnable(GL_DEPTH_TEST);
+
 }
 
 cairo_t*
@@ -76,6 +220,7 @@ UILabel::create_cairo_context(
     int channels,
     cairo_surface_t** surf,
     unsigned char** buffer) {
+
   *buffer = (unsigned char*) calloc(channels * width * height,
                                     sizeof (unsigned char));
 
@@ -89,8 +234,7 @@ UILabel::create_cairo_context(
   
 }
 
-cairo_t*
-UILabel::create_layout_context() {
+cairo_t* UILabel::create_layout_context() {
   cairo_surface_t *temp_surface;
   cairo_t *context;
 

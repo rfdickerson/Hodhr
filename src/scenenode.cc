@@ -6,7 +6,6 @@
 
 #include <utility>
 #include <memory>
-// #include <iostream>
 
 #include "include/scenenode.h"
 #include "include/model.h"

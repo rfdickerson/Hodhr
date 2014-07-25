@@ -6,7 +6,7 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
+//#include <iostream>
 #include <vector>
 
 #include "include/objmodel.h"
@@ -55,8 +55,8 @@ ObjModel::~ObjModel ()
   glBindVertexArray(0);
   //glDeleteVertexArrays(1, &vaoId);
 
-
-  std::cout << "Destroying obj model" << std::endl;
+  fprintf(stderr, "Destroying OBJ model\n");
+  //std::cout << "Destroying obj model" << std::endl;
 
 }
 
@@ -66,11 +66,12 @@ ObjModel::~ObjModel ()
   ObjModel::LoadFile(std::string filename)
   {
 
-    std::cout << "Loading model from " << filename << std::endl;
+    //std::cout << "Loading model from " << filename << std::endl;
+  fprintf(stderr, "Loading model from %s\n", filename.c_str());
 
     std::ifstream infile(filename);
 
-    std::vector<Hodhr::HodhrVertex> h_vertices;
+    std::vector<HodhrVertex> h_vertices;
     std::vector<unsigned short> h_indices;
     std::vector<glm::vec3> vertices;
 
@@ -95,7 +96,7 @@ ObjModel::~ObjModel ()
 
         vertices.push_back(glm::vec3(x,y,z));
 
-        //std::cout << x << "," << y << "," << z << std::endl;
+        // std::cout << x << "," << y << "," << z << std::endl;
 
         }
       else if (line[0] == 'f')
@@ -105,7 +106,7 @@ ObjModel::~ObjModel ()
           unsigned short i3 = ::atoi(tokens[3].c_str());
           unsigned short i4 = ::atoi(tokens[4].c_str());
 
-          std::cout << i1 << "," << i2 << "," << i3 << "," << i4 << std::endl;
+          // std::cout << i1 << "," << i2 << "," << i3 << "," << i4 << std::endl;
 
 
           glm::vec3 v1 = vertices[i1-1];
@@ -163,8 +164,8 @@ ObjModel::~ObjModel ()
           indice++;
 
           h_vertices.push_back(hv4);
-          //h_indices.push_back(indice);
-          //indice++;
+          // h_indices.push_back(indice);
+          // indice++;
 
           h_indices.push_back(indice-1);
           h_indices.push_back(indice-3);
@@ -174,16 +175,21 @@ ObjModel::~ObjModel ()
 
         }
       else {
-          //std::cout << line[0] << std::endl;
+          // std::cout << line[0] << std::endl;
         }
 
     }
 
+  /*
   std::cout << "Read " 
 	    << h_vertices.size() 
 	    << " vertices and " 
 	    << h_indices.size() 
 	    << " indices."<< std::endl;
+*/
+
+  fprintf(stderr, "Model loaded with %d vertices and %d indices\n",
+          h_vertices.size(), h_indices.size());
 
   initData(h_vertices, h_indices);
 
@@ -240,8 +246,9 @@ ObjModel::~ObjModel ()
 
     if (!initialized)
       {
-	std::cerr << "Obj has not been initialized yet!" << vbo_id_ << " " << vao_id_ << std::endl;
-	return;
+//	std::cerr << "Obj has not been initialized yet!" << vbo_id_ << " " << vao_id_ << std::endl;
+  fprintf(stderr, "OBJ model has not been initialized yet!");
+        return;
       }
 
     glUseProgram(shader->getProgramID());
@@ -256,8 +263,8 @@ ObjModel::~ObjModel ()
   glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
   glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
 
-  glUniform1f( constant_attenuation_loc_, .2);
-  glUniform1f( linear_attenuation_loc_, .2);
+  glUniform1f( constant_attenuation_loc_, .2f);
+  glUniform1f( linear_attenuation_loc_, .2f);
 
   glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
   glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
@@ -298,11 +305,13 @@ ObjModel::~ObjModel ()
     light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
     ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
 
+    /*
     std::cout << "Set cube shader " << shader->getName()
 	      << " with pID " << shader->getProgramID()
 	      << " mvp_matrix: " << MVPMatrixLocation
 	      << " normal matrix: " << normal_matrix_loc_
 	      << ", ambient light: " << ambient_loc_ <<  std::endl;
+    */
 
   }
 

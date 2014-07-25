@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include <string>
+#include <vector>
 
 #include <GL/glew.h>
 
@@ -22,9 +23,11 @@ class Shader
 
         ~Shader();
 
-        GLuint getProgramID();
+        GLuint getProgramID() const;
 
         std::string getName();
+
+        std::vector<std::string> getActiveUniforms() const;
         
         
 };

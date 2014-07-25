@@ -1,5 +1,6 @@
 // copyright Robert Dickerson 2014
 
+
 #include <GL/glew.h>
 
 #define GLM_FORCE_RADIANS
@@ -50,8 +51,8 @@ void TerrainPatch::init() {
       vertices[e].nz = 0.0f;
 
       // put the uv coords down
-      vertices[e].s0 = (uvstep * i);
-      vertices[e].t0 = (uvstep * j);
+      vertices[e].s = (uvstep * i);
+      vertices[e].t = (uvstep * j);
 
     }
   }
@@ -63,8 +64,6 @@ void TerrainPatch::init() {
   
   std::vector<GLuint> indices(numIndices);
 
-  int numPerRow = (subdivisions-1)*6;
-  // numPerRow = (subdivisions - 1) * 6;
   for (int i = 0; i < subdivisions - 1; i++) {
     for (int j = 0; j < subdivisions - 1; j++) {
       int baseindex = i * (subdivisions) + j;
@@ -96,7 +95,7 @@ void TerrainPatch::init() {
 
   for (int i = 0; i < 12; ++i) {
     // cout << indices[i] << ", ";
-    fprintf(stderr, "%d", indices[i]);
+    // fprintf(stderr, "%d", indices[i]);
   }
 
 
@@ -163,21 +162,14 @@ void TerrainPatch::draw(const SceneNode& node) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
-  //  cout << mvpMatrix[0][0] << endl;
-  //  glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
-  //  glBindAttribLocation(shader->getProgramID(), 1, "in_tex_coord");
-  
-  //  glBindVertexArray(vaoId);
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-  //  glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-  
+
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
-  
   glBindVertexArray(0);
 
   printOglError("Draw terrain patch");

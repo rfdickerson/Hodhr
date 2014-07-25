@@ -47,6 +47,7 @@ void ShaderLibrary::AddShader(std::string shaderName,
   // cout << "Added shader " << vertexShaderSrc << endl;
   string shaderSrc = loadFile(vertexShaderSrc);
   // cout << "Loaded " << shaderSrc << endl;
+  // fprintf(stderr, "vertex shader %s", shaderSrc.c_str());
 
     const char *c_str = shaderSrc.c_str();
 
@@ -55,6 +56,7 @@ void ShaderLibrary::AddShader(std::string shaderName,
     glCompileShader(vsid);
 
     shaderSrc = loadFile(fragmentShaderSrc);
+     // fprintf(stderr, "fragment shader %s", shaderSrc.c_str());
     //  cout << "Loaded " << shaderSrc << endl;
 
     const char *cf_str = shaderSrc.c_str();
@@ -74,8 +76,10 @@ void ShaderLibrary::AddShader(std::string shaderName,
     // cout << "Compiled " << shaderName << endl;
     // cout << logInfo << endl;
     fprintf(stderr, "Compiled %s\n", shaderName.c_str());
-    fprintf(stderr, "Compilation log: %s", logInfo);
+    fprintf(stderr, "Compilation result: %s\n", logInfo);
     auto newShader = make_unique<Shader>(shaderName, pId);
+
+    newShader->getActiveUniforms();
 
     shaders_[std::string(shaderName)] = move(newShader);
 }
