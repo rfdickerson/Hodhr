@@ -24,6 +24,9 @@ class UILabel {
   void update();
   void setShader(Shader* shader);
 
+  void setOpacity(float opacity);
+  float getOpacity();
+
  private:
 
   GLuint texture_id_;

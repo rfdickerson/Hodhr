@@ -14,20 +14,34 @@
 #include <glm/gtx/transform.hpp>
 
 // #define FONT "Sans Bold 38"
-#define FONT "Alegreya Sans SC Black 28"
-#define TEXT "The quick brown fox is so かわいい!"
-// #define TEXT "The 1st was Pompey the Great’s most elite and loyal legion. It fought against Caesar in major civil war battles at Pharsalus, Thapsus and Munda. It is very likely that Imperial 1st Legion of Augustus have been the direct descendant of Pompey’s 1st. In the year of 29 BC it began its service in Cantabrian War in Spain, around 25 BC emperor granted it the title “Augusta” in recognition for its meritorious service. However, in 19 BC Legion was stripped of “Augusta” title for cowardice by Marcus Agrippa. This punishment was dealt to Legion because of cowardice during one of the battle in Cantabrian War. That same year, legion was transferred to Gaul."
-#define TEXT "The 1st was Pompey the Great’s most elite and loyal legion. It fought against Caesar in major civil war battles at Pharsalus"
+// #define FONT "Alegreya Sans SC Black 18"
+#define FONT "Fira Sans Bold 14"
+// #define TEXT "The quick brown fox is so かわいい!"
+
+const char* TEXT =
+        "The 1st was Pompey the Great’s most elite and loyal legion.\n"
+        "It fought against Caesar in major civil war battles at Pharsalus, Thapsus and Munda.\n"
+        "It is very likely that Imperial 1st Legion of Augustus have been the direct descendant of Pompey’s 1st.\n"
+        "In the year of 29 BC it began its service in Cantabrian War in Spain, around 25 BC emperor granted it the\n"
+        "title 'Augusta' in recognition for its meritorious service. However, in 19 BC Legion was stripped of \"Augusta\"\n"
+        "title for cowardice by Marcus Agrippa. This punishment was dealt to Legion because of cowardice during one of the\n"
+        "battle in Cantabrian War. That same year, legion was transferred to Gaul.";
+
+// #define TEXT "The 1st was Pompey the Great’s most elite and loyal legion.\n It fought against Caesar in major civil war battles at Pharsalus"
 
 namespace Hodhr {
+
+
 
 UILabel::UILabel() {
   // createQuad();
   vbo_id_ = 0;
   vao_id_ = 0;
   vboi_id_ = 0;
-  opacity_ = 0.2f;
+  opacity_ = 0.0f;
   time_ = 0.0f;
+
+
 
 }
 
@@ -51,6 +65,17 @@ void UILabel::setShader(Shader *shader) {
   // shader_id_ = shader->getProgramID();
   active_shader_ = shader;
 
+}
+
+void UILabel::setOpacity(float opacity)
+{
+  if (opacity > 0 && opacity < 1) {
+    opacity_ = opacity;
+   }
+}
+
+float UILabel::getOpacity() {
+  return opacity_;
 }
 
 void
@@ -91,9 +116,9 @@ void UILabel::draw() {
 
 void UILabel::update()
 {
-  opacity_ = sin(time_/10);
-  time_ += .01f;
-
+  opacity_ = sin(time_);
+  time_ += .005f;
+  // opacity_ = 1.0f;
 }
 
 /* Create a texture from the pixels for OpenGL */

@@ -73,7 +73,7 @@ void Renderer::drawScene()
   // update the transformation matrices
   rootSceneNode->updateAll(*camera);
 
-  glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -108,7 +108,7 @@ void Renderer::drawOffscreenSurface()
      glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
      int texLoc = glGetUniformLocation(screenShader->getProgramID(), "tex");
      glUniform1i(texLoc, 0);
-     fprintf(stderr, "Location of texture for deferred surface is %d\n", texLoc);
+     // fprintf(stderr, "Location of texture for deferred surface is %d\n", texLoc);
 
      glActiveTexture(GL_TEXTURE1);
      glBindTexture(GL_TEXTURE_2D, textureIDs[1]);

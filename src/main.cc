@@ -23,6 +23,8 @@
 const int WIDTH = 1280;
 const int HEIGHT = 768;
 
+const float SPEED = 0.4f;
+
 void sdldie(const char *msg) {
   printf("%s: %s\n", msg, SDL_GetError());
   SDL_Quit();
@@ -55,7 +57,7 @@ int main() {
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   
@@ -182,9 +184,9 @@ int main() {
 
     auto terrainNode = make_unique<Hodhr::SceneNode>("terrain node");
     terrainNode->setAsset(t);
-    terrainNode->setPosition(0.0f, 1.0f, 0.0f);
-    terrainNode->setScale(20.0f);
-    // rootNode->addChild( std::move(terrainNode));
+    // terrainNode->setPosition(0.0f, 1.0f, 0.0f);
+    terrainNode->setScale(30.0f);
+    rootNode->addChild( std::move(terrainNode));
 
     for (int j = 0; j < 20; ++j) {
       for (int i = 0; i < 20; i++) {
@@ -205,7 +207,7 @@ int main() {
     renderer->setCamera(camera.get() );
 
     int done = 0;
-    int interval = 20;
+    // int interval = 20;
 
     int x, y;
 
@@ -251,10 +253,10 @@ int main() {
         done = 1;
       }
       if (keysHeld[SDLK_w]) {
-        camera->move(dt, .02);
+        camera->move(dt, SPEED);
       }
       if (keysHeld[SDLK_s]) {
-        camera->move(dt, -.02);
+        camera->move(dt, -SPEED);
       }
 
 

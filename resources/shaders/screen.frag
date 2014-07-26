@@ -48,7 +48,7 @@ void main(void) {
     vec4 dcolor = texture2D(depthTex, texCoord0);
     vec4 rcolor = texture2D(tex, texCoord0);
 
-    vec4 fogcolor = vec4(195.0/255.0, 228.0/255.0, 243.0/255.0, 0.01);
+    vec4 fogcolor = vec4(195.0/255.0, 228.0/255.0, 243.0/255.0, 0.00);
 
     float z_b = dcolor.x;
     float z_n = 2.0 * z_b - 1.0;

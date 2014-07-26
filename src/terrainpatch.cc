@@ -22,7 +22,7 @@ namespace Hodhr {
 
 TerrainPatch::TerrainPatch() {
   vboId = 0;
-  vaoId = 0;
+  vao_id_ = 0;
   vboiId = 0;
   subdivisions = 64;
 }
@@ -62,11 +62,13 @@ void TerrainPatch::init() {
   // cout << "Built terrain with " << numIndices << " indices" << endl;
   fprintf(stderr, "Built terrain with %d indices\n", numIndices);
   
-  std::vector<GLuint> indices(numIndices);
+  std::vector<GLuint> indices;
+
+  // const int numPerRow = subdivisions * 6;
 
   for (int i = 0; i < subdivisions - 1; i++) {
     for (int j = 0; j < subdivisions - 1; j++) {
-      int baseindex = i * (subdivisions) + j;
+      unsigned int baseindex = i * (subdivisions) + j;
 
       GLuint a = baseindex;
       GLuint b = baseindex + subdivisions;
@@ -83,6 +85,7 @@ void TerrainPatch::init() {
       indices[(numPerRow * i) + (6 * j) + 5] = a;
       */
 
+
       indices.push_back(a);
       indices.push_back(b);
       indices.push_back(c);
@@ -90,18 +93,22 @@ void TerrainPatch::init() {
       indices.push_back(c);
       indices.push_back(d);
       indices.push_back(a);
+
     }
   }
 
   for (int i = 0; i < 12; ++i) {
     // cout << indices[i] << ", ";
-    // fprintf(stderr, "%d", indices[i]);
+    fprintf(stderr, "%d", indices[i]);
   }
 
 
   // glGenVertexArrays(1, &vaoId);
   // glBindVertexArray(vaoId);
   // printOglError("vertex array");
+
+  glGenVertexArrays(1, &vao_id_);
+  glBindVertexArray(vao_id_);
 
   glGenBuffers(1, &vboId);
   printOglError("Gen Buffers");
@@ -146,24 +153,53 @@ void TerrainPatch::init() {
  **/
 void TerrainPatch::draw(const SceneNode& node) {
   
+  printOglError("begin terrain create");
+
+
+  glm::vec3 light_position = glm::vec3(-5, 5,5);
+  glm::vec3 light_color = glm::vec3(249.0/256.0,240.0/256.0,182.0/256.0);
+  glm::vec3 ambient_light = glm::vec3(0.2,0.2,0.3);
+
   if (!initialized) {
     fprintf(stderr, "Patch has not been initialized yet\n");
     return;
   }
   
   glUseProgram(shader->getProgramID());
-  // cout << "using shader " << shader->getProgramID() << endl;
+  //cout << "using shader " << shader->getProgramID() << endl;
+  fprintf(stderr, "Terrain using shader %s", shader->getName().c_str());
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();
+  glm::mat3 normal_matrix = node.getNormalMatrix();
 
-  glUniformMatrix4fv(MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
-  glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+  // glUniformMatrix4fv(MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
+  // glBindAttribLocation(shader->getProgramID(), 0, "in_Position");
+
+  glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
+   glUniformMatrix3fv( normal_matrix_loc_, 1, GL_FALSE, &normal_matrix[0][0]);
+   glUniform3f( ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
+   glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
+   glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
+
+   glUniform1f( constant_attenuation_loc_, .2f);
+   glUniform1f( linear_attenuation_loc_, .2f);
+
+   printOglError("Set uniforms");
+
+   glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
+   glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
+
+   glBindVertexArray(vao_id_);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
+
+  printOglError("Terrain attrib array");
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+
+
 
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
@@ -194,6 +230,16 @@ TerrainPatch::~TerrainPatch() {
 void TerrainPatch::setShader(Shader* shader) {
   Model::setShader(shader);
   MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
+      normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
+      light_position_loc_ = glGetUniformLocation(shader->getProgramID(), "LightPosition");
+      eye_direction_loc_ = glGetUniformLocation(shader->getProgramID(), "EyeDirection");
+      constant_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "ConstantAttenuation");
+      linear_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "LinearAttenuation");
+      quadratic_attenuation_loc_ = glGetUniformLocation(shader->getProgramID(), "QuadraticAttenuation");
+      shininess_loc_ = glGetUniformLocation(shader->getProgramID(), "Shininess");
+      strength_loc_ = glGetUniformLocation(shader->getProgramID(), "Strength");
+      light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
+      ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
 }
 
 }  // namespace Hodhr

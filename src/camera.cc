@@ -13,7 +13,7 @@ Camera::Camera(int width, int height) {
   horizontalAngle = 0.0f;
   verticalAngle = 0.0f;
   position = glm::vec3(0, 0, 0);
-  mouseSpeed = 0.005;
+  mouseSpeed = 0.0005;
 
   aspectRatio = static_cast<float> (width) / static_cast<float> (height);
 
