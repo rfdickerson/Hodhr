@@ -12,6 +12,7 @@
 #include "include/terrainpatch.h"
 #include "include/shaderlibrary.h"
 #include "include/scenenode.h"
+#include "include/texture.h"
 
 /**
  * Terrain Patch is a section of terrain that can be swapped in and out of memory
@@ -166,8 +167,8 @@ void TerrainPatch::draw(const SceneNode& node) {
   }
   
   glUseProgram(shader->getProgramID());
-  //cout << "using shader " << shader->getProgramID() << endl;
-  fprintf(stderr, "Terrain using shader %s", shader->getName().c_str());
+  // cout << "using shader " << shader->getProgramID() << endl;
+  // fprintf(stderr, "Terrain using shader %s", shader->getName().c_str());
 
   glm::mat4 mvpMatrix = node.getMVPMatrix();
   glm::mat3 normal_matrix = node.getNormalMatrix();
@@ -183,6 +184,8 @@ void TerrainPatch::draw(const SceneNode& node) {
 
    glUniform1f( constant_attenuation_loc_, .2f);
    glUniform1f( linear_attenuation_loc_, .2f);
+   
+   
 
    printOglError("Set uniforms");
 
@@ -199,7 +202,9 @@ void TerrainPatch::draw(const SceneNode& node) {
   
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
-
+  
+  glBindTexture(GL_TEXTURE_2D, texture_->getTextureID());
+  glEnable(GL_TEXTURE_2D);
 
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
@@ -217,6 +222,7 @@ void TerrainPatch::draw(const SceneNode& node) {
 TerrainPatch::~TerrainPatch() {
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers(1, &vboId);
@@ -240,6 +246,10 @@ void TerrainPatch::setShader(Shader* shader) {
       strength_loc_ = glGetUniformLocation(shader->getProgramID(), "Strength");
       light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
       ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
+}
+
+void TerrainPatch::setTexture(Texture *texture) {
+  this->texture_ = texture;
 }
 
 }  // namespace Hodhr

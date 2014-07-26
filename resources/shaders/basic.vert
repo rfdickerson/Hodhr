@@ -12,7 +12,7 @@ uniform float QuadraticAttenuation;
 
 layout(location = 0) in vec4 VertexPosition;
 layout(location = 1) in vec3 VertexNormal;
-layout(location = 1) in vec2 VertexTexCoord;
+layout(location = 2) in vec2 VertexTexCoord;
 
 out vec4 Color;
 out vec3 Normal;
@@ -29,6 +29,7 @@ void main() {
 
 
     Normal = normalize(NormalMatrix * VertexNormal);
+    TexCoord = VertexTexCoord;
     
     LightDirection = LightPosition - vec3(VertexPosition);
     float lightDistance = length(LightDirection);

@@ -11,6 +11,8 @@
 
 namespace Hodhr {
 
+class Texture;
+
 class TerrainPatch : public Model
 {
 
@@ -37,6 +39,8 @@ private:
 
     bool initialized;
 
+    Texture* texture_;
+
 
 public:
 
@@ -52,6 +56,8 @@ public:
     virtual void draw(const SceneNode& node );
 
     virtual void setShader(Shader* shader);
+
+    void setTexture(Texture* texture);
 
 };
 

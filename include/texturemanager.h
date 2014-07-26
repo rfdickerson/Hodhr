@@ -19,7 +19,7 @@ namespace Hodhr {
   class TextureManager {
    public:
     TextureManager();
-    void LoadTexture(std::string texture_name, std::string filename);
+    Texture* LoadTexture(std::string texture_name, std::string filename, bool generate);
 
    protected:
     std::map<std::string, std::unique_ptr<Texture>> textures_;

@@ -29,9 +29,11 @@ find_package(SDL_ttf 2.0.8 REQUIRED)
 pkg_check_modules( PANGOCAIRO REQUIRED pangocairo>=1.14.8 )
 pkg_check_modules( FONTCONFIG REQUIRED fontconfig>=2.4.1 )
 
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+
 pkg_search_module( pangocairo required)
 
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
 #find_package(SDL2Net REQUIRED)
 
@@ -113,6 +115,7 @@ add_executable(testFonts
 endif()
 
 TARGET_LINK_LIBRARIES(OpenWorld ${SDL2_LIBRARIES})
+TARGET_LINK_LIBRARIES(OpenWorld ${SDL2IMAGE_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld ${GLFW_LIBRARIES})
 TARGET_LINK_LIBRARIES(OpenWorld ${GLEW_LIBRARY})
 TARGET_LINK_LIBRARIES(OpenWorld ${EXTRA_LIBS})

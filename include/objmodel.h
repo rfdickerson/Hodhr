@@ -28,7 +28,8 @@ public:
 
 private:
 
-  void initData(const std::vector<HodhrVertex>& vertices, const std::vector<unsigned short>& indices);
+  void initData(const std::vector<HodhrVertex>& vertices,
+                const std::vector<unsigned short>& indices);
 
   GLuint vao_id_, vbo_id_, vboi_id_;
 

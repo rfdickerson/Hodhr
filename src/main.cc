@@ -6,17 +6,7 @@
 #include <SDL.h>
 #include <memory>
 
-#include "include/scenenode.h"
-#include "include/shaderlibrary.h"
-#include "include/terrainpatch.h"
-#include "include/assetlibrary.h"
-#include "include/renderer.h"
-#include "include/camera.h"
-#include "include/cubemesh.h"
-#include "include/model.h"
-#include "include/objmodel.h"
-#include "include/uilabel.h"
-#include "include/ui.h"
+#include "include/hodhr.h"
 
 #define PROGRAM_NAME "Hodhr"
 
@@ -108,8 +98,8 @@ int main() {
 
     auto sl = make_unique<Hodhr::ShaderLibrary>();
     sl->AddShader("basic",
-                  "resources/shaders/basic.vs",
-                  "resources/shaders/basic.fs");
+                  "resources/shaders/basic.vert",
+                  "resources/shaders/basic.frag");
     sl->AddShader("screen",
                   "resources/shaders/screen.vert",
                   "resources/shaders/screen.frag");
@@ -129,6 +119,10 @@ int main() {
     Hodhr::Shader* basicShader = sl->GetShader("basic");
     Hodhr::Shader* flatShader = sl->GetShader("flat");
 
+    Hodhr::TextureManager tm;
+    Hodhr::Texture* mapTexture = tm.LoadTexture("oldmap",
+						"./resources/images/oldmap.jpg", true);
+
     // load the assets
     auto assets = make_unique<Hodhr::AssetLibrary>();
 
@@ -147,6 +141,7 @@ int main() {
 
     auto terrainModel = make_unique<Hodhr::TerrainPatch>();
     terrainModel->setShader(basicShader);
+    terrainModel->setTexture(mapTexture);
     terrainModel->init();
     assets->addAsset("terrain", std::move(terrainModel));
 

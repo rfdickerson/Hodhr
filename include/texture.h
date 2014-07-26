@@ -3,22 +3,30 @@
 
 #include <string>
 
+#include <GL/glew.h>
+
+
+#include "include/common.h"
+
 namespace Hodhr {
 
 
 class Texture {
 
 public:
-    Texture(std::string name);
+    Texture(std::string name, GLuint texture_id);
 
     ~Texture();
 
-    int getTextureID();
+    GLuint getTextureID();
+
+    std::string getName();
+
 
 protected:
 
-    int textureID;
-    std::string name;
+    GLuint texture_id_;
+    std::string name_;
 
 };
 
