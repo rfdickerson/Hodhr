@@ -69,7 +69,7 @@ int main() {
 
     SDL_GL_MakeCurrent(mainwindow, maincontext);
 
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     
     glewExperimental = GL_TRUE;
@@ -96,14 +96,15 @@ int main() {
 
     SDL_Event event;
 
-    auto sl = make_unique<Hodhr::ShaderLibrary>();
-    sl->AddShader("basic",
+    //auto sl = make_unique<Hodhr::ShaderLibrary>();
+    Hodhr::ShaderLibrary sl;
+    sl.AddShader("basic",
                   "resources/shaders/basic.vert",
                   "resources/shaders/basic.frag");
-    sl->AddShader("screen",
+    sl.AddShader("screen",
                   "resources/shaders/screen.vert",
                   "resources/shaders/screen.frag");
-    sl->AddShader("flat",
+    sl.AddShader("flat",
                       "resources/shaders/flat.vert",
                       "resources/shaders/flat.frag");
 
@@ -113,15 +114,18 @@ int main() {
 
     auto camera = make_unique<Hodhr::Camera> (WIDTH, HEIGHT);
 
-    Hodhr::Shader* screenShader = sl->GetShader("screen");
+    Hodhr::Shader* screenShader = sl.GetShader("screen");
     renderer->setScreenShader(screenShader);
 
-    Hodhr::Shader* basicShader = sl->GetShader("basic");
-    Hodhr::Shader* flatShader = sl->GetShader("flat");
+    Hodhr::Shader* basicShader = sl.GetShader("basic");
+    Hodhr::Shader* flatShader = sl.GetShader("flat");
 
     Hodhr::TextureManager tm;
     Hodhr::Texture* mapTexture = tm.LoadTexture("oldmap",
 						"./resources/images/oldmap.jpg", true);
+    
+    Hodhr::Texture* artTexture = tm.LoadTexture("art",
+						"./resources/images/principes.jpg", false);
 
     // load the assets
     auto assets = make_unique<Hodhr::AssetLibrary>();
@@ -131,11 +135,23 @@ int main() {
 
     auto user_interface = std::make_unique<Hodhr::UI>(WIDTH, HEIGHT);
 
+    /*
     auto custom_label = std::make_unique<Hodhr::UILabel>();
     custom_label->setShader(flatShader);
     custom_label->create_text("Leveled Up!");
-
     user_interface->addWidget(std::move(custom_label));
+    */
+    
+    auto custom_image = std::make_unique<Hodhr::UIImage>();
+    custom_image->setShader(flatShader);
+    custom_image->setImageTexture(artTexture);
+    user_interface->addWidget(std::move(custom_image));
+    
+    
+    auto custom_panel = std::make_unique<Hodhr::UIPanel>(1280,100);
+    custom_panel->setShader(flatShader);
+    user_interface->addWidget(std::move(custom_panel));
+    
     renderer->setUserInterface(user_interface.get());
 
 
@@ -146,11 +162,12 @@ int main() {
     assets->addAsset("terrain", std::move(terrainModel));
 
 
+    /*
     auto cubeMesh = make_unique<Hodhr::CubeMesh>();
     cubeMesh->setShader(basicShader);
     cubeMesh->init();
     assets->addAsset("cube", std::move(cubeMesh));
-
+*/
 
     // make the obj model
     auto custom_model = make_unique<Hodhr::ObjModel>();
@@ -180,7 +197,7 @@ int main() {
     auto terrainNode = make_unique<Hodhr::SceneNode>("terrain node");
     terrainNode->setAsset(t);
     // terrainNode->setPosition(0.0f, 1.0f, 0.0f);
-    terrainNode->setScale(30.0f);
+    terrainNode->setScale(5.0f);
     rootNode->addChild( std::move(terrainNode));
 
     for (int j = 0; j < 20; ++j) {
@@ -189,7 +206,7 @@ int main() {
         cubeNode->setAsset(custom_m);
         cubeNode->setPosition(i*1.5, 0, j*1.5);
         cubeNode->setScale(0.2);
-        rootNode->addChild(std::move(cubeNode));
+        // rootNode->addChild(std::move(cubeNode));
       }
     }
 

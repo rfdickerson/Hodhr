@@ -11,9 +11,11 @@
 namespace Hodhr {
 
 
-Texture::Texture(std::string name, GLuint texture_id) {
+Texture::Texture(std::string name, GLuint texture_id, GLuint width, GLuint height) {
   this->name_ = name;
   this->texture_id_ = texture_id;
+  this->width_ = width;
+  this->height_ = height;
 }
 
 Texture::~Texture() {
@@ -28,6 +30,14 @@ GLuint Texture::getTextureID() {
 
 std::string Texture::getName() {
   return name_;
+}
+
+GLuint Texture::getWidth() {
+  return width_;
+}
+  
+GLuint Texture::getHeight() {
+  return height_;
 }
 
 }  // namespace Hodhr

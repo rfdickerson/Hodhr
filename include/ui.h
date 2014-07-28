@@ -12,9 +12,9 @@
 namespace Hodhr {
 
   // forward declare
-  class UILabel;
+  class UIWidget;
 
-  typedef std::vector<std::unique_ptr<UILabel>> WidgetVector;
+  typedef std::vector<std::unique_ptr<UIWidget>> WidgetVector;
 
   class UI {
    public:
@@ -22,7 +22,7 @@ UI();
 UI(unsigned int width, unsigned int height);
     ~UI();
 
-    void addWidget(std::unique_ptr<UILabel> widget);
+    void addWidget(std::unique_ptr<UIWidget> widget);
     void draw();
 
    protected:

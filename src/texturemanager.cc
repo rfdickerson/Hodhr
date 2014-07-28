@@ -72,7 +72,7 @@ TextureManager::LoadTexture(std::string texture_name, std::string filename, bool
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  auto texture = std::make_unique<Texture>(texture_name, texture_id);
+  auto texture = std::make_unique<Texture>(texture_name, texture_id, width, height);
 
   textures_[texture_name] = move(texture);
   

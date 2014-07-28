@@ -15,6 +15,7 @@
 #include "include/ui.h"
 #include "include/texturemanager.h"
 #include "include/texture.h"
-
+#include "include/uiimage.h"
+#include "include/uipanel.h"
 
 #endif // HODHR_H

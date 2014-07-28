@@ -6,7 +6,7 @@
 
 #include "include/common.h"
 #include "include/ui.h"
-#include "include/uilabel.h"
+#include "include/uiwidget.h"
 
 namespace Hodhr {
 
@@ -20,7 +20,7 @@ namespace Hodhr {
   UI::~UI() {
   }
 
-  void UI::addWidget(std::unique_ptr<UILabel> widget) {
+  void UI::addWidget(std::unique_ptr<UIWidget> widget) {
     widgets_.push_back(std::move(widget));
     fprintf(stderr, "Adding widget to UI, total widgets is %ld\n",
               widgets_.size());

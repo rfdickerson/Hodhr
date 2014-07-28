@@ -74,6 +74,9 @@ set(SOURCE
     src/common.cc
     src/objmodel.cc
     src/uilabel.cc
+    src/uiwidget.cc
+    src/uiimage.cc
+    src/uipanel.cc
     src/ui.cc
     )
     
@@ -94,6 +97,9 @@ set(HEADERS
     include/common.h
     include/objmodel.h
     include/uilabel.h
+    include/uiwidget.h
+    include/uiimage.h
+    include/uipanel.h
     include/ui.h
     )
 
