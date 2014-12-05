@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include "model.h"
-
+#include "texture.h"
 
 class Shader;
 
@@ -26,12 +26,16 @@ public:
 
   virtual void setShader(Shader* shader);
 
+  void setTexture(Texture *texture);
+
 private:
 
   void initData(const std::vector<HodhrVertex>& vertices,
                 const std::vector<unsigned short>& indices);
 
   GLuint vao_id_, vbo_id_, vboi_id_;
+
+  GLint mTextureLocation;
 
   GLint MVPMatrixLocation,
   MVMatrixLocation,
@@ -51,7 +55,7 @@ private:
 
   bool initialized;
 
-
+    Texture* mTexture;
 
 };
 

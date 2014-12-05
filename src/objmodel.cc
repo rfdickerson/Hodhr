@@ -2,15 +2,15 @@
 
 
 
-# <GL/glew.h>
+#include <GL/glew.h>
 
-# <fstream>
-# <sstream>
+#include <fstream>
+#include <sstream>
 //# <iostream>
-# <vector>
+#include <vector>
 
-# "include/objmodel.h"
-# "include/shader.h"
+#include "objmodel.h"
+#include "shader.h"
 
 namespace Hodhr {
 
@@ -277,6 +277,17 @@ ObjModel::~ObjModel ()
 
   glUseProgram(shader->getProgramID());
 
+  if (this->mTexture)
+  {
+      // fprintf(stderr, "Texture id on model is %d\n", mTexture->getTextureID());
+      glEnable(GL_TEXTURE_2D);
+
+      glUniform1i(mTextureLocation, 0);
+
+      glActiveTexture(GL_TEXTURE0 + 0);
+      glBindTexture(GL_TEXTURE_2D, mTexture->getTextureID());
+  }
+
   //std::cout << "draw cube with indices " << numIndices << std::endl;
 
   //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
@@ -285,6 +296,7 @@ ObjModel::~ObjModel ()
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glBindVertexArray(0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
   void 
@@ -293,6 +305,8 @@ ObjModel::~ObjModel ()
 		      )
   {
     Model::setShader(shader);
+
+    mTextureLocation = glGetUniformLocation(shader->getProgramID(), "tex");
     MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
     normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
     light_position_loc_ = glGetUniformLocation(shader->getProgramID(), "LightPosition");
@@ -305,6 +319,8 @@ ObjModel::~ObjModel ()
     light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
     ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
 
+    fprintf(stdout, "Location of texture is at %d", mTextureLocation);
+
     /*
     std::cout << "Set cube shader " << shader->getName()
 	      << " with pID " << shader->getProgramID()
@@ -313,6 +329,10 @@ ObjModel::~ObjModel ()
 	      << ", ambient light: " << ambient_loc_ <<  std::endl;
     */
 
+  }
+
+  void ObjModel::setTexture(Texture* texture) {
+      mTexture = texture;
   }
 
   

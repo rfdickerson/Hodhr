@@ -1,4 +1,4 @@
-#version 430 core
+#version 420 core
 
 uniform vec3 Ambient;
 uniform vec3 LightColor;
@@ -34,7 +34,7 @@ void main() {
     
     FragColor = vec4(rgb, Color.a);
     FragColor = texColor;
-    //FragColor = vec4(Normal, 1);
+    // FragColor = vec4(Normal, 1);
     
 
 }

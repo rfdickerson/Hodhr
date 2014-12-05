@@ -202,7 +202,7 @@ namespace Hodhr {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
     
   
-  // glBindTexture(GL_TEXTURE_2D, texture_->getTextureID());
+  glBindTexture(GL_TEXTURE_2D, texture_->getTextureID());
   glEnable(GL_TEXTURE_2D);
 
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));

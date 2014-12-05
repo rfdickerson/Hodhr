@@ -44,7 +44,7 @@ int main() {
   
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                       SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -121,8 +121,8 @@ int main() {
     // Hodhr::Shader* flatShader = sl.GetShader("flat");
 
     Hodhr::TextureManager tm;
-    Hodhr::Texture* mapTexture = tm.LoadTexture("oldmap",
-						"./resources/images/oldmap.jpg", true);
+    Hodhr::Texture* grassTexture = tm.LoadTexture("grass",
+                        "resources/images/grass.png", true);
     
     /**
     Hodhr::Texture* artTexture = tm.LoadTexture("art",
@@ -161,25 +161,26 @@ int main() {
 
     Hodhr::TerrainPatch terrainModel;
     terrainModel.setShader(basicShader);
-    terrainModel.setTexture(mapTexture);
+    terrainModel.setTexture(grassTexture);
     terrainModel.init();
     assets.addAsset("terrain", &terrainModel);
 
 
-    /*
-    auto cubeMesh = make_unique<Hodhr::CubeMesh>();
+/*
+    Hodhr::CubeMesh cubeMesh = new Hodhr::CubeMesh();
     cubeMesh->setShader(basicShader);
     cubeMesh->init();
-    assets->addAsset("cube", std::move(cubeMesh));
+    assets->addAsset("cube", &cubeMesh);
 */
 
     // make the obj model
-    /**
-    auto custom_model = make_unique<Hodhr::ObjModel>();
-    custom_model->setShader(basicShader);
-    custom_model->LoadFile("resources/models/cubey.obj");
-    assets->addAsset("gadget", std::move(custom_model));
-    **/
+
+    Hodhr::ObjModel custom_model;
+    custom_model.setShader(basicShader);
+    custom_model.setTexture(grassTexture);
+    custom_model.LoadFile("resources/models/cubey.obj");
+    assets.addAsset("gadget", &custom_model);
+
 
     /**
     Hodhr::Model* custom_m = assets->getModel("gadget");
@@ -207,17 +208,18 @@ int main() {
     terrainNode.setScale(5.0f);
     rootNode.addChild( &terrainNode );
 
-    /*
+
     for (int j = 0; j < 20; ++j) {
       for (int i = 0; i < 20; i++) {
-	Hodhr::SceneNode cubeNode = make_unique<Hodhr::SceneNode>("cube node");
-        cubeNode.setAsset(custom_m);
-        cubeNode.setPosition(i*1.5, 0, j*1.5);
-        cubeNode.setScale(0.2);
+        Hodhr::SceneNode* cubeNode = new Hodhr::SceneNode("cube node");
+        cubeNode->setAsset(&custom_model);
+        cubeNode->setPosition(i*1.5, 0, j*1.5);
+        cubeNode->setScale(0.2);
+        rootNode.addChild( cubeNode);
         // rootNode->addChild(std::move(cubeNode));
       }
     }
-    */
+
 
     /**
     auto custom_model_node = make_unique<Hodhr::SceneNode>("custom object");

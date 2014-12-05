@@ -163,6 +163,7 @@ namespace Hodhr {
     glEnable(GL_TEXTURE_2D);
     
     // culling stuff
+
     /*
       glFrontFace(GL_CCW);
       glCullFace(GL_BACK);

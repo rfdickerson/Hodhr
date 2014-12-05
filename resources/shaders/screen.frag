@@ -106,5 +106,5 @@ void main(void) {
         color = vec4(result2, 1.0);
 
     color = mix(fogcolor, color, fogFactor);
-    //color = rcolor;
+    // color = rcolor;
 }
