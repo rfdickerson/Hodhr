@@ -8,29 +8,29 @@
 
 namespace Hodhr {
 
-class Shader
-{
+  class Shader
+  {
 
-    private:
-
-        std::string name;
+  private:
+    
+    std::string name;
         
-        GLuint programID;
+    GLuint programID;
 
-    public:
+  public:
 
-        Shader(std::string name, GLuint pId);
-
-        ~Shader();
-
-        GLuint getProgramID() const;
-
-        std::string getName();
-
-        std::vector<std::string> getActiveUniforms() const;
-        
-        
-};
+    Shader(std::string name, GLuint pId);
+    
+    ~Shader();
+    
+    GLuint getProgramID() const;
+    
+    std::string getName();
+    
+    std::vector<std::string> getActiveUniforms() const;
+    
+    
+  };
 
 }
 

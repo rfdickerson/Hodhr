@@ -9,8 +9,8 @@
 
 #include <string>
 
-#include "include/common.h"
-#include "include/uiwidget.h"
+#include "common.h"
+#include "uiwidget.h"
 
 namespace Hodhr {
 

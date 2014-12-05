@@ -14,62 +14,62 @@
 
 namespace Hodhr {
 
+  // forward defines
+  class Model;
+  class SceneNode;
+  class Camera;
 
+  /* holds a list of scenenodes to traverse */
+  typedef std::vector<SceneNode*> NodeVector;
 
-class Model;
-class SceneNode;
-class Camera;
+  class SceneNode {
+    
+  private:
+    Model* asset;
+    
+    NodeVector children;
 
-typedef std::vector<std::unique_ptr<SceneNode>> NodeVector;
+    glm::vec3 position_;
+    glm::vec3 scale_;
+    glm::mat4 mvp_matrix_;
+    glm::mat4 mv_matrix_;
+    glm::mat3 normal_matrix_;
+    
+    std::string name;
 
-class SceneNode {
- private:
-Model* asset = NULL;
+  public:
 
-// std::weak_ptr<SceneNode> parent;
-
-NodeVector children;
-
-glm::vec3 position_;
-glm::vec3 scale_;
-glm::mat4 mvp_matrix_;
-glm::mat4 mv_matrix_;
-glm::mat3 normal_matrix_;
-
-std::string name;
-
- public:
-SceneNode(const std::string& name);
-
-// SceneNode(const SceneNode&);
-// SceneNode & operator=(const SceneNode &n);
+    SceneNode(const std::string& name);
+    
+    // SceneNode(const SceneNode&);
+    // SceneNode & operator=(const SceneNode &n);
         
+    
+    virtual ~SceneNode();
+    
+    void addChild(SceneNode* node);
+    
+    void setAsset(Model* model);
+    
+    //  glm::mat4 getMVMatrix() const;
+    
+    glm::mat4 getMVPMatrix() const;
+    
+    glm::mat3 getNormalMatrix() const;
+    
+    //  glm::mat3 getNormalMatrix() const;
 
-virtual ~SceneNode();
+    void setPosition(float x, float y, float z);
 
-void addChild(std::unique_ptr<SceneNode>  node);
+    void setScale(float s);
 
-void setAsset(Model* model);
+    void draw(void);
 
-//  glm::mat4 getMVMatrix() const;
+    void updateLocal(const Camera& c);
 
-glm::mat4 getMVPMatrix() const;
-
-glm::mat3 getNormalMatrix() const;
-
-//  glm::mat3 getNormalMatrix() const;
-
-void setPosition(float x, float y, float z);
-
-void setScale(float s);
-
-void draw(void);
-
-void updateLocal(const Camera& c);
-
-void updateAll(const Camera& c);
-};
-
+    void updateAll(const Camera& c);
+  };
+  
 }   //  namespace Hodhr
 
 #endif  // INCLUDE_SCENENODE_H_

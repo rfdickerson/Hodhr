@@ -1,9 +1,9 @@
 // Copyright Robert Dickerson 2014
 
 
-#include <SDL_net.h>
+# <SDL_net.h>
 
-#include "include/networkmanager.h"
+# "include/networkmanager.h"
 
 namespace Hodhr {
 

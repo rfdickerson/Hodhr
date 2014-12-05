@@ -1,12 +1,12 @@
 // Copyright Robert Dickerson 2014
 
-// #include <iostream>
+// # <iostream>
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "include/assetlibrary.h"
-#include "include/terrainpatch.h"
+#include "assetlibrary.h"
+#include "terrainpatch.h"
 
 
 namespace Hodhr {
@@ -34,18 +34,18 @@ AssetLibrary::~AssetLibrary() {
   */
 }
 
-void AssetLibrary::addTerrainPatch(std::string name) {
-  auto terrain = make_unique<TerrainPatch>();
-  models[name] = move(terrain);
-}
+  void AssetLibrary::addTerrainPatch(std::string name) {
+    TerrainPatch* terrain = new TerrainPatch();
+    models[name] = terrain;
+  }
 
 
-Model* AssetLibrary::getModel(std::string assetName) {
-  return models[assetName].get();
-}
+  Model* AssetLibrary::getModel(std::string assetName) {
+    return models[assetName];
+  }
 
-void AssetLibrary::addAsset(std::string name, unique_ptr<Model> model) {
-  models[name] = std::move(model);
-}
+  void AssetLibrary::addAsset(std::string name, Model* model) {
+    models[name] = model;
+  }
 
 }  // namespace Hodhr

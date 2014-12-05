@@ -4,9 +4,9 @@
 #include <GL/glut.h>
 
 #include <SDL.h>
-#include <memory>
+// #include <memory>
 
-#include "include/hodhr.h"
+#include "hodhr.h"
 
 #define PROGRAM_NAME "Hodhr"
 
@@ -34,7 +34,7 @@ void checkSDLError(int line = -1) {
 
 int main() {
   // int oldTicks = 0;
-
+  
   SDL_Window *mainwindow;
   SDL_GLContext maincontext;
 
@@ -51,46 +51,46 @@ int main() {
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   
-    // multisample antialiasing
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+  // multisample antialiasing
+  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    mainwindow = SDL_CreateWindow(PROGRAM_NAME,
-                                  SDL_WINDOWPOS_CENTERED,
-                                  SDL_WINDOWPOS_CENTERED,
-                                  WIDTH, HEIGHT,
-                                  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-    if (!mainwindow) /* Die if creation failed */
-      sdldie("Unable to create window");
-    
+  mainwindow = SDL_CreateWindow(PROGRAM_NAME,
+				SDL_WINDOWPOS_CENTERED,
+				SDL_WINDOWPOS_CENTERED,
+				WIDTH, HEIGHT,
+				SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  if (!mainwindow) /* Die if creation failed */
+    sdldie("Unable to create window");
+  
+  
+  maincontext = SDL_GL_CreateContext(mainwindow);
+  checkSDLError(__LINE__);
+  
+  SDL_GL_MakeCurrent(mainwindow, maincontext);
+  
+  SDL_GL_SetSwapInterval(0);
+  SDL_SetRelativeMouseMode(SDL_TRUE);
+  
+  glewExperimental = GL_TRUE;
+  GLenum result = glewInit();
+  if (result != GLEW_OK) {
+    fprintf(stderr, "Problem initializing GLEW\n");
+  }
 
-    maincontext = SDL_GL_CreateContext(mainwindow);
-    checkSDLError(__LINE__);
+  if (GLEW_VERSION_1_1) {
+    fprintf(stderr, "Graphics successfully initialized\n");
+    fprintf(stderr, "Version: %s\n", glGetString(GL_VERSION));
+    fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
+    fprintf(stderr, "Renderer: %s\n", glGetString(GL_RENDERER));
+  }
 
-    SDL_GL_MakeCurrent(mainwindow, maincontext);
+  if (SDL_HasSSE42())      {
+    fprintf(stderr, "CPU has SSE4.2 features!\n");
+  }
 
-    SDL_GL_SetSwapInterval(0);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    
-    glewExperimental = GL_TRUE;
-    GLenum result = glewInit();
-    if (result != GLEW_OK) {
-      fprintf(stderr, "Problem initializing GLEW\n");
-    }
-
-    if (GLEW_VERSION_1_1) {
-      fprintf(stderr, "Graphics successfully initialized\n");
-      fprintf(stderr, "Version: %s\n", glGetString(GL_VERSION));
-      fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
-      fprintf(stderr, "Renderer: %s\n", glGetString(GL_RENDERER));
-    }
-
-    if (SDL_HasSSE42())      {
-      fprintf(stderr, "CPU has SSE4.2 features!\n");
-    }
-
-    fprintf(stderr, "CPU has %i logical CPU cores\n", SDL_GetCPUCount());
-    fprintf(stderr, "System has %i MB of memory\n", SDL_GetSystemRAM());
+  fprintf(stderr, "CPU has %i logical CPU cores\n", SDL_GetCPUCount());
+  fprintf(stderr, "System has %i MB of memory\n", SDL_GetSystemRAM());
 
 
 
@@ -108,32 +108,34 @@ int main() {
                       "resources/shaders/flat.vert",
                       "resources/shaders/flat.frag");
 
-    auto renderer = make_unique<Hodhr::Renderer> (WIDTH, HEIGHT);
-    renderer->init();
+    Hodhr::Renderer renderer(WIDTH, HEIGHT);
+    renderer.init();
     checkSDLError(__LINE__);
 
-    auto camera = make_unique<Hodhr::Camera> (WIDTH, HEIGHT);
+    Hodhr::Camera camera(WIDTH, HEIGHT);
 
     Hodhr::Shader* screenShader = sl.GetShader("screen");
-    renderer->setScreenShader(screenShader);
+    renderer.setScreenShader(screenShader);
 
     Hodhr::Shader* basicShader = sl.GetShader("basic");
-    Hodhr::Shader* flatShader = sl.GetShader("flat");
+    // Hodhr::Shader* flatShader = sl.GetShader("flat");
 
     Hodhr::TextureManager tm;
     Hodhr::Texture* mapTexture = tm.LoadTexture("oldmap",
 						"./resources/images/oldmap.jpg", true);
     
+    /**
     Hodhr::Texture* artTexture = tm.LoadTexture("art",
 						"./resources/images/principes.jpg", false);
+    **/
 
     // load the assets
-    auto assets = make_unique<Hodhr::AssetLibrary>();
+    Hodhr::AssetLibrary assets;
 
 
     // initialize the UI
 
-    auto user_interface = std::make_unique<Hodhr::UI>(WIDTH, HEIGHT);
+    // auto user_interface = std::make_unique<Hodhr::UI>(WIDTH, HEIGHT);
 
     /*
     auto custom_label = std::make_unique<Hodhr::UILabel>();
@@ -142,24 +144,26 @@ int main() {
     user_interface->addWidget(std::move(custom_label));
     */
     
+    /**
     auto custom_image = std::make_unique<Hodhr::UIImage>();
     custom_image->setShader(flatShader);
     custom_image->setImageTexture(artTexture);
     user_interface->addWidget(std::move(custom_image));
+    **/
     
-    
+    /**
     auto custom_panel = std::make_unique<Hodhr::UIPanel>(1280,100);
     custom_panel->setShader(flatShader);
     user_interface->addWidget(std::move(custom_panel));
     
     renderer->setUserInterface(user_interface.get());
+    **/
 
-
-    auto terrainModel = make_unique<Hodhr::TerrainPatch>();
-    terrainModel->setShader(basicShader);
-    terrainModel->setTexture(mapTexture);
-    terrainModel->init();
-    assets->addAsset("terrain", std::move(terrainModel));
+    Hodhr::TerrainPatch terrainModel;
+    terrainModel.setShader(basicShader);
+    terrainModel.setTexture(mapTexture);
+    terrainModel.init();
+    assets.addAsset("terrain", &terrainModel);
 
 
     /*
@@ -170,53 +174,60 @@ int main() {
 */
 
     // make the obj model
+    /**
     auto custom_model = make_unique<Hodhr::ObjModel>();
     custom_model->setShader(basicShader);
     custom_model->LoadFile("resources/models/cubey.obj");
     assets->addAsset("gadget", std::move(custom_model));
+    **/
 
-
+    /**
     Hodhr::Model* custom_m = assets->getModel("gadget");
     if (custom_m == NULL) {
       fprintf(stderr, "Model could not be found\n");
      
     }
+    **/
 
-    Hodhr::Model* c = assets->getModel("cube");
-    Hodhr::Model* t = assets->getModel("terrain");
+    // Hodhr::Model* c = assets->getModel("cube");
+    // Hodhr::Model* t = assets->getModel("terrain");
 
-    // t->setShader(basicShader);
-    // t->init();
+    // t.setShader(basicShader);
+    // t.init();
 
     // make the scene graph
-    auto rootNode = make_unique<Hodhr::SceneNode>("root node");
+    Hodhr::SceneNode rootNode ("root node");
 
     // make the terrain node
 
 
-    auto terrainNode = make_unique<Hodhr::SceneNode>("terrain node");
-    terrainNode->setAsset(t);
+    Hodhr::SceneNode terrainNode("terrain node");
+    terrainNode.setAsset(&terrainModel);
     // terrainNode->setPosition(0.0f, 1.0f, 0.0f);
-    terrainNode->setScale(5.0f);
-    rootNode->addChild( std::move(terrainNode));
+    terrainNode.setScale(5.0f);
+    rootNode.addChild( &terrainNode );
 
+    /*
     for (int j = 0; j < 20; ++j) {
       for (int i = 0; i < 20; i++) {
-        auto cubeNode = make_unique<Hodhr::SceneNode>("cube node");
-        cubeNode->setAsset(custom_m);
-        cubeNode->setPosition(i*1.5, 0, j*1.5);
-        cubeNode->setScale(0.2);
+	Hodhr::SceneNode cubeNode = make_unique<Hodhr::SceneNode>("cube node");
+        cubeNode.setAsset(custom_m);
+        cubeNode.setPosition(i*1.5, 0, j*1.5);
+        cubeNode.setScale(0.2);
         // rootNode->addChild(std::move(cubeNode));
       }
     }
+    */
 
+    /**
     auto custom_model_node = make_unique<Hodhr::SceneNode>("custom object");
     custom_model_node->setAsset(custom_m);
     custom_model_node->setScale(.2);
     rootNode->addChild(std::move(custom_model_node));
+    **/
 
-    renderer->setRootSceneNode(std::move(rootNode));
-    renderer->setCamera(camera.get() );
+    renderer.setRootSceneNode( &rootNode);
+    renderer.setCamera( &camera );
 
     int done = 0;
     // int interval = 20;
@@ -245,7 +256,7 @@ int main() {
           y = event.motion.y;
           
 
-          camera->rotate(dt, event.motion.xrel, event.motion.yrel);
+          camera.rotate(dt, event.motion.xrel, event.motion.yrel);
 
           
         }
@@ -265,10 +276,10 @@ int main() {
         done = 1;
       }
       if (keysHeld[SDLK_w]) {
-        camera->move(dt, SPEED);
+        camera.move(dt, SPEED);
       }
       if (keysHeld[SDLK_s]) {
-        camera->move(dt, -SPEED);
+        camera.move(dt, -SPEED);
       }
 
 
@@ -276,7 +287,7 @@ int main() {
       //glViewport(0, 0, WIDTH, HEIGHT);
 
       /* draw the scene */
-      renderer->draw();
+      renderer.draw();
 
       SDL_GL_SwapWindow(mainwindow);
 

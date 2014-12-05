@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 
 
-#include "include/common.h"
+#include "common.h"
 
 namespace Hodhr {
 

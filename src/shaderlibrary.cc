@@ -1,6 +1,6 @@
 // Copyright Robert Dickerson 2014
 
-// #include <iostream>
+// # <iostream>
 #include <cstring>
 #include <string>
 #include <fstream>
@@ -8,7 +8,7 @@
 #include <memory>
 #include <utility>
 
-#include "include/shaderlibrary.h"
+#include "shaderlibrary.h"
 
 
 namespace Hodhr {
@@ -77,17 +77,16 @@ void ShaderLibrary::AddShader(std::string shaderName,
     // cout << logInfo << endl;
     fprintf(stderr, "Compiled %s\n", shaderName.c_str());
     fprintf(stderr, "Compilation result: %s\n", logInfo);
-    auto newShader = make_unique<Shader>(shaderName, pId);
+    Shader* newShader = new Shader(shaderName, pId);
 
     newShader->getActiveUniforms();
 
-    shaders_[std::string(shaderName)] = move(newShader);
+    shaders_[std::string(shaderName)] = newShader;
 }
 
 Shader* ShaderLibrary::GetShader(std::string shader_name)
 {
-    return shaders_[shader_name].get();
-
+    return shaders_[shader_name];
 }
 
 }

@@ -9,7 +9,7 @@
 #include <map>
 #include <utility>
 
-#include "include/texture.h"
+#include "texture.h"
 
 namespace Hodhr {
 
@@ -17,12 +17,12 @@ namespace Hodhr {
    * Texture Manager contains a library of all the loaded textures on the GPU
    */
   class TextureManager {
-   public:
+  public:
     TextureManager();
     Texture* LoadTexture(std::string texture_name, std::string filename, bool generate);
-
+    
    protected:
-    std::map<std::string, std::unique_ptr<Texture>> textures_;
+    std::map<std::string, Texture*> textures_;
   };
 }  // namespace Hodhr
 

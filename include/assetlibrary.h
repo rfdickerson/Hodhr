@@ -20,29 +20,28 @@ class strless {
 */
 
 namespace Hodhr {
-typedef map<std::string, unique_ptr<Model>> ModelMap;
-//typedef map<const char*, unique_ptr<Model>, strless> ModelMap;
-//typedef map<const char*, unique_ptr<Model>> ModelMap;
+  typedef map<std::string, Model*> ModelMap;
 
-class AssetLibrary
-{
+  
+  class AssetLibrary
+  {
 
-private:
+  private:
 
     ModelMap models;
 
-public:
+  public:
 
     AssetLibrary();
     ~AssetLibrary();
 
     void addTerrainPatch(std::string name);
 
-    void addAsset(std::string, unique_ptr<Model> model);
+    void addAsset(std::string, Model* model);
 
     Model* getModel(std::string name);
 
-};
+  };
 }
 
 #endif

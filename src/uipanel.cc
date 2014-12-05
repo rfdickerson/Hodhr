@@ -1,11 +1,11 @@
-#include <cairo.h>
-#include "include/uipanel.h"
-#include <include/texture.h>
+# <cairo.h>
+# "include/uipanel.h"
+# <include/texture.h>
 
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+# <glm/gtc/matrix_transform.hpp>
+# <glm/gtx/transform.hpp>
 
 
 namespace Hodhr {

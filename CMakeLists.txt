@@ -19,8 +19,13 @@ endif(GLFW_FOUND)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+
+SET(GLM_INCLUDE_DIR /usr/local/include/glm)
+SET(CMAKE_MODULE_PATH /usr/local/include/glm/util)
 find_package(GLM REQUIRED)
 
+SET(SDL_NET_LIBRARIES /usr/local/lib)
+SET(SDL_NET_INCLUDE_DIRS /usr/local/include/SDL2)
 find_package(SDL_net REQUIRED)
 find_package(SDL_image REQUIRED)
 find_package(PNG REQUIRED)
@@ -35,7 +40,6 @@ PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 pkg_search_module( pangocairo required)
 
 
-#find_package(SDL2Net REQUIRED)
 
 SET(EXTRA_LIBS ${GLFW_LDFLAGS_OTHER})
 add_definitions(${GLFW_CFLAGS_OTHER})

@@ -1,6 +1,6 @@
 // copyright Robert Dickerson 2014
 
-#include "include/texturemanager.h"
+#include "texturemanager.h"
 
 #include <algorithm>
 #include <memory>
@@ -10,16 +10,17 @@
 
 namespace Hodhr {
 
-TextureManager::TextureManager() {
-}
+  TextureManager::TextureManager() {
+  }
 
-Texture*
-TextureManager::LoadTexture(std::string texture_name, std::string filename, bool generate = false) {
-
-  // bool generate = true;
+  Texture*
+  TextureManager::LoadTexture(std::string texture_name, std::string filename, 
+			      bool generate = false) {
+    
+    // bool generate = true;
   
-  SDL_Surface* surface = IMG_Load(filename.c_str());
-  if (surface==NULL) {
+    SDL_Surface* surface = IMG_Load(filename.c_str());
+    if (surface==NULL) {
       fprintf(stderr, "Could find file %s\n", filename.c_str());
       return NULL;
     }
@@ -72,13 +73,13 @@ TextureManager::LoadTexture(std::string texture_name, std::string filename, bool
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  auto texture = std::make_unique<Texture>(texture_name, texture_id, width, height);
+  Texture* texture = new Texture(texture_name, texture_id, width, height);
 
-  textures_[texture_name] = move(texture);
+  textures_[texture_name] = texture;
   
   fprintf(stderr, "Successfully created %s texture\n", texture_name.c_str());
 
-  return textures_[texture_name].get();
+  return textures_[texture_name];
 }
 
 }   // namespace Hodhr

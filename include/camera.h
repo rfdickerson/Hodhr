@@ -11,40 +11,41 @@
 
 namespace Hodhr {
 
-class Camera
-{
- public:
-  Camera(int width, int height);
-  virtual ~Camera();
-  void rotate(float deltaTime, float dx, float dy);
-  void move(float deltaTime, float speed);
-  glm::mat4 getViewMatrix() const;
-  glm::mat4 getProjectionMatrix() const;
- protected:
+  class Camera
+  {
+  public:
+    Camera(int width, int height);
+    virtual ~Camera();
+    void rotate(float deltaTime, float dx, float dy);
+    void move(float deltaTime, float speed);
+    glm::mat4 getViewMatrix() const;
+    glm::mat4 getProjectionMatrix() const;
  
- private:
+  protected:
+ 
+  private:
   
-  float mouseSpeed;
+    float mouseSpeed;
 
-  glm::mat4 projectionMatrix;
-  glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
   
-  glm::vec3 position;
-  glm::vec3 direction;
-  glm::vec3 up;
-  glm::vec3 right;
-
-  float horizontalAngle;
-  float verticalAngle;
-  
-  float fieldOfView;
-  int width;
-  int height;
+    glm::vec3 position;
+    glm::vec3 direction;
+    glm::vec3 up;
+    glm::vec3 right;
+    
+    float horizontalAngle;
+    float verticalAngle;
+    
+    float fieldOfView;
+    int width;
+    int height;
         
-  float aspectRatio;
+    float aspectRatio;
 
 
-};
+  };
 
 }  // namespace Hodhr
 

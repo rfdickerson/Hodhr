@@ -10,14 +10,14 @@
 
 namespace Hodhr {
 
-struct HodhrVertex {
-  float x, y, z;
-  float nx, ny, nz;
-  float s, t;
-};
-
-int printOglError(std::string instruction);
-
+  struct HodhrVertex {
+    float x, y, z;
+    float nx, ny, nz;
+    float s, t;
+  };
+  
+  int printOglError(std::string instruction);
+  
 }  // namespace Hodhr
 
 

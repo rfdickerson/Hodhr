@@ -1,12 +1,12 @@
 // Copyright Robert Dickerson 2014
 
-#include <memory>
-#include <utility>
-#include <vector>
+# <memory>
+# <utility>
+# <vector>
 
-#include "include/common.h"
-#include "include/ui.h"
-#include "include/uiwidget.h"
+# "include/common.h"
+# "include/ui.h"
+# "include/uiwidget.h"
 
 namespace Hodhr {
 

@@ -10,7 +10,7 @@
    copies of the Software, and to permit persons to whom the Software is
    furnished to do so, subject to the following conditions:
 
-   The above copyright notice and this permission notice shall be included in
+   The above copyright notice and this permission notice shall be d in
    all copies or substantial portions of the Software.
 
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -24,174 +24,175 @@
 
 #include <GL/glew.h>
 
-// #include <iostream>
-// #include <fstream>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <memory>
 
-#include "include/common.h"
-#include "include/renderer.h"
-#include "include/shader.h"
-#include "include/shaderlibrary.h"
-#include "include/terrainpatch.h"
-#include "include/ui.h"
+#include "common.h"
+#include "renderer.h"
+#include "shader.h"
+#include "shaderlibrary.h"
+#include "terrainpatch.h"
+#include "ui.h"
 
 namespace Hodhr {
 
 
-Renderer::Renderer(GLuint targetWidth, GLuint targetHeight) {
-  this->targetWidth = targetWidth;
-  this->targetHeight = targetHeight;
+  Renderer::Renderer(GLuint targetWidth, GLuint targetHeight) {
+    
+    this->targetWidth = targetWidth;
+    this->targetHeight = targetHeight;
+    
+    textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
+  }
 
-  textureBuffer = new GLfloat[targetWidth * targetHeight * 32];
-}
+  Renderer::~Renderer() {
 
-Renderer::~Renderer() {
+    fprintf(stderr, "Cleaning up render system\n");
 
-  fprintf(stderr, "Cleaning up render system\n");
+    glDeleteFramebuffers(2, frameBufferID);
+    glDeleteRenderbuffers(2, renderBufferID);
 
-  glDeleteFramebuffers(2, frameBufferID);
-  glDeleteRenderbuffers(2, renderBufferID);
+    glDeleteTextures(2, textureIDs);
+    glDeleteBuffers(1, &vaoID);
+    glDeleteBuffers(1, &vboID);
+    
+    printOglError("Clean up render system");
+  }
 
-  glDeleteTextures(2, textureIDs);
-  glDeleteBuffers(1, &vaoID);
-  glDeleteBuffers(1, &vboID);
-
-  printOglError("Clean up render system");
-}
-
-/*
- * Draw the Scene
- */
-void Renderer::drawScene()
-{
-  if (!camera) {
+  /*
+   * Draw the Scene
+   */
+  void Renderer::drawScene()
+  {
+    if (!mCamera) {
       fprintf(stderr, "No camera attached\n");
       return;
     }
 
-  // update the transformation matrices
-  rootSceneNode->updateAll(*camera);
+    // update the transformation matrices
+    mRootSceneNode->updateAll(*mCamera);
+    
+    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glUseProgram(0);
+    
+    if (mRootSceneNode != NULL) {
+      mRootSceneNode->draw();
+    }
 
-  glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID[0]);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glUseProgram(0);
-
-  if (rootSceneNode != NULL) {
-      rootSceneNode->draw();
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
   }
 
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glBindVertexArray(0);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glUseProgram(0);
-}
-
-void Renderer::drawOffscreenSurface()
-{
-  // draw the deferred texture rendering
+  void Renderer::drawOffscreenSurface()
+  {
+    // draw the deferred texture rendering
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    
+    glUseProgram(mScreenShader->getProgramID());
+    
+    
+    glBindVertexArray(vaoID);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
+    int texLoc = glGetUniformLocation(mScreenShader->getProgramID(), "tex");
+    glUniform1i(texLoc, 0);
+    // fprintf(stderr, "Location of texture for deferred surface is %d\n", texLoc);
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
+    texLoc = glGetUniformLocation(mScreenShader->getProgramID(), "depthTex");
+    glUniform1i(texLoc, 1);
+    
+    //  glReadBuffer(GL_COLOR_ATTACHMENT0);
+    
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+    
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    
+  }
+  
 
-     glUseProgram(screenShader->getProgramID());
-
-
-     glBindVertexArray(vaoID);
-     glEnableVertexAttribArray(0);
-     glEnableVertexAttribArray(1);
-
-     glActiveTexture(GL_TEXTURE0);
-     glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-     int texLoc = glGetUniformLocation(screenShader->getProgramID(), "tex");
-     glUniform1i(texLoc, 0);
-     // fprintf(stderr, "Location of texture for deferred surface is %d\n", texLoc);
-
-     glActiveTexture(GL_TEXTURE1);
-     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
-     texLoc = glGetUniformLocation(screenShader->getProgramID(), "depthTex");
-     glUniform1i(texLoc, 1);
-
-     //  glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-     glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
-
-     glDisableVertexAttribArray(0);
-     glDisableVertexAttribArray(1);
-     glBindVertexArray(0);
-
-     glBindTexture(GL_TEXTURE_2D, 0);
-     glUseProgram(0);
-     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-}
-
-
-void Renderer::drawUI()
-{
-  // draw the UI on top of this
-  if (ui_) {
-      ui_->draw();
-
+  void Renderer::drawUI()
+  {
+    // draw the UI on top of this
+    if (mUI) {
+      // mUI->draw();
+      
     }
-}
+  }
+  
+  void Renderer::draw() {
+    
+    drawScene();
+    
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, targetWidth, targetHeight);
+    
+    drawOffscreenSurface();
+    
+    // drawUI();
+    
+    
+  }
 
-void Renderer::draw() {
+  void Renderer::init() {
+    printOglError("Begin Render System init");
+    /* Create the render buffers */
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    
+    // culling stuff
+    /*
+      glFrontFace(GL_CCW);
+      glCullFace(GL_BACK);
+      glEnable(GL_CULL_FACE);
+    */
+    
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_CLAMP);
+    glDepthFunc(GL_LESS);
+    
+    glGenTextures(2, textureIDs);
+    
+    fprintf(stderr, "Texture ID for color channel is %d\n", textureIDs[0]);
 
-  drawScene();
-
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, targetWidth, targetHeight);
-
-  drawOffscreenSurface();
-
-  drawUI();
-
-
-}
-
-void Renderer::init() {
-  printOglError("Begin Render System init");
-  /* Create the render buffers */
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_TEXTURE_2D);
-
-  // culling stuff
-  /*
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);
-  */
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_DEPTH_CLAMP);
-  glDepthFunc(GL_LESS);
-
-  glGenTextures(2, textureIDs);
-
-  fprintf(stderr, "Texture ID for color channel is %d\n", textureIDs[0]);
-
-  glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-  glTexImage2D(GL_TEXTURE_2D,
-               0,
-               GL_RGBA,
-               targetWidth,
-               targetHeight,
-               0,
-               GL_RGBA,
-               GL_UNSIGNED_BYTE,
-               textureBuffer);
-
+    glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
+    glTexImage2D(GL_TEXTURE_2D,
+		 0,
+		 GL_RGBA,
+		 targetWidth,
+		 targetHeight,
+		 0,
+		 GL_RGBA,
+		 GL_UNSIGNED_BYTE,
+		 textureBuffer);
+    
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
+    
 
     fprintf(stderr, "Texture ID for depth channel is %d\n", textureIDs[1]);
 
@@ -200,15 +201,15 @@ void Renderer::init() {
     glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
 
     glTexImage2D(GL_TEXTURE_2D,
-            0,
-            GL_DEPTH_COMPONENT32,
-            targetWidth,
-            targetHeight,
-            0,
-            GL_DEPTH_COMPONENT,
-            GL_FLOAT,
-            textureBuffer);
-
+		 0,
+		 GL_DEPTH_COMPONENT32,
+		 targetWidth,
+		 targetHeight,
+		 0,
+		 GL_DEPTH_COMPONENT,
+		 GL_FLOAT,
+		 textureBuffer);
+    
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -293,25 +294,24 @@ void Renderer::init() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-
+    
     printOglError("Create deferred rendering surface");
-}
+  }
 
-void Renderer::setScreenShader(Shader* s) {
-    this->screenShader = s;
-}
+  void Renderer::setScreenShader(Shader* s) {
+    this->mScreenShader = s;
+  }
 
-void Renderer::setCamera(Camera* c) {
-    this->camera = c;
-}
+  void Renderer::setCamera(Camera* c) {
+    this->mCamera = c;
+  }
 
-void Renderer::setRootSceneNode(unique_ptr<SceneNode> sceneNode) {
-    this->rootSceneNode = std::move(sceneNode);
-}
+  void Renderer::setRootSceneNode(SceneNode* sceneNode) {
+    this->mRootSceneNode = sceneNode;
+  }
 
-void Renderer::setUserInterface(UI* ui) {
-  this->ui_ = ui;
-}
+  void Renderer::setUserInterface(UI* ui) {
+    this->mUI = ui;
+  }
 
 }  // namespace Hodhr

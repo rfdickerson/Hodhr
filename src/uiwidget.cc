@@ -1,10 +1,10 @@
 // Copyright Robert Dickerson 2014
 
-#include <GL/glew.h>
+# <GL/glew.h>
 
-#include "include/uiwidget.h"
-#include "include/shader.h"
-#include "include/texture.h"
+# "include/uiwidget.h"
+# "include/shader.h"
+# "include/texture.h"
 
 namespace Hodhr {
 

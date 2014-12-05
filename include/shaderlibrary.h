@@ -19,7 +19,7 @@ class ShaderLibrary
 
     //static ShaderLibrary *instance;
 
-    std::map<std::string, unique_ptr<Shader>> shaders_;
+    std::map<std::string, Shader*> shaders_;
 
 public:
 

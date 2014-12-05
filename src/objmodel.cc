@@ -2,15 +2,15 @@
 
 
 
-#include <GL/glew.h>
+# <GL/glew.h>
 
-#include <fstream>
-#include <sstream>
-//#include <iostream>
-#include <vector>
+# <fstream>
+# <sstream>
+//# <iostream>
+# <vector>
 
-#include "include/objmodel.h"
-#include "include/shader.h"
+# "include/objmodel.h"
+# "include/shader.h"
 
 namespace Hodhr {
 

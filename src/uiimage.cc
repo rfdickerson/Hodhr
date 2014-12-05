@@ -1,10 +1,10 @@
-#include "include/uiwidget.h"
-#include "include/uiimage.h"
-#include "include/texture.h"
+# "include/uiwidget.h"
+# "include/uiimage.h"
+# "include/texture.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+# <glm/gtc/matrix_transform.hpp>
+# <glm/gtx/transform.hpp>
 
 namespace Hodhr {
   

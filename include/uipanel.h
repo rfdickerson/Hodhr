@@ -1,8 +1,8 @@
 #ifndef INCLUDE_PANEL_H_
 #define INCLUDE_PANEL_H_
 
-#include "include/common.h"
-#include "include/uiwidget.h"
+#include "common.h"
+#include "uiwidget.h"
 
 namespace Hodhr {
 

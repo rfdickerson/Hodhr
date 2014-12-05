@@ -1,8 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <memory>
-
 #include "scenenode.h"
 
 
@@ -12,33 +10,33 @@ Pure virtual class for describing a model
 
 namespace Hodhr {
 
-class Shader;
-class SceneNode;
+  class Shader;
+  class SceneNode;
 
-class Model
-{
+  class Model
+  {
 
-protected:
+  protected:
 
     Shader* shader;
     bool initialized;
 
-public:
+  public:
 
-        // no copy
-        //Model(const Model&) = delete;
+    // no copy
+    //Model(const Model&) = delete;
 
-        // no assign
-        //Model& operator=(const Model&) = delete;
+    // no assign
+    //Model& operator=(const Model&) = delete;
 
-        //virtual ~Model() = default;
-        virtual ~Model() = 0;
+    //virtual ~Model() = default;
+    virtual ~Model() = 0;
 
-        virtual void init() = 0;
-        virtual void draw(const SceneNode& n) = 0;
+    virtual void init() = 0;
+    virtual void draw(const SceneNode& n) = 0;
 
-        virtual void setShader(Shader *s);
-};
+    virtual void setShader(Shader *s);
+  };
 
 }
 

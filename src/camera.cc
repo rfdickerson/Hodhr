@@ -1,41 +1,41 @@
 // Copyright Robert Dickerson 2014
 
 #include <glm/gtc/constants.hpp>
-#include "include/common.h"
-#include "include/camera.h"
+#include "common.h"
+#include "camera.h"
 
 namespace Hodhr {
 
-Camera::Camera(int width, int height) {
+  Camera::Camera(int width, int height) {
   
-  // ctor
-  fieldOfView = 75.0f;
-  horizontalAngle = 0.0f;
-  verticalAngle = 0.0f;
-  position = glm::vec3(0, 0, 0);
-  mouseSpeed = 0.0005;
+    // ctor
+    fieldOfView = 75.0f;
+    horizontalAngle = 0.0f;
+    verticalAngle = 0.0f;
+    position = glm::vec3(0, 0, 0);
+    mouseSpeed = 0.0005;
+  
+    aspectRatio = static_cast<float> (width) / static_cast<float> (height);
 
-  aspectRatio = static_cast<float> (width) / static_cast<float> (height);
-
-  viewMatrix = glm::lookAt(
-      position,
-      position+direction,
-      up);
-
-
-  projectionMatrix = glm::perspective(
-      fieldOfView,
-      aspectRatio,
-      0.1f,
-      100.0f);
-
-  fprintf(stderr, "Created a camera with FoV of %5.2f\n", fieldOfView);
-}
+    viewMatrix = glm::lookAt(
+			     position,
+			     position+direction,
+			     up);
 
 
-glm::mat4 Camera::getViewMatrix() const {
-  return viewMatrix;
-}
+    projectionMatrix = glm::perspective(
+					fieldOfView,
+					aspectRatio,
+					0.1f,
+					100.0f);
+  
+    fprintf(stderr, "Created a camera with FoV of %5.2f\n", fieldOfView);
+  }
+
+
+  glm::mat4 Camera::getViewMatrix() const {
+    return viewMatrix;
+  }
 
 glm::mat4 Camera::getProjectionMatrix() const {
   return projectionMatrix;

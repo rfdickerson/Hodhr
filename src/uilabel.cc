@@ -1,17 +1,17 @@
 // Copyright Robert Dickerson 2014
 
-#include "include/common.h"
-#include "include/uilabel.h"
-#include "include/shader.h"
+# "include/common.h"
+# "include/uilabel.h"
+# "include/shader.h"
 
-#include <pango/pangocairo.h>
+# <pango/pangocairo.h>
 
-#include <stdlib.h>
-#include <vector>
+# <stdlib.h>
+# <vector>
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+# <glm/gtc/matrix_transform.hpp>
+# <glm/gtx/transform.hpp>
 
 // #define FONT "Sans Bold 38"
 // #define FONT "Alegreya Sans SC Black 18"
