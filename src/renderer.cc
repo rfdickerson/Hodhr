@@ -199,7 +199,7 @@ namespace Hodhr {
 
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
-    fprintf(stdout, "Setting anisotropic filtering to %f", fLargest);
+    fprintf(stdout, "Setting anisotropic filtering to %f\n", fLargest);
 
     fprintf(stderr, "Texture ID for depth channel is %d\n", textureIDs[1]);
 

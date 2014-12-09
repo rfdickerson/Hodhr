@@ -40,7 +40,7 @@ namespace Hodhr {
   
   printOglError("generate texture");
   
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   
   if (generate) {
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
@@ -93,7 +93,7 @@ namespace Hodhr {
 
   textures_[texture_name] = texture;
   
-  fprintf(stderr, "Successfully created %s texture\n", texture_name.c_str());
+  fprintf(stdout, "Successfully created %s texture\n", texture_name.c_str());
 
   return textures_[texture_name];
 }

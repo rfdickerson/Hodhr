@@ -74,7 +74,9 @@ typedef struct
     unsigned short v;
 } UV_COORD;
 
-
+/*
+ * Extracts the vertex position index and the texture vertex index
+ */
 int parse_desc(std::string token, FACE_DESC* face )
 {
     int i = token.find('/');
@@ -85,14 +87,86 @@ int parse_desc(std::string token, FACE_DESC* face )
 
     face->vertexID = a;
     face->uvID = b;
+
+    return 0;
+}
+
+int parseFace(
+        std::vector<std::string> &tokens,
+        std::vector<glm::vec3> &vertices,
+        std::vector<UV_COORD> &textureVerts,
+        std::vector<HodhrVertex> &h_vertices,
+                std::vector<unsigned short> &h_indices,
+               int &indice)
+{
+    FACE_DESC faceDesc[4];
+    glm::vec3 v[4];
+    UV_COORD tv[4];
+    Hodhr::HodhrVertex hv[4];
+    glm::vec3 a, b, normal;
+
+    for (int i=0;i<4;i++) {
+        parse_desc(tokens[i+1], &faceDesc[i]);
+    }
+
+    for (int i=0;i<4;i++) {
+        v[i] = vertices[faceDesc[i].vertexID-1];
+    }
+
+
+    for (int i=0;i<4;i++)
+    {
+       tv[i] = textureVerts[faceDesc[i].uvID-1];
+    }
+
+    for (int i=0 ; i<4 ; i++)
+    {
+       hv[i].x = v[i].x;
+       hv[i].y = v[i].y;
+       hv[i].z = v[i].z;
+       hv[i].s = tv[i].u;
+       hv[i].t = tv[i].v;
+    }
+
+
+    a = v[1]-v[0];
+    b = v[2]-v[0];
+
+    normal = glm::cross(b, a);
+
+    for (int i=0;i<4;i++) {
+      hv[i].nx = normal.x;
+      hv[i].ny = normal.y;
+      hv[i].nz = normal.z;
+    }
+
+    h_vertices.push_back(hv[0]);
+    h_indices.push_back(indice);
+    indice++;
+
+    h_vertices.push_back(hv[1]);
+    h_indices.push_back(indice);
+    indice++;
+
+    h_vertices.push_back(hv[2]);
+    h_indices.push_back(indice);
+    indice++;
+
+    h_vertices.push_back(hv[3]);
+
+    h_indices.push_back(indice-1);
+    h_indices.push_back(indice-3);
+    h_indices.push_back(indice);
+    indice++;
+
+    return 0;
 }
 
   void 
   ObjModel::LoadFile(std::string filename)
   {
 
-    //std::cout << "Loading model from " << filename << std::endl;
-  fprintf(stderr, "Loading model from %s\n", filename.c_str());
+    fprintf(stderr, "Loading model from %s\n", filename.c_str());
 
     std::ifstream infile(filename);
 
@@ -105,7 +179,7 @@ int parse_desc(std::string token, FACE_DESC* face )
     std::vector<glm::vec3> vertices;
 
   std::string line;
-  float a, b, c;
+  // float a, b, c;
 
   int indice = 0;
   while (std::getline(infile, line))
@@ -115,13 +189,17 @@ int parse_desc(std::string token, FACE_DESC* face )
       if (line[0] == '#')
         // comment
         continue;
+      else if (line[0] == 'o')
+      {
+        fprintf(stdout, "Loading model %s\n", tokens[1].c_str());
+      }
       else if (line[0] == 'v' && line[1] == 't')
       {
 
         float fu = ::atof(tokens[1].c_str());
         float fv = ::atof(tokens[2].c_str());
-        unsigned short u = (short)(fu * 65535);
-        unsigned short v = (short)(fv * 65535);
+        unsigned short u = (short)((fu) * 65535);
+        unsigned short v = (short)((fv) * 65535);
 
         UV_COORD uv;
         uv.u = u;
@@ -146,104 +224,8 @@ int parse_desc(std::string token, FACE_DESC* face )
       else if (line[0] == 'f')
         {
 
-          /**
-          unsigned short i1 = ::atoi(tokens[1].c_str());
-          unsigned short i2 = ::atoi(tokens[2].c_str());
-          unsigned short i3 = ::atoi(tokens[3].c_str());
-          unsigned short i4 = ::atoi(tokens[4].c_str());
-            **/
+          parseFace(tokens, vertices, textureVerts, h_vertices, h_indices, indice);
 
-          FACE_DESC faceDesc[4];
-            parse_desc(tokens[1], &faceDesc[0]);
-             parse_desc(tokens[2], &faceDesc[1]);
-              parse_desc(tokens[3], &faceDesc[2]);
-               parse_desc(tokens[4], &faceDesc[3]);
-
-               unsigned short i1 = faceDesc[0].vertexID;
-                unsigned short i2 = faceDesc[1].vertexID;
-                 unsigned short i3 = faceDesc[2].vertexID;
-                 unsigned short i4 = faceDesc[3].vertexID;
-
-
-          // std::cout << i1 << "," << i2 << "," << i3 << "," << i4 << std::endl;
-          fprintf(stdout, "Face: %d, %d, %d, %d\n", i1, i2, i3, i4);
-
-          glm::vec3 v1 = vertices[i1-1];
-          glm::vec3 v2 = vertices[i2-1];
-          glm::vec3 v3 = vertices[i3-1];
-          glm::vec3 v4 = vertices[i4-1];
-
-          // read the texture vertices
-          UV_COORD tv1 = textureVerts[faceDesc[0].uvID-1];
-          UV_COORD tv2 = textureVerts[faceDesc[1].uvID-1];
-          UV_COORD tv3 = textureVerts[faceDesc[2].uvID-1];
-          UV_COORD tv4 = textureVerts[faceDesc[3].uvID-1];
-
-          Hodhr::HodhrVertex hv1;
-          hv1.x = v1.x;
-          hv1.y = v1.y;
-          hv1.z = v1.z;
-          hv1.s = tv1.u;
-          hv1.t = tv1.v;
-
-          Hodhr::HodhrVertex hv2;
-          hv2.x = v2.x;
-          hv2.y = v2.y;
-          hv2.z = v2.z;
-          hv2.s = tv2.u;
-          hv2.t = tv2.v;
-
-          Hodhr::HodhrVertex hv3;
-          hv3.x = v3.x;
-          hv3.y = v3.y;
-          hv3.z = v3.z;
-          hv3.s = tv3.u;
-          hv3.t = tv3.v;
-
-          Hodhr::HodhrVertex hv4;
-          hv4.x = v4.x;
-          hv4.y = v4.y;
-          hv4.z = v4.z;
-          hv4.s = tv4.u;
-          hv4.t = tv4.v;
-
-          glm::vec3 a = v2-v1;
-          glm::vec3 b = v3-v1;
-
-          glm::vec3 normal = glm::cross(b, a);
-          hv1.nx = normal.x;
-          hv1.ny = normal.y;
-          hv1.nz = normal.z;
-          hv2.nx = normal.x;
-          hv2.ny = normal.y;
-          hv2.nz = normal.z;
-          hv3.nx = normal.x;
-          hv3.ny = normal.y;
-          hv3.nz = normal.z;
-          hv4.nx = normal.x;
-          hv4.ny = normal.y;
-          hv4.nz = normal.z;
-
-          h_vertices.push_back(hv1);
-          h_indices.push_back(indice);
-          indice++;
-
-          h_vertices.push_back(hv2);
-          h_indices.push_back(indice);
-          indice++;
-
-          h_vertices.push_back(hv3);
-          h_indices.push_back(indice);
-          indice++;
-
-          h_vertices.push_back(hv4);
-          // h_indices.push_back(indice);
-          // indice++;
-
-          h_indices.push_back(indice-1);
-          h_indices.push_back(indice-3);
-          h_indices.push_back(indice);
-            indice++;
 
 
         }
@@ -252,14 +234,6 @@ int parse_desc(std::string token, FACE_DESC* face )
         }
 
     }
-
-  /*
-  std::cout << "Read " 
-	    << h_vertices.size() 
-	    << " vertices and " 
-	    << h_indices.size() 
-	    << " indices."<< std::endl;
-*/
 
   fprintf(stderr, "Model loaded with %d vertices and %d indices\n",
           h_vertices.size(), h_indices.size());
@@ -286,9 +260,12 @@ int parse_desc(std::string token, FACE_DESC* face )
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
+
+       // normals
     glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(16));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(16));
+
+    // texture
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
 
@@ -393,7 +370,7 @@ int parse_desc(std::string token, FACE_DESC* face )
     light_color_loc_ = glGetUniformLocation(shader->getProgramID(), "LightColor");
     ambient_loc_ = glGetUniformLocation(shader->getProgramID(), "Ambient");
 
-    fprintf(stdout, "Location of texture is at %d", mTextureLocation);
+    fprintf(stdout, "Location of texture is at %d\n", mTextureLocation);
 
     /*
     std::cout << "Set cube shader " << shader->getName()

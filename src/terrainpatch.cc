@@ -99,7 +99,7 @@ namespace Hodhr {
     
     for (int i = 0; i < 12; ++i) {
       // cout << indices[i] << ", ";
-      fprintf(stderr, "%d", indices[i]);
+      // fprintf(stderr, "%d", indices[i]);
     }
     
 
