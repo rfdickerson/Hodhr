@@ -14,6 +14,7 @@ const int WIDTH = 1280;
 const int HEIGHT = 768;
 
 const float SPEED = 0.4f;
+const int FRAME_DELAY = 12;
 
 void sdldie(const char *msg) {
   printf("%s: %s\n", msg, SDL_GetError());
@@ -69,7 +70,7 @@ int main() {
   
   SDL_GL_MakeCurrent(mainwindow, maincontext);
   
-  SDL_GL_SetSwapInterval(0);
+  SDL_GL_SetSwapInterval(1);
   SDL_SetRelativeMouseMode(SDL_TRUE);
   
   glewExperimental = GL_TRUE;
@@ -122,7 +123,7 @@ int main() {
 
     Hodhr::TextureManager tm;
     Hodhr::Texture* grassTexture = tm.LoadTexture("cube",
-                        "resources/images/cube.png", true);
+                        "resources/images/cube2.png", true);
     
     /**
     Hodhr::Texture* artTexture = tm.LoadTexture("art",
@@ -293,7 +294,7 @@ int main() {
 
       SDL_GL_SwapWindow(mainwindow);
 
-      SDL_Delay(1);
+      SDL_Delay(FRAME_DELAY);
     }
 
     SDL_GL_DeleteContext(maincontext);

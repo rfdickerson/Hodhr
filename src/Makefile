@@ -1,7 +1,7 @@
 all: hodhr	
 
 CC := g++
-CFLAGS := -g -c -Wall -std=c++11
+CFLAGS := -O2 -c -Wall -std=c++11
 LDFLAGS := -lSDL2 -lSDL2_image
 
 OBJECTS := terrainpatch.o model.o texture.o main.o scenenode.o shader.o camera.o common.o shaderlibrary.o renderer.o texturemanager.o assetlibrary.o objmodel.o

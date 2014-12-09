@@ -198,8 +198,8 @@ int parseFace(
 
         float fu = ::atof(tokens[1].c_str());
         float fv = ::atof(tokens[2].c_str());
-        unsigned short u = (short)((fu) * 65535);
-        unsigned short v = (short)((fv) * 65535);
+        unsigned short u = (short)((fu) * USHRT_MAX);
+        unsigned short v = (short)((1-fv) * USHRT_MAX);
 
         UV_COORD uv;
         uv.u = u;
