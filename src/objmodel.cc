@@ -61,6 +61,31 @@ ObjModel::~ObjModel ()
 }
 
 
+typedef struct
+{
+    unsigned int vertexID;
+    unsigned int uvID;
+
+} FACE_DESC;
+
+typedef struct
+{
+    unsigned short u;
+    unsigned short v;
+} UV_COORD;
+
+
+int parse_desc(std::string token, FACE_DESC* face )
+{
+    int i = token.find('/');
+    std::string l1 = token.substr(0, i);
+    std::string l2 = token.substr(i+1, token.size());
+    unsigned a = ::atoi(l1.c_str());
+    unsigned b = ::atoi(l2.c_str());
+
+    face->vertexID = a;
+    face->uvID = b;
+}
 
   void 
   ObjModel::LoadFile(std::string filename)
@@ -72,6 +97,10 @@ ObjModel::~ObjModel ()
     std::ifstream infile(filename);
 
     std::vector<HodhrVertex> h_vertices;
+
+    // store the texture coordinates
+    std::vector<UV_COORD> textureVerts;
+
     std::vector<unsigned short> h_indices;
     std::vector<glm::vec3> vertices;
 
@@ -86,6 +115,21 @@ ObjModel::~ObjModel ()
       if (line[0] == '#')
         // comment
         continue;
+      else if (line[0] == 'v' && line[1] == 't')
+      {
+
+        float fu = ::atof(tokens[1].c_str());
+        float fv = ::atof(tokens[2].c_str());
+        unsigned short u = (short)(fu * 65535);
+        unsigned short v = (short)(fv * 65535);
+
+        UV_COORD uv;
+        uv.u = u;
+        uv.v = v;
+
+         fprintf(stdout, "Reading texture coordinate %d, %d\n", u, v);
+         textureVerts.push_back( uv );
+      }
       else if (line[0] == 'v')
         {
 
@@ -101,38 +145,67 @@ ObjModel::~ObjModel ()
         }
       else if (line[0] == 'f')
         {
+
+          /**
           unsigned short i1 = ::atoi(tokens[1].c_str());
           unsigned short i2 = ::atoi(tokens[2].c_str());
           unsigned short i3 = ::atoi(tokens[3].c_str());
           unsigned short i4 = ::atoi(tokens[4].c_str());
+            **/
+
+          FACE_DESC faceDesc[4];
+            parse_desc(tokens[1], &faceDesc[0]);
+             parse_desc(tokens[2], &faceDesc[1]);
+              parse_desc(tokens[3], &faceDesc[2]);
+               parse_desc(tokens[4], &faceDesc[3]);
+
+               unsigned short i1 = faceDesc[0].vertexID;
+                unsigned short i2 = faceDesc[1].vertexID;
+                 unsigned short i3 = faceDesc[2].vertexID;
+                 unsigned short i4 = faceDesc[3].vertexID;
+
 
           // std::cout << i1 << "," << i2 << "," << i3 << "," << i4 << std::endl;
-
+          fprintf(stdout, "Face: %d, %d, %d, %d\n", i1, i2, i3, i4);
 
           glm::vec3 v1 = vertices[i1-1];
           glm::vec3 v2 = vertices[i2-1];
           glm::vec3 v3 = vertices[i3-1];
           glm::vec3 v4 = vertices[i4-1];
 
+          // read the texture vertices
+          UV_COORD tv1 = textureVerts[faceDesc[0].uvID-1];
+          UV_COORD tv2 = textureVerts[faceDesc[1].uvID-1];
+          UV_COORD tv3 = textureVerts[faceDesc[2].uvID-1];
+          UV_COORD tv4 = textureVerts[faceDesc[3].uvID-1];
+
           Hodhr::HodhrVertex hv1;
           hv1.x = v1.x;
           hv1.y = v1.y;
           hv1.z = v1.z;
+          hv1.s = tv1.u;
+          hv1.t = tv1.v;
 
           Hodhr::HodhrVertex hv2;
           hv2.x = v2.x;
           hv2.y = v2.y;
           hv2.z = v2.z;
+          hv2.s = tv2.u;
+          hv2.t = tv2.v;
 
           Hodhr::HodhrVertex hv3;
           hv3.x = v3.x;
           hv3.y = v3.y;
           hv3.z = v3.z;
+          hv3.s = tv3.u;
+          hv3.t = tv3.v;
 
           Hodhr::HodhrVertex hv4;
           hv4.x = v4.x;
           hv4.y = v4.y;
           hv4.z = v4.z;
+          hv4.s = tv4.u;
+          hv4.t = tv4.v;
 
           glm::vec3 a = v2-v1;
           glm::vec3 b = v3-v1;
@@ -170,7 +243,7 @@ ObjModel::~ObjModel ()
           h_indices.push_back(indice-1);
           h_indices.push_back(indice-3);
           h_indices.push_back(indice);
-	  indice++;
+            indice++;
 
 
         }
@@ -212,11 +285,12 @@ ObjModel::~ObjModel ()
     printOglError("Creating VBO for Obj Model");
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(0));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(12));
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(16));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(16));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
 
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);

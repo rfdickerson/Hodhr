@@ -33,34 +33,50 @@ namespace Hodhr {
   glBindTexture(GL_TEXTURE_2D, texture_id);
   
   if (generate) { 
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
   } else {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   }
   
   printOglError("generate texture");
   
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_NEAREST);
   
-  if (generate) 
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+  if (generate) {
+        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+  }
   
   
   if (generate) {
-    gluBuild2DMipmaps(
-	GL_TEXTURE_2D,
+      /*
+      gluBuild2DMipmaps(
+        GL_TEXTURE_2D,
         GL_RGBA,
         surface->w, surface->h,
-        GL_RGB,
+        GL_RGBA,
                GL_UNSIGNED_BYTE,
                surface->pixels);
+               */
+
+      glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 surface->w, surface->h,
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 surface->pixels);
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+
   } else {
     glTexImage2D(GL_TEXTURE_2D,
                0,
                GL_RGBA,
                surface->w, surface->h,
                0,
-               GL_RGB,
+               GL_RGBA,
                GL_UNSIGNED_BYTE,
                surface->pixels);
   }

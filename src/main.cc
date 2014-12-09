@@ -121,8 +121,8 @@ int main() {
     // Hodhr::Shader* flatShader = sl.GetShader("flat");
 
     Hodhr::TextureManager tm;
-    Hodhr::Texture* grassTexture = tm.LoadTexture("grass",
-                        "resources/images/grass.png", true);
+    Hodhr::Texture* grassTexture = tm.LoadTexture("cube",
+                        "resources/images/cube.png", true);
     
     /**
     Hodhr::Texture* artTexture = tm.LoadTexture("art",
@@ -178,7 +178,7 @@ int main() {
     Hodhr::ObjModel custom_model;
     custom_model.setShader(basicShader);
     custom_model.setTexture(grassTexture);
-    custom_model.LoadFile("resources/models/cubey.obj");
+    custom_model.LoadFile("resources/models/cube.obj");
     assets.addAsset("gadget", &custom_model);
 
 
@@ -206,11 +206,11 @@ int main() {
     terrainNode.setAsset(&terrainModel);
     // terrainNode->setPosition(0.0f, 1.0f, 0.0f);
     terrainNode.setScale(5.0f);
-    rootNode.addChild( &terrainNode );
+    // rootNode.addChild( &terrainNode );
 
 
-    for (int j = 0; j < 20; ++j) {
-      for (int i = 0; i < 20; i++) {
+    for (int j = 0; j < 3; ++j) {
+      for (int i = 0; i < 3; i++) {
         Hodhr::SceneNode* cubeNode = new Hodhr::SceneNode("cube node");
         cubeNode->setAsset(&custom_model);
         cubeNode->setPosition(i*1.5, 0, j*1.5);

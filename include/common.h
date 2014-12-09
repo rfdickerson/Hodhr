@@ -11,9 +11,9 @@
 namespace Hodhr {
 
   struct HodhrVertex {
-    float x, y, z;
-    float nx, ny, nz;
-    float s, t;
+    float x, y, z;          // position
+    float nx, ny, nz;       // normal direction
+    unsigned short s, t;    // texture coordinates
   };
   
   int printOglError(std::string instruction);

@@ -193,7 +193,13 @@ namespace Hodhr {
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
+
+    // enable anisotropic filtering
+    GLfloat fLargest;
+
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+    fprintf(stdout, "Setting anisotropic filtering to %f", fLargest);
 
     fprintf(stderr, "Texture ID for depth channel is %d\n", textureIDs[1]);
 
