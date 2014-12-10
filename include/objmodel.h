@@ -11,6 +11,22 @@ class Shader;
 
 namespace Hodhr {
 
+typedef struct 
+{
+	glm::vec3 ka;
+	glm::vec3 kd;
+	glm::vec3 ks;
+	float shininess;	// Specular shininess
+} MaterialInfo;
+
+typedef struct 
+{
+	glm::vec4 position;
+	glm::vec3 la;		// Ambient light intensity
+	glm::vec3 ld;		// Diffuse light intensity
+	glm::vec3 ls;		// Specular light intensity
+} LightInfo;
+
 class ObjModel : public Model {
 
 public:
@@ -37,6 +53,25 @@ private:
 
   GLint mTextureLocation;
 
+	GLint mMVPLocation,
+		mNormalMatrixLocation,
+		mMaterialLocation,
+		mLightPositionLocation,
+		mLightLaLocation,
+        mLightLdLocation,
+		mLightLsLocation,
+		mMaterialKaLocation,
+		mMaterialKdLocation,
+		mMaterialKsLocation,
+        mMaterialShininessLocation,
+		mProjectionMatrixLocation,
+		mModelViewMatrixLocation;
+
+	LightInfo mLightInfo;
+	MaterialInfo mMaterialInfo;
+	
+
+	/*
   GLint MVPMatrixLocation,
   MVMatrixLocation,
   normal_matrix_loc_,
@@ -50,6 +85,7 @@ private:
   light_color_loc_,
   ambient_loc_
   ;
+*/
 
   unsigned short num_indices_;
 

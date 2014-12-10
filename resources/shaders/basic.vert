@@ -1,4 +1,4 @@
-#version 430 core
+#version 400 core
 
 uniform mat4 MVPMatrix;
 //uniform mat4 MVMatrix;
@@ -17,17 +17,19 @@ layout(location = 2) in vec2 VertexTexCoord;
 out vec4 Color;
 out vec3 Normal;
 out vec2 TexCoord;
+out vec3 Normal2;
 
 out vec3 LightDirection;
 out vec3 HalfVector;
 out float Attenuation;
 
-void main() {
 
+
+void main() {
 
     Color = vec4(.5, .85, 0.15, 1);
 
-
+	Normal2 = vec3(VertexNormal);
     Normal = normalize(NormalMatrix * VertexNormal);
     TexCoord = VertexTexCoord;
     

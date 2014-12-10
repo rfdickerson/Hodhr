@@ -1,7 +1,5 @@
 // Copyright Robert Dickerson 2014
 
-
-
 #include <GL/glew.h>
 
 #include <fstream>
@@ -63,22 +61,22 @@ ObjModel::~ObjModel ()
 
 typedef struct
 {
-    unsigned int vertexID;
-    unsigned int uvID;
-
+  unsigned int vertexID;
+  unsigned int uvID;
+  
 } FACE_DESC;
-
+  
 typedef struct
 {
-    unsigned short u;
-    unsigned short v;
+  unsigned short u;
+  unsigned short v;
 } UV_COORD;
-
-/*
- * Extracts the vertex position index and the texture vertex index
- */
-int parse_desc(std::string token, FACE_DESC* face )
-{
+  
+  /*
+   * Extracts the vertex position index and the texture vertex index
+   */
+  int parse_desc(std::string token, FACE_DESC* face )
+  {
     int i = token.find('/');
     std::string l1 = token.substr(0, i);
     std::string l2 = token.substr(i+1, token.size());
@@ -87,18 +85,18 @@ int parse_desc(std::string token, FACE_DESC* face )
 
     face->vertexID = a;
     face->uvID = b;
-
+    
     return 0;
-}
-
-int parseFace(
-        std::vector<std::string> &tokens,
-        std::vector<glm::vec3> &vertices,
-        std::vector<UV_COORD> &textureVerts,
-        std::vector<HodhrVertex> &h_vertices,
+  }
+  
+  int parseFace(
+		std::vector<std::string> &tokens,
+		std::vector<glm::vec3> &vertices,
+		std::vector<UV_COORD> &textureVerts,
+		std::vector<HodhrVertex> &h_vertices,
                 std::vector<unsigned short> &h_indices,
-               int &indice)
-{
+		int &indice)
+  {
     FACE_DESC faceDesc[4];
     glm::vec3 v[4];
     UV_COORD tv[4];
@@ -112,7 +110,6 @@ int parseFace(
     for (int i=0;i<4;i++) {
         v[i] = vertices[faceDesc[i].vertexID-1];
     }
-
 
     for (int i=0;i<4;i++)
     {
@@ -128,16 +125,24 @@ int parseFace(
        hv[i].t = tv[i].v;
     }
 
-
     a = v[1]-v[0];
     b = v[2]-v[0];
 
     normal = glm::cross(b, a);
-
-    for (int i=0;i<4;i++) {
+    normal = glm::normalize(normal);
+    
+    for (int i=0 ; i<4 ; ++i) {
+      
       hv[i].nx = normal.x;
       hv[i].ny = normal.y;
       hv[i].nz = normal.z;
+      
+
+        /*
+      hv[i].nx = a.y * b.z - a.z * b.y;
+      hv[i].ny = a.z * b.x - a.x * b.z;
+      hv[i].nz = a.x * b.y - a.y * b.x;
+      */
     }
 
     h_vertices.push_back(hv[0]);
@@ -160,7 +165,7 @@ int parseFace(
     indice++;
 
     return 0;
-}
+  }
 
   void 
   ObjModel::LoadFile(std::string filename)
@@ -177,35 +182,35 @@ int parseFace(
 
     std::vector<unsigned short> h_indices;
     std::vector<glm::vec3> vertices;
-
-  std::string line;
+    
+    std::string line;
   // float a, b, c;
 
-  int indice = 0;
-  while (std::getline(infile, line))
-    {
-       std::vector<std::string> tokens = split(line, ' ' );
-
-      if (line[0] == '#')
-        // comment
-        continue;
-      else if (line[0] == 'o')
+    int indice = 0;
+    while (std::getline(infile, line))
       {
-        fprintf(stdout, "Loading model %s\n", tokens[1].c_str());
-      }
-      else if (line[0] == 'v' && line[1] == 't')
-      {
+	std::vector<std::string> tokens = split(line, ' ' );
+	
+	if (line[0] == '#')
+	  // comment
+	  continue;
+	else if (line[0] == 'o')
+	  {
+	    fprintf(stdout, "Loading model %s\n", tokens[1].c_str());
+	  }
+	else if (line[0] == 'v' && line[1] == 't')
+	  {
 
-        float fu = ::atof(tokens[1].c_str());
-        float fv = ::atof(tokens[2].c_str());
-        unsigned short u = (short)((fu) * USHRT_MAX);
-        unsigned short v = (short)((1-fv) * USHRT_MAX);
+	    float fu = ::atof(tokens[1].c_str());
+	    float fv = ::atof(tokens[2].c_str());
+	    unsigned short u = (short)((fu) * USHRT_MAX);
+	    unsigned short v = (short)((1-fv) * USHRT_MAX);
+	    
+	    UV_COORD uv;
+	    uv.u = u;
+	    uv.v = v;
 
-        UV_COORD uv;
-        uv.u = u;
-        uv.v = v;
-
-         fprintf(stdout, "Reading texture coordinate %d, %d\n", u, v);
+         // fprintf(stdout, "Reading texture coordinate %d, %d\n", u, v);
          textureVerts.push_back( uv );
       }
       else if (line[0] == 'v')
@@ -236,7 +241,7 @@ int parseFace(
     }
 
   fprintf(stderr, "Model loaded with %d vertices and %d indices\n",
-          h_vertices.size(), h_indices.size());
+          (int)h_vertices.size(), (int)h_indices.size());
 
   initData(h_vertices, h_indices);
 
@@ -254,7 +259,8 @@ int parseFace(
 
     glGenBuffers(1, &vbo_id_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_id_);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(HodhrVertex), &vertices[0], GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(HodhrVertex), 
+		 &vertices[0], GL_STATIC_DRAW );
 
     printOglError("Creating VBO for Obj Model");
 
@@ -267,19 +273,34 @@ int parseFace(
 
     // texture
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, sizeof(HodhrVertex), BUFFER_OFFSET(24));
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 
+			  sizeof(HodhrVertex), BUFFER_OFFSET(24));
 
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);
 
     glGenBuffers(1, &vboi_id_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned short), 
+		 &indices[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     num_indices_ = indices.size();
 
+    mMaterialInfo.ka = glm::vec3(1.0, 1.0, 1.0);
+    mMaterialInfo.kd = glm::vec3(1.0, 1.0, 1.0);
+    mMaterialInfo.ks = glm::vec3(1.0, 1.0, 1.0);
+    
+    mMaterialInfo.shininess = 0.5f;
+    
+    mLightInfo.position = glm::vec4(10.0, 5.0, 0.0, 1.0);
+    mLightInfo.la = glm::vec3(1.0, 1.0, 1.0);
+    mLightInfo.ld = glm::vec3(1.0, 1.0, 1.0);
+    mLightInfo.ls = glm::vec3(1.0, 1.0, 1.0);
+
     initialized = true;
+
+    shader->getActiveUniforms();
 
   }
 
@@ -291,74 +312,84 @@ int parseFace(
 
   void ObjModel::draw(const SceneNode &node)
   {
-    glm::vec3 light_position = glm::vec3(-5, 5,5);
-    glm::vec3 light_color = glm::vec3(249.0/256.0,240.0/256.0,182.0/256.0);
-    glm::vec3 ambient_light = glm::vec3(0.2,0.2,0.3);
-
+        
     if (!initialized)
       {
-//	std::cerr << "Obj has not been initialized yet!" << vbo_id_ << " " << vao_id_ << std::endl;
-  fprintf(stderr, "OBJ model has not been initialized yet!");
+	fprintf(stderr, "OBJ model has not been initialized yet!");
         return;
       }
-
+    
     glUseProgram(shader->getProgramID());
 
+    glm::mat4 mvpMatrix = node.getMVPMatrix();
+    glm::mat3 normal_matrix = node.getNormalMatrix();
+    
+    glUniformMatrix4fv( mMVPLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
+    glUniformMatrix3fv( mNormalMatrixLocation, 1, GL_FALSE, &normal_matrix[0][0]);
+    glUniformMatrix4fv (mModelViewMatrixLocation, 1, GL_FALSE, 
+			&node.getModelViewMatrix()[0][0]);
+    
+    glUniform4fv( mLightPositionLocation, 4, &mLightInfo.position[0]);
+    glUniform4fv( mLightLaLocation, 3, &mLightInfo.la[0]);
+    glUniform4fv( mLightLdLocation, 3, &mLightInfo.ld[0]);
+    glUniform4fv( mLightLsLocation, 3, &mLightInfo.ls[0]);
+    
 
-  glm::mat4 mvpMatrix = node.getMVPMatrix();
-  glm::mat3 normal_matrix = node.getNormalMatrix();
-
-  glUniformMatrix4fv( MVPMatrixLocation, 1, GL_FALSE, &mvpMatrix[0][0]);
-  glUniformMatrix3fv( normal_matrix_loc_, 1, GL_FALSE, &normal_matrix[0][0]);
-  glUniform3f( ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
-  glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
-  glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
-
-  glUniform1f( constant_attenuation_loc_, .2f);
-  glUniform1f( linear_attenuation_loc_, .2f);
-
-  glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
-  glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
-
-  glBindVertexArray(vao_id_);
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
-
-  glUseProgram(shader->getProgramID());
-
-  if (this->mTexture)
-  {
-      // fprintf(stderr, "Texture id on model is %d\n", mTexture->getTextureID());
-      glEnable(GL_TEXTURE_2D);
-
-      glUniform1i(mTextureLocation, 0);
-
-      glActiveTexture(GL_TEXTURE0 + 0);
-      glBindTexture(GL_TEXTURE_2D, mTexture->getTextureID());
+    glUniform4fv( mMaterialKaLocation, 3, &mMaterialInfo.ka[0]);
+    glUniform4fv( mMaterialKdLocation, 3, &mMaterialInfo.kd[0]);
+    glUniform4fv( mMaterialKsLocation, 3, &mMaterialInfo.ks[0]);
+    glUniform1f( mMaterialShininessLocation, mMaterialInfo.shininess); 
+    
+    // glUniform3f( ambient_loc_, ambient_light.x, ambient_light.y, ambient_light.z);
+    // glUniform3f( light_color_loc_, light_color.x, light_color.y, light_color.z);
+    // glUniform3f( light_position_loc_, light_position.x, light_position.y, light_position.z);
+    
+    // glUniform1f( constant_attenuation_loc_, .2f);
+    // glUniform1f( linear_attenuation_loc_, .2f);
+    
+    glBindAttribLocation(shader->getProgramID(), 0, "VertexPosition");
+    glBindAttribLocation(shader->getProgramID(), 1, "VertexNormal");
+    
+    glBindVertexArray(vao_id_);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi_id_);
+    
+    // glUseProgram(shader->getProgramID());
+    
+    if (this->mTexture)
+      {
+	// fprintf(stderr, "Texture id on model is %d\n", mTexture->getTextureID());
+	// glEnable(GL_TEXTURE_2D);
+	
+	glUniform1i(mTextureLocation, 0);
+	
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, mTexture->getTextureID());
+      }
+    
+    //std::cout << "draw cube with indices " << numIndices << std::endl;
+    
+    // glDrawElements(GL_LINES, num_indices_, GL_UNSIGNED_SHORT, NULL);
+    glDrawElements(GL_TRIANGLES, num_indices_, GL_UNSIGNED_SHORT, NULL);
+    
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
   }
-
-  //std::cout << "draw cube with indices " << numIndices << std::endl;
-
-  //glDrawElements(GL_LINES, numIndices, GL_UNSIGNED_SHORT, NULL);
-  glDrawElements(GL_TRIANGLES, num_indices_, GL_UNSIGNED_SHORT, NULL);
-
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glBindVertexArray(0);
-  glBindTexture(GL_TEXTURE_2D, 0);
-}
-
+  
   void 
   ObjModel::setShader(
 		      Shader* shader
 		      )
   {
     Model::setShader(shader);
-
+    
+    /*
     mTextureLocation = glGetUniformLocation(shader->getProgramID(), "tex");
-    MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVPMatrix");
+    MVPMatrixLocation = glGetUniformLocation(shader->getProgramID(), "MVP");
     normal_matrix_loc_ = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
     light_position_loc_ = glGetUniformLocation(shader->getProgramID(), "LightPosition");
     eye_direction_loc_ = glGetUniformLocation(shader->getProgramID(), "EyeDirection");
@@ -372,13 +403,34 @@ int parseFace(
 
     fprintf(stdout, "Location of texture is at %d\n", mTextureLocation);
 
-    /*
-    std::cout << "Set cube shader " << shader->getName()
-	      << " with pID " << shader->getProgramID()
-	      << " mvp_matrix: " << MVPMatrixLocation
-	      << " normal matrix: " << normal_matrix_loc_
-	      << ", ambient light: " << ambient_loc_ <<  std::endl;
-    */
+	*/
+
+    mMVPLocation = glGetUniformLocation(shader->getProgramID(), "MVP");
+    mNormalMatrixLocation = glGetUniformLocation(shader->getProgramID(), "NormalMatrix");
+    
+    mLightPositionLocation = glGetUniformLocation(shader->getProgramID(), "Light.Position");
+    mLightLaLocation = glGetUniformLocation(shader->getProgramID(), "Light.La");
+    mLightLdLocation = glGetUniformLocation(shader->getProgramID(), "Light.Ld");
+    mLightLsLocation = glGetUniformLocation(shader->getProgramID(), "Light.Ls");
+
+    mMaterialKaLocation = glGetUniformLocation(shader->getProgramID(), "Material.Ka");
+    mMaterialKdLocation = glGetUniformLocation(shader->getProgramID(), "Material.Kd");
+    mMaterialKsLocation = glGetUniformLocation(shader->getProgramID(), "Material.Ks");
+    mMaterialShininessLocation = glGetUniformLocation(shader->getProgramID(), "Material.Shininess");
+
+    mModelViewMatrixLocation = glGetUniformLocation(shader->getProgramID(), "ModelViewMatrix");
+    mProjectionMatrixLocation = glGetUniformLocation(shader->getProgramID(), "ProjectionMatrix");
+    
+    // output the locations of the uniforms
+    fprintf(stdout, "Searching for uniforms in shader\n");
+    fprintf(stdout, "MVP: %d, NormalMatrix: %d, ProjectionMatrix: %d, ModelView: %d\n", 
+	    mMVPLocation, mNormalMatrixLocation, 
+	    mProjectionMatrixLocation, mModelViewMatrixLocation);
+    fprintf(stdout, "Light Position: %d, Ambient: %d, Diffuse: %d, Specular: %d\n", 
+	    mLightPositionLocation, 
+	    mLightLaLocation, mLightLdLocation, mLightLsLocation);
+
+    
 
   }
 

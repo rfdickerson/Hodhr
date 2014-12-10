@@ -46,7 +46,7 @@ int main() {
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                       SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
   
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -92,23 +92,26 @@ int main() {
 
   fprintf(stderr, "CPU has %i logical CPU cores\n", SDL_GetCPUCount());
   fprintf(stderr, "System has %i MB of memory\n", SDL_GetSystemRAM());
+  
 
+  
+  SDL_Event event;
 
-
-    SDL_Event event;
-
-    //auto sl = make_unique<Hodhr::ShaderLibrary>();
-    Hodhr::ShaderLibrary sl;
-    sl.AddShader("basic",
-                  "resources/shaders/basic.vert",
-                  "resources/shaders/basic.frag");
-    sl.AddShader("screen",
-                  "resources/shaders/screen.vert",
-                  "resources/shaders/screen.frag");
-    sl.AddShader("flat",
-                      "resources/shaders/flat.vert",
-                      "resources/shaders/flat.frag");
-
+  //auto sl = make_unique<Hodhr::ShaderLibrary>();
+  Hodhr::ShaderLibrary sl;
+  sl.AddShader("basic",
+	       "resources/shaders/basic.vert",
+	       "resources/shaders/basic.frag");
+  sl.AddShader("screen",
+	       "resources/shaders/screen.vert",
+	       "resources/shaders/screen.frag");
+  sl.AddShader("flat",
+	       "resources/shaders/flat.vert",
+	       "resources/shaders/flat.frag");
+	sl.AddShader("phong",
+		"resources/shaders/phong.vert",
+		"resources/shaders/phong.frag");
+  
     Hodhr::Renderer renderer(WIDTH, HEIGHT);
     renderer.init();
     checkSDLError(__LINE__);
@@ -121,9 +124,11 @@ int main() {
     Hodhr::Shader* basicShader = sl.GetShader("basic");
     // Hodhr::Shader* flatShader = sl.GetShader("flat");
 
+	Hodhr::Shader* phongShader = sl.GetShader("phong");
+
     Hodhr::TextureManager tm;
     Hodhr::Texture* grassTexture = tm.LoadTexture("cube",
-                        "resources/images/cube2.png", true);
+                        "resources/images/torusdiffuse.png", true);
     
     /**
     Hodhr::Texture* artTexture = tm.LoadTexture("art",
@@ -177,9 +182,9 @@ int main() {
     // make the obj model
 
     Hodhr::ObjModel custom_model;
-    custom_model.setShader(basicShader);
+    custom_model.setShader(phongShader);
     custom_model.setTexture(grassTexture);
-    custom_model.LoadFile("resources/models/cube.obj");
+    custom_model.LoadFile("resources/models/torus.obj");
     assets.addAsset("gadget", &custom_model);
 
 
@@ -235,7 +240,7 @@ int main() {
     int done = 0;
     // int interval = 20;
 
-    int x, y;
+    //  int x, y;
 
     int currentTick;
     int lastTick;
@@ -255,8 +260,8 @@ int main() {
       
       while (SDL_PollEvent(&event))        {
         if ( event.type == SDL_MOUSEMOTION ) {
-          x = event.motion.x;
-          y = event.motion.y;
+          // x = event.motion.x;
+          // y = event.motion.y;
           
 
           camera.rotate(dt, event.motion.xrel, event.motion.yrel);
@@ -284,6 +289,7 @@ int main() {
       if (keysHeld[SDLK_s]) {
         camera.move(dt, -SPEED);
       }
+
 
 
       //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

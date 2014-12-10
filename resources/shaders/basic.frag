@@ -9,6 +9,7 @@ uniform sampler2D tex;
 in vec4 Color;
 in vec3 Normal;
 in vec2 TexCoord;
+in vec3 Normal2;
 
 in vec3 LightDirection;
 in vec3 HalfVector;
@@ -32,8 +33,9 @@ void main() {
     vec3 reflectedLight = LightColor * specular * Attenuation;
     vec3 rgb = min(texColor.rgb * scatteredLight + reflectedLight, vec3(1.0));
     
-    FragColor = vec4(rgb, Color.a);
-    FragColor = texColor;
+	FragColor = vec4(scatteredLight,1);
+    // FragColor = vec4(rgb, Color.a);
+    // FragColor = texColor;
     // FragColor = vec4(Normal, 1);
     
 

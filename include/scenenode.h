@@ -3,6 +3,7 @@
 #ifndef INCLUDE_SCENENODE_H_
 #define INCLUDE_SCENENODE_H_
 
+#include <glm/gtx/quaternion.hpp>
 #include <glm/glm.hpp>
 
 #include <memory>
@@ -29,36 +30,34 @@ namespace Hodhr {
     
     NodeVector children;
 
-    glm::vec3 position_;
-    glm::vec3 scale_;
+    glm::vec3 mPosition;
+    glm::vec3 mScale;
+
+    glm::quat mQuat;
+
     glm::mat4 mvp_matrix_;
     glm::mat4 mv_matrix_;
     glm::mat3 normal_matrix_;
+
     
     std::string name;
 
   public:
 
     SceneNode(const std::string& name);
-    
-    // SceneNode(const SceneNode&);
-    // SceneNode & operator=(const SceneNode &n);
-        
-    
+
     virtual ~SceneNode();
     
     void addChild(SceneNode* node);
     
     void setAsset(Model* model);
     
-    //  glm::mat4 getMVMatrix() const;
-    
     glm::mat4 getMVPMatrix() const;
+
+    glm::mat4 getModelViewMatrix() const;
     
     glm::mat3 getNormalMatrix() const;
     
-    //  glm::mat3 getNormalMatrix() const;
-
     void setPosition(float x, float y, float z);
 
     void setScale(float s);

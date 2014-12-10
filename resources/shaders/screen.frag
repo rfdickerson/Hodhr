@@ -7,7 +7,7 @@ uniform mat4 projectionMatrix;
 in vec2 texCoord0;
 
 const float LOG2 = 1.442695;
-const float density = 0.04;
+const float density = 0.02;
 const float zNear = 0.1;
 const float zFar = 100.0;
 
