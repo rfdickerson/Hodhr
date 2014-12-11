@@ -60,7 +60,7 @@ void main()
 	LightIntensity = phongModel( eyePosition, eyeNorm);
 	LightIntensity = vec3(eyeNorm);
 
-	Normal = VertexNormal;
+	// LightIntensity = VertexNormal;
 
 	gl_Position = MVP * vec4(VertexPosition, 1.0);
 }

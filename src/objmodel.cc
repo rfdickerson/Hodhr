@@ -6,6 +6,7 @@
 #include <sstream>
 //# <iostream>
 #include <vector>
+#include <map>
 
 #include "objmodel.h"
 #include "shader.h"
@@ -63,19 +64,31 @@ typedef struct
 {
   unsigned int vertexID;
   unsigned int uvID;
-  
-} FACE_DESC;
+} FaceDesc;
+
+bool operator<(const FaceDesc& l, const FaceDesc& r) {
+    return (l.uvID < r.uvID && l.vertexID < r.vertexID);
+}
   
 typedef struct
 {
   unsigned short u;
   unsigned short v;
-} UV_COORD;
+} UVCoord;
   
+typedef struct
+{
+      unsigned int fboIndex;     // the index we use in the fbo
+      HodhrVertex* hVertex;
+
+} GLVertexIndex;
+
+typedef std::map<FaceDesc, GLVertexIndex>::iterator it_glindex;
+
   /*
    * Extracts the vertex position index and the texture vertex index
    */
-  int parse_desc(std::string token, FACE_DESC* face )
+  int parse_desc(std::string token, FaceDesc* face )
   {
     int i = token.find('/');
     std::string l1 = token.substr(0, i);
@@ -88,19 +101,78 @@ typedef struct
     
     return 0;
   }
+
+  int averageNormal(glm::vec3& normal, HodhrVertex& hVertex)
+  {
+
+      glm::vec3 currentNormal = glm::vec3(hVertex.nx, hVertex.ny, hVertex.nz);
+      currentNormal = currentNormal + normal;
+      currentNormal = glm::normalize(currentNormal);
+      hVertex.nx = currentNormal.x;
+      hVertex.ny = currentNormal.y;
+      hVertex.nz = currentNormal.z;
+
+      return 0;
+  }
+
+  int addVertex(int i, glm::vec3 normal, unsigned short &indice,
+                const FaceDesc faceDesc[4],
+                const glm::vec3 v[4],
+                const UVCoord tv[4],
+                std::map<FaceDesc, GLVertexIndex> &vertexMap,
+                std::vector<unsigned short> &h_indices,
+                bool normalize
+                )
+  {
+
+      if ( vertexMap.count(faceDesc[i]))
+      {
+          // faceDesc[i].fboIndex = indice;
+          HodhrVertex* hv = vertexMap[faceDesc[i]].hVertex;
+          if (normalize) {
+            averageNormal(normal, *hv );
+          }
+          h_indices.push_back(vertexMap[faceDesc[i]].fboIndex);
+      } else
+      {
+          HodhrVertex *hv = new HodhrVertex();
+          hv->x = v[i].x;
+          hv->y = v[i].y;
+          hv->z = v[i].z;
+          hv->s = tv[i].u;
+          hv->t = tv[i].v;
+
+          if (normalize) {
+            averageNormal(normal, *hv );
+          }
+
+          GLVertexIndex sVi;
+          sVi.hVertex = hv;
+          sVi.fboIndex = indice;
+
+          vertexMap[faceDesc[i]] = sVi;
+          h_indices.push_back(indice);
+          indice++;
+          //indice++;
+      }
+
+       return 0;
+  }
   
   int parseFace(
 		std::vector<std::string> &tokens,
-		std::vector<glm::vec3> &vertices,
-		std::vector<UV_COORD> &textureVerts,
-		std::vector<HodhrVertex> &h_vertices,
-                std::vector<unsigned short> &h_indices,
-		int &indice)
+        std::vector<glm::vec3> &vertices,     // OBJ position vertices
+        std::vector<UVCoord> &textureVerts,  // OBJ texture vertices
+        std::map<FaceDesc, GLVertexIndex> &vertexMap,    // maps face descriptor with OpenGL vertex
+        std::vector<unsigned short> &h_indices,         // list of OpenGL indices
+        unsigned short &indice)
   {
-    FACE_DESC faceDesc[4];
-    glm::vec3 v[4];
-    UV_COORD tv[4];
-    Hodhr::HodhrVertex hv[4];
+
+
+    FaceDesc faceDesc[4];  // FACE tuple of vertex index and texture index
+    glm::vec3 v[4];         // FACE obj vertices
+    UVCoord tv[4];         // OBJ holds a tuple for the u and v coord
+    // Hodhr::HodhrVertex hv[4];
     glm::vec3 a, b, normal;
 
     for (int i=0;i<4;i++) {
@@ -116,6 +188,34 @@ typedef struct
        tv[i] = textureVerts[faceDesc[i].uvID-1];
     }
 
+    // calculate the normal from the cross product
+    a = v[1]-v[0];
+    b = v[2]-v[0];
+
+    normal = glm::cross(b, a);
+    // normal = glm::normalize(normal);
+
+
+    addVertex(0, normal, indice, faceDesc, v, tv, vertexMap, h_indices, true);
+    addVertex(1, normal, indice, faceDesc, v, tv, vertexMap, h_indices, true);
+    addVertex(2, normal, indice, faceDesc, v, tv, vertexMap, h_indices, true);
+
+
+    addVertex(0, normal, indice, faceDesc, v, tv, vertexMap, h_indices, false);
+    addVertex(3, normal, indice, faceDesc, v, tv, vertexMap, h_indices, true);
+    addVertex(2, normal, indice, faceDesc, v, tv, vertexMap, h_indices, false);
+
+
+    /*
+    addVertex(1, &indice, &vertexMap);
+    addVertex(2, &indice, &vertexMap);
+    addVertex(1, &indice, &vertexMap);
+    addVertex(2, &indice, &vertexMap);
+    addVertex(0, &indice, &vertexMap);
+    */
+
+
+    /*
     for (int i=0 ; i<4 ; i++)
     {
        hv[i].x = v[i].x;
@@ -124,27 +224,23 @@ typedef struct
        hv[i].s = tv[i].u;
        hv[i].t = tv[i].v;
     }
+    */
 
-    a = v[1]-v[0];
-    b = v[2]-v[0];
 
-    normal = glm::cross(b, a);
-    normal = glm::normalize(normal);
+
+
     
+    /*
     for (int i=0 ; i<4 ; ++i) {
       
       hv[i].nx = normal.x;
       hv[i].ny = normal.y;
       hv[i].nz = normal.z;
-      
 
-        /*
-      hv[i].nx = a.y * b.z - a.z * b.y;
-      hv[i].ny = a.z * b.x - a.x * b.z;
-      hv[i].nz = a.x * b.y - a.y * b.x;
-      */
     }
+    */
 
+    /**
     h_vertices.push_back(hv[0]);
     h_indices.push_back(indice);
     indice++;
@@ -163,6 +259,7 @@ typedef struct
     h_indices.push_back(indice-3);
     h_indices.push_back(indice);
     indice++;
+    **/
 
     return 0;
   }
@@ -175,18 +272,20 @@ typedef struct
 
     std::ifstream infile(filename);
 
-    std::vector<HodhrVertex> h_vertices;
+    // std::vector<HodhrVertex> h_vertices;
 
     // store the texture coordinates
-    std::vector<UV_COORD> textureVerts;
+    std::vector<UVCoord> textureVerts;
 
+    std::vector<HodhrVertex> h_vertices;
     std::vector<unsigned short> h_indices;
     std::vector<glm::vec3> vertices;
+    std::map<FaceDesc, GLVertexIndex> vertexMap;
     
     std::string line;
   // float a, b, c;
 
-    int indice = 0;
+    unsigned short indice = 0;
     while (std::getline(infile, line))
       {
 	std::vector<std::string> tokens = split(line, ' ' );
@@ -206,7 +305,7 @@ typedef struct
 	    unsigned short u = (short)((fu) * USHRT_MAX);
 	    unsigned short v = (short)((1-fv) * USHRT_MAX);
 	    
-	    UV_COORD uv;
+        UVCoord uv;
 	    uv.u = u;
 	    uv.v = v;
 
@@ -229,7 +328,7 @@ typedef struct
       else if (line[0] == 'f')
         {
 
-          parseFace(tokens, vertices, textureVerts, h_vertices, h_indices, indice);
+          parseFace(tokens, vertices, textureVerts, vertexMap, h_indices, indice);
 
 
 
@@ -239,6 +338,21 @@ typedef struct
         }
 
     }
+
+
+    std::map<unsigned int, HodhrVertex*> tempVertex;
+
+    for (it_glindex iterator = vertexMap.begin(); iterator != vertexMap.end(); iterator++)
+    {
+        tempVertex[iterator->second.fboIndex] = iterator->second.hVertex;
+    }
+
+
+    for (int i=0;i<indice;i++)
+    {
+        h_vertices.push_back(*tempVertex[i]);
+    }
+
 
   fprintf(stderr, "Model loaded with %d vertices and %d indices\n",
           (int)h_vertices.size(), (int)h_indices.size());
